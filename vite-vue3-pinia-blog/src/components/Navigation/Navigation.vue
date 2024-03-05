@@ -134,6 +134,7 @@ const listenScreen = () => {
     isMobile = getScreen() < 1 ? true : false;
   });
 };
+
 // 监听
 watchEffect(async () => {
   listenScreen();

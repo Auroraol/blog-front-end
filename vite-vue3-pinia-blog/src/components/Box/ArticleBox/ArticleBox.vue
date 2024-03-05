@@ -39,10 +39,10 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from "@/store/count";
+// import { useStore } from "@/store/count";
 import { useRouter } from "vue-router";
-import useAxios from '@/hooks/axios/axios';
-import { extractMarkdownText } from '@/hooks/extractMarkdownText/extractMarkdownText'
+// import useAxios from '@/hooks/axios/axios';
+// import { extractMarkdownText } from '@/hooks/extractMarkdownText/extractMarkdownText'
 const router = useRouter()
 const pinia = useStore()
 

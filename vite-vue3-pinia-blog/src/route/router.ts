@@ -244,12 +244,12 @@ router.beforeEach((to, from, next) => {
   }
 
   //进入写文页面，判断是否有权限
-  if (to.path === '/write') {
-      if (!sessionAccount) {
-          alert('还没有登录，去登录吧')
-          router.push('/login')
-      }
-  }
+  // if (to.path === '/write') {
+  //     if (!sessionAccount) {
+  //         alert('还没有登录，去登录吧')
+  //         router.push('/login')
+  //     }
+  // }
 
   window.document.title = to.meta.title as string
   //到新页面要把页面滚动到最顶

@@ -1,7 +1,7 @@
 <template>
     <Suspense>
         <template #default>
-            <!-- <article></article> -->
+            <write></write>
         </template>
 
         <!-- 加载完成前的载入动画 -->
@@ -16,8 +16,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 //Suspense要异步引入组件
-// const Article = defineAsyncComponent(() => import('/@/components/article/Article.vue'))
-
+const Write = defineAsyncComponent(() => import('/@/components/Write/Write.vue'))
 
 </script>
 
