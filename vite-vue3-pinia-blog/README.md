@@ -12,6 +12,7 @@
   + [Element Plus ](https://element-plus.org/zh-CN/component/button.html)
   + [iconfont-阿里巴巴矢量图标库](https://www.iconfont.cn/?spm=a313x.search_index.i3.2.52c93a81WpIhXZ)
 + 其他: html、css、 less、 js
++ 动画: [GSAP ](https://gsap.framer.wiki/)
 
 ## 后端
 
@@ -61,3 +62,14 @@ nginx负载均衡
 参考:
 
 + 网站性能优化.md
+
+
+
+# 登录-JWT+Redis缓存
+
+
+
+
+
+
+
