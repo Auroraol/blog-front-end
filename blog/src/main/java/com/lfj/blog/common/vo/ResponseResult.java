@@ -105,11 +105,14 @@ public class ResponseResult<T>{
 		return fail(ResponseCodeEnum.TOKEN_ERROR);
 	}
 
-//	public static <T> ResponseResult<T> noPermission(){
-//		return new ResponseResult<>(false,BusinessCodeEnum.HTTP_NO_PERMISSION.getMsg(),BusinessCodeEnum.HTTP_NO_PERMISSION.getCode(),null);
-//	}
-//
-//	public static <T> ResponseResult<T> noLogin() {
-//		return new ResponseResult<>(false,BusinessCodeEnum.HTTP_NO_LOGIN.getMsg(),BusinessCodeEnum.HTTP_NO_LOGIN.getCode(),null);
-//	}
+	// 没权限
+	public static <T> ResponseResult<T> noPermission(){
+
+		return fail(ResponseCodeEnum.HTTP_NO_PERMISSION);
+	}
+
+	// 没登录
+	public static <T> ResponseResult<T> noLogin() {
+		return  fail(ResponseCodeEnum.HTTP_NO_LOGIN);
+	}
 }

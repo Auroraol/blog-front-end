@@ -2,15 +2,16 @@ package com.lfj.blog.handler.security;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.lfj.blog.common.cache.CachePrefix;
 import com.lfj.blog.common.security.AuthUser;
 import com.lfj.blog.common.security.UserEnums;
+import com.lfj.blog.common.vo.ResponseResult;
 import com.lfj.blog.utils.token.SecretKeyUtil;
 import com.lfj.blog.utils.token.SecurityKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,12 +19,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
+import com.lfj.blog.utils.ResponseUtil;
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * @Author: LFJ
@@ -33,7 +37,7 @@ import java.util.List;
  *
  */
 @Slf4j
-public class UserAuthenticationFilter extends BasicAuthenticationFilte {
+public class UserAuthenticationFilter extends BasicAuthenticationFilter {
 	private StringRedisTemplate redisTemplate;
 
 	/**
@@ -48,12 +52,12 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilte {
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException, IOException {
 
 		//从header中获取jwt
 		String jwt = request.getHeader(SecurityKey.ACCESS_TOKEN);
 		try {
-			//如果没有token 则return
+			//如果请求头没有携带token 则return
 			if (StringUtils.isBlank(jwt)) {
 				chain.doFilter(request, response);
 				return;
@@ -69,7 +73,7 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilte {
 
 	/**
 	 * 解析用户
-	 *
+	 * 读取Token信息，创建UsernamePasswordAuthenticationToken对象
 	 * @param jwt
 	 * @param response
 	 * @return
@@ -77,16 +81,17 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilte {
 	private UsernamePasswordAuthenticationToken getAuthentication(String jwt, HttpServletResponse response) {
 
 		try {
-			Claims claims
-					= Jwts.parser()
-					.setSigningKey(SecretKeyUtil.generalKey())
-					.parseClaimsJws(jwt).getBody();
+			Claims claims = Jwts.parser()
+					.verifyWith(SecretKeyUtil.generalKey()) // 传递密钥
+					.build()
+					.parseSignedClaims(jwt)//传递jwt令牌参数
+					.getPayload();  // 获取- Payload(有效载荷）
 			//获取存储在claims中的用户信息
 			String json = claims.get(SecurityKey.USER_CONTEXT).toString();
 			AuthUser authUser = JSON.parseObject(json, AuthUser.class);
 
 			//校验redis中是否有权限
-			Boolean hasKey = redisTemplate.hasKey(CachePrefix.ACCESS_TOKEN.name() + UserEnums.MEMBER.name() + jwt);
+			Boolean hasKey = redisTemplate.hasKey(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwt);
 			if (hasKey != null && hasKey) {
 				//构造返回信息
 				List<GrantedAuthority> auths = new ArrayList<>();
@@ -95,7 +100,7 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilte {
 				authentication.setDetails(authUser);
 				return authentication;
 			}
-			ResponseUtil.output(response, 401, Result.noLogin());
+			ResponseUtil.output(response, 401001, ResponseResult.noLogin());
 			return null;
 		} catch (ExpiredJwtException e) {
 			log.debug("user analysis exception:", e);

@@ -8,6 +8,8 @@ import org.jasypt.encryption.StringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * @Author: LFJ
  * @Date: 2024-03-09 15:43
@@ -20,20 +22,15 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-//	@Autowired
-//	private StringEncryptor stringEncryptor;
-
 	@PostMapping("/login")
-	public ResponseResult<Token> userLogin(@RequestParam String username, @RequestParam String password) {
+//	public ResponseResult<Token> userLogin(@RequestParam String username, @RequestParam String password) {
+//		return userService.usernameLogin(username, password);
+//	}
+	public ResponseResult<Token> userLogin(@RequestBody Map<String, String> loginData) {
+		String username = loginData.get("username");
+		String password = loginData.get("password");
 		return userService.usernameLogin(username, password);
 	}
 
-//	@GetMapping("/test1")
-//	public void encryptTest() {
-//		String content = "741106";
-//		String encryptStr = stringEncryptor.encrypt(content);
-//		String decryptStr = stringEncryptor.decrypt(encryptStr);
-//		System.out.println("加密后的内容：" + encryptStr);
-//		System.out.println("解密后的内容：" + decryptStr);
-//	}
+
 }

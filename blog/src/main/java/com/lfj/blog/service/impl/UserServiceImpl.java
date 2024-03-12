@@ -2,6 +2,7 @@ package com.lfj.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lfj.blog.common.cache.CachePrefix;
 import com.lfj.blog.common.security.AuthUser;
 import com.lfj.blog.common.security.Token;
 import com.lfj.blog.common.security.UserEnums;
@@ -10,13 +11,15 @@ import com.lfj.blog.entity.User;
 import com.lfj.blog.mapper.UserMapper;
 import com.lfj.blog.service.UserService;
 import com.lfj.blog.utils.token.TokenUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
 /**
  * @author 16658
  * @description 针对表【user】的数据库操作Service实现
@@ -25,6 +28,9 @@ import java.util.List;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		implements UserService {
+
+	@Autowired
+	private StringRedisTemplate redisTemplate;
 
 	public static void main(String[] args) {
 		System.out.println(new BCryptPasswordEncoder().encode("123456"));
@@ -57,6 +63,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		//MQ 考虑使用mq 把信息发到mq当中，由mq的消费者 来去更新1
 		user.setRecentlylanded(LocalDateTime.now());
 		this.updateById(user);
+
 		Token token = genToken(user);
 		return ResponseResult.success(token);
 	}
@@ -67,15 +74,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		AuthUser authUser = new AuthUser(user.getUsername(), String.valueOf(user.getId()),
 				user.getUsername(), UserEnums.USER);
 		// 7天
-		String accessToken = TokenUtils.createToken(user.getUsername(), authUser, 7 * 24 * 60 * 60 * 1000L);
-		token.setAccessToken(accessToken);
-//		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.MEMBER.name() + jwtToken, "1", 7, TimeUnit.DAYS);
-//
+		String jwtAccessToken = TokenUtils.createToken(user.getUsername(), authUser, 7 * 24 * 60 * 60 * 1000L);
+		token.setAccessToken(jwtAccessToken);
+		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwtAccessToken
+				,"1", 7, TimeUnit.DAYS); // 储存到Redis中 前缀+用户类型+jwtToken
+
 		// 15天
 		//设置刷新token，当accessToken过期的时候，可以通过refreshToken来 重新获取accessToken 而不用访问数据库
-		String refreshToken = TokenUtils.createToken(user.getUsername(), authUser, 15 * 24 * 60 * 60 * 1000L);
-		token.setRefreshToken(refreshToken);
-//		redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.MEMBER.name() + jwtToken, "1", 15, TimeUnit.DAYS);
+		String jwtRefreshToken = TokenUtils.createToken(user.getUsername(), authUser, 15 * 24 * 60 * 60 * 1000L);
+		token.setRefreshToken(jwtRefreshToken);
+		redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.USER.name() + jwtRefreshToken
+				,"1", 15, TimeUnit.DAYS);
 
 		return token;
 	}

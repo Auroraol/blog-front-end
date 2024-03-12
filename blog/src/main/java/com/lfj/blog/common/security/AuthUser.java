@@ -9,6 +9,7 @@ import java.io.Serializable;
 /**
  * @Author: LFJ
  * @Date: 2024-03-09 17:32
+ *  存储到Token中的信息
  */
 @Data
 @AllArgsConstructor

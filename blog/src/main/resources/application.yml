@@ -1,5 +1,8 @@
 server:
   port: 9000
+  #配置代理地址
+  servlet:
+    context-path: /dev-api
 
 spring:
   datasource:
@@ -8,6 +11,23 @@ spring:
     url: jdbc:mysql://localhost:3306/myblog
     username: root
     password: CODE(yTDT90o8m/N9uwVvJybwjg==)
+
+  # redis配置
+  redis:
+    host: 192.168.200.134
+    port: 6379
+    password: 741106
+    # lettuce配置(需引入 commons-pool2依赖)
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 200
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1
+        # 连接池中的最大空闲连接
+        max-idle: 10
+        # 连接池中的最小空闲连接
+        min-idle: 0
 
 #mybatis-plus配置
 mybatis-plus:
@@ -31,6 +51,7 @@ jasypt:
 
 ignored:
   urls:
+    - /user/**
     - /pages/**
     - /pageData/**
     - /article/**

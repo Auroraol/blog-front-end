@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 		log.error("业务异常：{}", e.getMessage());
 		return ResponseResult.fail(e.getCode(), e.getMessage());
 	}
-
+//
 	//如果抛出Exception的话, 调用
 	@ExceptionHandler(Exception.class)
 	public ResponseResult exceptionHandler(Exception e) {

@@ -12,6 +12,7 @@ import java.io.IOException;
  * @Author: LFJ
  * @Date: 2024-03-10 23:14
  * response 输出响应工具, 用于任何地方发起响应数据, 不需要PostMapping()等等
+ * 实现了在任何地方方便地输出响应数据到HttpServletResponse中的功能。
  */
 @Slf4j
 public class ResponseUtil {
@@ -74,7 +75,9 @@ public class ResponseUtil {
 			response.setCharacterEncoding(ENCODING);
 			response.setContentType(CONTENT_TYPE);
 			servletOutputStream = response.getOutputStream();
+//			System.out.println(result.getMessage());
 			servletOutputStream.write(JSON.toJSONString(result).getBytes());
+			log.info("Response output successful");
 		} catch (Exception e) {
 			log.error("response output error:", e);
 		} finally {
@@ -88,6 +91,5 @@ public class ResponseUtil {
 			}
 		}
 	}
-
 
 }

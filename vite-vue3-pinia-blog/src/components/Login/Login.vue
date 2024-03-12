@@ -92,9 +92,10 @@
 import { onMounted, reactive, ref, toRaw } from 'vue'
 import { useStore } from '/@/store';
 import { useRouter } from 'vue-router'
-// import useAxios from "@/hooks/axios/axios";
 import qs from "qs";
 import { ElNotification } from 'element-plus'
+import { useRequest } from "vue-hooks-plus";
+import { getLogin } from "./services";
 
 const pinia = useStore()
 const router = useRouter()
@@ -120,52 +121,67 @@ const nickname = ref()
 //点击登录
 const login = async () => {
     const userLogInfo = toRaw(logInfo)
-    const { data: res } = await useAxios.post("/login", userLogInfo)
-    if (res.status === 2) {
-        alert('用户名不存在')
-    } else if (res.status === 0) {
-        //token里面存上登录的account
-        const time = Math.floor(new Date().getTime() / 1000 / 60 / 60)  //现在登录的时间的时间戳(小时)
-        const accountInfo = {
-            account: res.data.account,
-            root: res.data.root,
-            time: time
-        }
-        // sessionStorage
-        localStorage.setItem('userAccount', window.btoa(JSON.stringify(accountInfo)))
-        pinia.sessionInfo = window.btoa(JSON.stringify(accountInfo))
-        ElNotification({
-            title: 'Success',
-            message: '登录成功',
-            type: 'success',
-        })
-        router.replace('/index')
-    } else {
-        alert('密码错误')
-    }
+    const { data, error, loading, run } =  useRequest(getLogin,{
+    manual: true, // 手动触发请求
+        devKey: "demo1", // 开发者密钥
+        onSuccess: data => {
+        //注意: 在手动触发的情况下, ts中使用data,error,....中的属性
+        alert(data.message); // 有自动补全提示
+        },
+        onError: error => {
+        alert(error);
+        },
+    });
+
+    run(userLogInfo)
+
+
+    // const { data: res } = await useAxios.post("/login", userLogInfo)
+    // if (res.status === 2) {
+    //     alert('用户名不存在')
+    // } else if (res.status === 0) {
+    //     //token里面存上登录的account
+    //     const time = Math.floor(new Date().getTime() / 1000 / 60 / 60)  //现在登录的时间的时间戳(小时)
+    //     const accountInfo = {
+    //         account: res.data.account,
+    //         root: res.data.root,
+    //         time: time
+    //     }
+    //     // sessionStorage
+    //     localStorage.setItem('userAccount', window.btoa(JSON.stringify(accountInfo)))
+    //     pinia.sessionInfo = window.btoa(JSON.stringify(accountInfo))
+    //     ElNotification({
+    //         title: 'Success',
+    //         message: '登录成功',
+    //         type: 'success',
+    //     })
+    //     router.replace('/index')
+    // } else {
+    //     alert('密码错误')
+    // }
 }
 
 //点击注册
 const register = async () => {
-    const registerform = toRaw(registerInfo)
+    // const registerform = toRaw(registerInfo)
 
-    if (registerform.password.length < 6 || registerform.username.length < 6) {
-        alert('用户名和密码都不能小于6位')
-    } else {
-        if (registerform.password === registerform.againPassword) {
-            const { data: res } = await useAxios.post('/register', registerform)
-            if (res.status === 0) {
-                alert('注册成功!')
-                name.value = false
-            } else if (res.status === 1) {
-                alert('用户名已被注册')
-            } else {
-                alert('失败了..')
-            }
-        } else {
-            alert('两次输入的密码不一致 ')
-        }
-    }
+    // if (registerform.password.length < 6 || registerform.username.length < 6) {
+    //     alert('用户名和密码都不能小于6位')
+    // } else {
+    //     if (registerform.password === registerform.againPassword) {
+    //         const { data: res } = await useAxios.post('/register', registerform)
+    //         if (res.status === 0) {
+    //             alert('注册成功!')
+    //             name.value = false
+    //         } else if (res.status === 1) {
+    //             alert('用户名已被注册')
+    //         } else {
+    //             alert('失败了..')
+    //         }
+    //     } else {
+    //         alert('两次输入的密码不一致 ')
+    //     }
+    // }
 
 }
 
@@ -188,28 +204,28 @@ const skipNickName = () => {
 
 //更新昵称
 const updateNickName = async () => {
-    if (nickname.value === '') {
-        alert('昵称不能为空')
-    } else {
-        const uploadNick = toRaw(nickname.value)
-        const { data: res } = await useAxios.get('/updatanicknane', {
-            params: {
-                account: registerInfo.username,
-                nickName: uploadNick
-            }
-        })
-        if (res.status === 0) {
-            alert('昵称更新成功')
-            registerInfo.password = ''
-            registerInfo.username = ''
-            nickname.value = ''
-            name.value = true
-            ifLog.value = true
-        } else {
-            alert('昵称更新失败')
-            nickname.value = ''
-        }
-    }
+    // if (nickname.value === '') {
+    //     alert('昵称不能为空')
+    // } else {
+    //     const uploadNick = toRaw(nickname.value)
+    //     const { data: res } = await useAxios.get('/updatanicknane', {
+    //         params: {
+    //             account: registerInfo.username,
+    //             nickName: uploadNick
+    //         }
+    //     })
+    //     if (res.status === 0) {
+    //         alert('昵称更新成功')
+    //         registerInfo.password = ''
+    //         registerInfo.username = ''
+    //         nickname.value = ''
+    //         name.value = true
+    //         ifLog.value = true
+    //     } else {
+    //         alert('昵称更新失败')
+    //         nickname.value = ''
+    //     }
+    // }
 
 }
 

@@ -16,7 +16,9 @@ public enum ResponseCodeEnum {
 	ACCOUNT_NOT_FOUND(400002,"账号不存在"),
 	ACCOUNT_LOCK(400003,"账号已锁定，请联系管理员解锁"),
 	ACCOUNT_ERROR(400004,"账户密码不匹配"),
-	TOKEN_ERROR(401000,"token 已失效,请重新登录");
+	TOKEN_ERROR(401000,"token 已失效,请重新登录"),
+	HTTP_NO_PERMISSION(403000,"抱歉，你没有访问权限"),
+	HTTP_NO_LOGIN(401001, "登录已失效，请重新登录");
 
 	private final int code;
 	private final String message;

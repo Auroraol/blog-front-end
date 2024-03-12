@@ -120,32 +120,89 @@ nginx 负载均衡
 }
 ~~~
 
-## Token 实体类
+## 用户实体类
 
 ```java
-package com.mszlu.shop.common.security;
+package com.lfj.blog.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 /**
- * Token 实体类
+ * @TableName user
  */
+@TableName(value = "user")
 @Data
-public class Token {
-    /**
-     * 访问token
-     */
-    private String accessToken;
-
-    /**
-     * 刷新token
-     */
-    private String refreshToken;
-
+public class User implements Serializable {
+	@TableField(exist = false)
+	private static final long serialVersionUID = 1L;
+	/**
+	 *
+	 */
+	@TableId(value = "id", type = IdType.AUTO)
+	private Integer id;
+	/**
+	 *
+	 */
+	@TableField(value = "phone")
+	private String phone;
+	/**
+	 *
+	 */
+	@TableField(value = "username")
+	private String username;
+	/**
+	 *
+	 */
+	@TableField(value = "password")
+	private String password;
+	/**
+	 *
+	 */
+	@TableField(value = "gender")
+	private String gender;
+	/**
+	 *
+	 */
+	@TableField(value = "trueName")
+	private String truename;
+	/**
+	 *
+	 */
+	@TableField(value = "birthday")
+	private String birthday;
+	/**
+	 *
+	 */
+	@TableField(value = "email")
+	private String email;
+	/**
+	 *
+	 */
+	@TableField(value = "personalBrief")
+	private String personalbrief;
+	/**
+	 *
+	 */
+	@TableField(value = "avatarImgUrl")
+	private String avatarimgurl;
+	/**
+	 *
+	 */
+	@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+	@TableField(value = "recentlyLanded")
+	private LocalDateTime recentlylanded;
 }
 ```
 
-## 用户表
+
 
 ```sql
 -- ----------------------------
@@ -190,9 +247,75 @@ INSERT INTO `user_role` VALUES ('1', '3');
 
 ```
 
-## 核心实现
+## Token 实体类
 
 ```java
+package com.mszlu.shop.common.security;
+
+import lombok.Data;
+
+/**
+ * Token 实体类
+ */
+@Data
+public class Token {
+    /**
+     * 访问token
+     */
+    private String accessToken;
+
+    /**
+     * 刷新token
+     */
+    private String refreshToken;
+
+}
+```
+
+## 核心实现
+
+![image-20240311164152147](README.assets/image-20240311164152147.png)
+
+```java
+package com.lfj.blog.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lfj.blog.common.cache.CachePrefix;
+import com.lfj.blog.common.security.AuthUser;
+import com.lfj.blog.common.security.Token;
+import com.lfj.blog.common.security.UserEnums;
+import com.lfj.blog.common.vo.ResponseResult;
+import com.lfj.blog.entity.User;
+import com.lfj.blog.mapper.UserMapper;
+import com.lfj.blog.service.UserService;
+import com.lfj.blog.utils.token.TokenUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+/**
+ * @author 16658
+ * @description 针对表【user】的数据库操作Service实现
+ * @createDate 2024-03-09 17:46:34
+ */
+@Service
+public class UserServiceImpl extends ServiceImpl<UserMapper, User>
+		implements UserService {
+
+	@Autowired
+	private StringRedisTemplate redisTemplate;
+
+	public static void main(String[] args) {
+		System.out.println(new BCryptPasswordEncoder().encode("123456"));
+	}
+
+	@Override
 	public ResponseResult<Token> usernameLogin(String username, String password) {
 		/**
 		 1. 根据用户名查找Member信息
@@ -219,6 +342,7 @@ INSERT INTO `user_role` VALUES ('1', '3');
 		//MQ 考虑使用mq 把信息发到mq当中，由mq的消费者 来去更新1
 		user.setRecentlylanded(LocalDateTime.now());
 		this.updateById(user);
+
 		Token token = genToken(user);
 		return ResponseResult.success(token);
 	}
@@ -229,17 +353,20 @@ INSERT INTO `user_role` VALUES ('1', '3');
 		AuthUser authUser = new AuthUser(user.getUsername(), String.valueOf(user.getId()),
 				user.getUsername(), UserEnums.USER);
 		// 7天
-		String accessToken = TokenUtils.createToken(user.getUsername(), authUser, 7 * 24 * 60 * 60 * 1000L);
-		token.setAccessToken(accessToken);
-		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.MEMBER.name() + jwtToken, "1", 7, TimeUnit.DAYS);
+		String jwtAccessToken = TokenUtils.createToken(user.getUsername(), authUser, 7 * 24 * 60 * 60 * 1000L);
+		token.setAccessToken(jwtAccessToken);
+        // 储存到Redis中 前缀+用户类型+jwtToken
+		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwtAccessToken, "1", 7, TimeUnit.DAYS);
+
 		// 15天
 		//设置刷新token，当accessToken过期的时候，可以通过refreshToken来 重新获取accessToken 而不用访问数据库
-		String refreshToken = TokenUtils.createToken(user.getUsername(), authUser, 15 * 24 * 60 * 60 * 1000L);
-		token.setRefreshToken(refreshToken);
-		redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.MEMBER.name() + jwtToken, "1", 15, TimeUnit.DAYS);
+		String jwtRefreshToken = TokenUtils.createToken(user.getUsername(), authUser, 15 * 24 * 60 * 60 * 1000L);
+		token.setRefreshToken(jwtRefreshToken);
+		redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.USER.name() + jwtRefreshToken, "1", 15, TimeUnit.DAYS);
 
 		return token;
 	}
+}
 ```
 
 ### 所需技术
@@ -299,25 +426,430 @@ if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
 <!--   token加密结束 -->
 ```
 
+参考: [JWT令牌生成和解析（库：jjwt 版本：0.12.3）](https://blog.csdn.net/qq_45137726/article/details/135885870)
+
 #### ③Redis  —— 缓存
 
 就是Redis缓存知识
 
-```
-redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.MEMBER.name() + jwtToken, "1", 15, TimeUnit.DAYS);
+```java
+redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.USER.name() + "jwtRefreshToken", "1", 15, TimeUnit.DAYS);
 ```
 
-## 测试
+## 测试结果
 
 ![image-20240310210444090](README.assets/image-20240310210444090.png)
 
 #  登录认证
 
+![image-20240311172134694](README.assets/image-20240311172134694.png)
+
+##  导包
+
+~~~xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+~~~
+
+## security配置类
+
+~~~java
+package com.lfj.blog.config.security;
+
+import com.lfj.blog.handler.security.CustomAccessDeniedHandler;
+import com.lfj.blog.handler.security.UserAuthenticationFilter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+/**
+ * @Author: LFJ
+ * @Date: 2024-03-10 22:55
+ * security配置类
+ */
+@Slf4j
+@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class UserSecurityConfig extends WebSecurityConfigurerAdapter {
+	@Autowired
+	private StringRedisTemplate redisTemplate;
+
+	/**
+	 * 忽略验权配置
+	 */
+	@Autowired
+	private IgnoredUrlsProperties ignoredUrlsProperties;
+
+	/**
+	 * spring security 权限不足处理
+	 */
+	@Autowired
+	private CustomAccessDeniedHandler accessDeniedHandler;
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+
+		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
+				.authorizeRequests();
+		//配置的url 不需要授权
+		for (String url : ignoredUrlsProperties.getUrls()) {
+			registry.antMatchers(url).permitAll();
+		}
+		registry
+				.and()
+				//禁止网页iframe
+				.headers().frameOptions().disable()
+				.and()
+				.logout()
+				.permitAll()
+				.and()
+				.authorizeRequests()
+				//任何请求
+				.anyRequest()
+				//需要身份认证
+				.authenticated()
+				.and()
+				//允许跨域
+				.cors().and()
+				//关闭跨站请求防护
+				.csrf().disable()
+				//前后端分离采用JWT 不需要session
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and()
+				//自定义权限拒绝处理类
+				.exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+				.and()
+				//添加JWT认证过滤器(自定义)
+				.addFilter(new UserAuthenticationFilter(authenticationManager(), redisTemplate));
+	}
+
+}
+~~~
+
+## 忽略配置类
+
+~~~java
+package com.lfj.blog.config.security;
+
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @Author: LFJ
+ * @Date: 2024-03-10 22:57
+ */
+@Configuration
+@ConfigurationProperties(prefix = "ignored")
+@Data
+public class IgnoredUrlsProperties {
+	private List<String> urls = new ArrayList<>();
+}
+
+~~~
+
+使用:   在配置文件写不用进行token认证的请求路径
+
+~~~yml
+ignored:
+  urls:
+    - /pages/**
+    - /pageData/**
+    - /article/**
+    - /goods/**
+    - /members/**
+    - /category/**
+    - /common/**
+~~~
+
+## 认证过滤器
+
+~~~java
+package com.lfj.blog.utils.token;
+
+/**
+ * @Author: LFJ
+ * @Date: 2024-03-09 15:24
+ */
+public class SecurityKey {
+	public static final String USER_CONTEXT = "userContext";
+
+	public static final String ACCESS_TOKEN = "accessToken";
+}
+~~~
+
+实现
+
+~~~java
+package com.lfj.blog.handler.security;
+
+import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.lfj.blog.common.cache.CachePrefix;
+import com.lfj.blog.common.security.AuthUser;
+import com.lfj.blog.common.security.UserEnums;
+import com.lfj.blog.common.vo.ResponseResult;
+import com.lfj.blog.utils.token.SecretKeyUtil;
+import com.lfj.blog.utils.token.SecurityKey;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import com.lfj.blog.utils.ResponseUtil;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * @Author: LFJ
+ * @Date: 2024-03-10 22:59
+ *
+ * 认证结果过滤器
+ *
+ */
+@Slf4j
+public class UserAuthenticationFilter extends BasicAuthenticationFilter {
+	private StringRedisTemplate redisTemplate;
+
+	/**
+	 * 自定义构造器
+	 *
+	 * @param authenticationManager
+	 */
+	public UserAuthenticationFilter(AuthenticationManager authenticationManager
+			, StringRedisTemplate redisTemplate) {
+		super(authenticationManager);
+		this.redisTemplate = redisTemplate;
+	}
+
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException, IOException {
+
+		//从header中获取jwt
+		String jwt = request.getHeader(SecurityKey.ACCESS_TOKEN);
+		try {
+			//如果没有token 则return
+			if (StringUtils.isBlank(jwt)) {
+				chain.doFilter(request, response);
+				return;
+			}
+			//获取用户信息，存入context
+			UsernamePasswordAuthenticationToken authentication = getAuthentication(jwt, response);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+		} catch (Exception e) {
+			log.error("BuyerAuthenticationFilter-> member authentication exception:", e);
+		}
+		chain.doFilter(request, response);
+	}
+
+	/**
+	 * 解析用户
+	 * 读取Token信息，创建UsernamePasswordAuthenticationToken对象
+	 * @param jwt
+	 * @param response
+	 * @return
+	 */
+	private UsernamePasswordAuthenticationToken getAuthentication(String jwt, HttpServletResponse response) {
+
+		try {
+			Claims claims = Jwts.parser()
+					.verifyWith(SecretKeyUtil.generalKey()) // 传递密钥
+					.build()
+					.parseSignedClaims(jwt)//传递jwt令牌参数
+					.getPayload();  // 获取- Payload(有效载荷）
+			//获取存储在claims中的用户信息
+			String json = claims.get(SecurityKey.USER_CONTEXT).toString();
+			AuthUser authUser = JSON.parseObject(json, AuthUser.class);
+
+			//校验redis中是否有权限
+			Boolean hasKey = redisTemplate.hasKey(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwt);
+			if (hasKey != null && hasKey) {
+				//构造返回信息
+				List<GrantedAuthority> auths = new ArrayList<>();
+				auths.add(new SimpleGrantedAuthority("ROLE_" + authUser.getRole().name()));
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(authUser.getUsername(), null, auths);
+				authentication.setDetails(authUser);
+				return authentication;
+			}
+			ResponseUtil.output(response, 401001, ResponseResult.noLogin());
+			return null;
+		} catch (ExpiredJwtException e) {
+			log.debug("user analysis exception:", e);
+		} catch (Exception e) {
+			log.error("user analysis exception:", e);
+		}
+		return null;
+	}
+}
+~~~
+
+##  认证失败的返回权限不足
+
+~~~java
+package com.lfj.blog.handler.security;
+
+import com.lfj.blog.common.vo.ResponseResult;
+import com.lfj.blog.utils.ResponseUtil;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+/**
+ * @Author: LFJ
+ * @Date: 2024-03-10 23:13
+ * 认证失败的返回
+ */
+@Component
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+	@Override
+	public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
+		ResponseUtil.output(httpServletResponse, ResponseResult.noPermission());
+	}
+}
+~~~
+
+## 工具类
+
+**作用:  用于任何地方发起响应数据**
+
+~~~java
+package com.lfj.blog.utils;
+
+import com.alibaba.fastjson2.JSON;
+import com.lfj.blog.common.vo.ResponseResult;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ * @Author: LFJ
+ * @Date: 2024-03-10 23:14
+ * response 输出响应工具, 用于任何地方发起响应数据, 不需要PostMapping()等等
+ */
+@Slf4j
+public class ResponseUtil {
+
+	static final String ENCODING = "UTF-8";
+	static final String CONTENT_TYPE = "application/json;charset=UTF-8";
+
+	/**
+	 * 输出前端内容以及状态指定
+	 *
+	 * @param response
+	 * @param status
+	 * @param content
+	 */
+	public static void output(HttpServletResponse response, Integer status, String content) {
+		ServletOutputStream servletOutputStream = null;
+		try {
+			response.setCharacterEncoding(ENCODING);
+			response.setContentType(CONTENT_TYPE);
+			response.setStatus(status);
+			servletOutputStream = response.getOutputStream();
+			servletOutputStream.write(content.getBytes());
+		} catch (Exception e) {
+			log.error("response output error: ", e);
+		} finally {
+			if (servletOutputStream != null) {
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("response output IO close error:", e);
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * response 输出JSON
+	 *
+	 * @param response
+	 * @param status    response 状态
+	 * @param result
+	 */
+	public static void output(HttpServletResponse response, Integer status, ResponseResult result) {
+		response.setStatus(status);
+		output(response, result);
+	}
+
+
+	/**
+	 * response 输出JSON
+	 *
+	 * @param response
+	 * @param result
+	 */
+	public static void output(HttpServletResponse response, ResponseResult result) {
+		ServletOutputStream servletOutputStream = null;
+		try {
+			response.setCharacterEncoding(ENCODING);
+			response.setContentType(CONTENT_TYPE);
+			servletOutputStream = response.getOutputStream();
+			servletOutputStream.write(JSON.toJSONString(result).getBytes());
+		} catch (Exception e) {
+			log.error("response output error:", e);
+		} finally {
+			if (servletOutputStream != null) {
+				try {
+					servletOutputStream.flush();
+					servletOutputStream.close();
+				} catch (IOException e) {
+					log.error("response output IO close error:", e);
+				}
+			}
+		}
+	}
+}
+~~~
+
+## 测试结果
+
+**情况1:  请求头没带token, 返回空**
+
+![image-20240311170523945](README.assets/image-20240311170523945.png)
+
+**情况2:  请求头带过期token, 返回登录已失效，请重新登录**
 
 
 
+删除Redis
 
 
+
+**情况2:  请求头带有效token, 返回成功响应数据**
+
+![image-20240311191415030](README.assets/image-20240311191415030.png)
 
 # 表设计
 

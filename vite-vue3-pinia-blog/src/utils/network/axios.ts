@@ -1,11 +1,14 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+// 导入配置的环境变量url
+// import baseURL from "./base-url";
 
-// axios.defaults.headers.post["Content-Type"] =
-//   "application/x-www-form-urlencoded;charset=UTF-8";
+axios.defaults.headers.post["Content-Type"] =
+  "application/x-www-form-urlencoded;charset=UTF-8";
   
-
 const axiosInstance = axios.create({
   timeout: 10000,
+  // axios中请求配置有baseURL选项,表示请求URL公共部分,每个请求将会带该部分
+  // baseURL: import.meta.env.VITE_API_URL,//配置了跨域这里不用写会冲突
 });
 
 // 请求拦截
