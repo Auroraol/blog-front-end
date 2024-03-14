@@ -56,7 +56,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useStore } from '/@/store';
-// import useAxios from "/@/hooks/axios/axios";
 import { useRouter } from "vue-router";
 
 const router = useRouter()
@@ -67,7 +66,7 @@ const TableVisibleOutlog = ref(false)
 const newNickName = ref('')
 
 //获取session里面的account
-const sessionInfo = JSON.parse(window.atob(localStorage.getItem('userAccount')!))
+// const sessionInfo = JSON.parse(window.atob(localStorage.getItem('userAccount')!))
 
 type User = {
     id: number
@@ -111,9 +110,9 @@ onMounted(() => {
 
 //注销登录
 const exitAccount = () => {
-    localStorage.removeItem('userAccount')
-    pinia.sessionInfo = ''
-    alert('注销成功')
+    localStorage.removeItem('userInfo')
+    pinia.userInfo = ''
+    // alert('注销成功')
     router.go(0)
 }
 

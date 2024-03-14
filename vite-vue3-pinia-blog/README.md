@@ -249,6 +249,8 @@ INSERT INTO `user_role` VALUES ('1', '3');
 
 ## Token 实体类
 
+### Token 实体类
+
 ```java
 package com.mszlu.shop.common.security;
 
@@ -270,6 +272,76 @@ public class Token {
     private String refreshToken;
 
 }
+```
+
+### Token 实体类存放的信息
+
+```java
+package com.lfj.blog.common.security;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.io.Serializable;
+
+/**
+ * @Author: LFJ
+ * @Date: 2024-03-09 17:32
+ *  存储到Token中的信息
+ */
+@Data
+@AllArgsConstructor
+public class AuthUser implements Serializable {
+
+	/**
+	 * 用户名
+	 */
+	private String username;
+
+	/**
+	 * 昵称
+	 */
+	private String nickName;
+
+	/**
+	 * id
+	 */
+	private String id;
+
+	/**
+	 * 长期有效（用于手机app登录场景或者信任场景等）
+	 */
+	private Boolean longTerm = false;
+
+	/**
+	 * @see UserEnums
+	 * 角色
+	 */
+	private UserEnums role;
+
+
+	/**
+	 * 是否是超级管理员
+	 */
+	private Boolean isSuper = false;
+
+	public AuthUser(String username, String id, String nickName, UserEnums role) {
+		this.username = username;
+		this.id = id;
+		this.role = role;
+		this.nickName = nickName;
+	}
+
+	public AuthUser(String username, String id, UserEnums manager, String nickName, Boolean isSuper) {
+		this.username = username;
+		this.id = id;
+		this.role = manager;
+		this.isSuper = isSuper;
+		this.nickName = nickName;
+	}
+}
+
 ```
 
 ## 核心实现
@@ -295,7 +367,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -321,7 +397,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		 1. 根据用户名查找Member信息
 		 2. 如果为null，就是用户不存在
 		 3. 密码进行匹配，如果不匹配 密码不正确
-		 4. token 生成token
+		 4. jwt 生成token
 		 5. jwt 生成token, token放入redis当中，accessToken 过期短， refreshToken 过期长
 		 **/
 		LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
@@ -355,17 +431,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		// 7天
 		String jwtAccessToken = TokenUtils.createToken(user.getUsername(), authUser, 7 * 24 * 60 * 60 * 1000L);
 		token.setAccessToken(jwtAccessToken);
-        // 储存到Redis中 前缀+用户类型+jwtToken
-		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwtAccessToken, "1", 7, TimeUnit.DAYS);
+		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwtAccessToken
+				,"1", 7, TimeUnit.DAYS); // 储存到Redis中 前缀+用户类型+jwtToken
 
 		// 15天
 		//设置刷新token，当accessToken过期的时候，可以通过refreshToken来 重新获取accessToken 而不用访问数据库
 		String jwtRefreshToken = TokenUtils.createToken(user.getUsername(), authUser, 15 * 24 * 60 * 60 * 1000L);
 		token.setRefreshToken(jwtRefreshToken);
-		redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.USER.name() + jwtRefreshToken, "1", 15, TimeUnit.DAYS);
+		redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.USER.name() + jwtRefreshToken
+				,"1", 15, TimeUnit.DAYS);
 
 		return token;
 	}
+
+
+
 }
 ```
 
@@ -439,6 +519,8 @@ redisTemplate.opsForValue().set(CachePrefix.REFRESH_TOKEN.name() + UserEnums.USE
 ## 测试结果
 
 ![image-20240310210444090](README.assets/image-20240310210444090.png)
+
+
 
 #  登录认证
 

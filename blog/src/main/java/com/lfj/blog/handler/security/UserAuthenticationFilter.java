@@ -30,10 +30,9 @@ import java.util.List;
 
 
 /**
+ * 认证结果过滤器
  * @Author: LFJ
  * @Date: 2024-03-10 22:59
- *
- * 认证结果过滤器
  *
  */
 @Slf4j
@@ -100,7 +99,8 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilter {
 				authentication.setDetails(authUser);
 				return authentication;
 			}
-			ResponseUtil.output(response, 401001, ResponseResult.noLogin());
+//			ResponseUtil.output(response, 401001, ResponseResult.noLogin());
+//
 			return null;
 		} catch (ExpiredJwtException e) {
 			log.debug("user analysis exception:", e);

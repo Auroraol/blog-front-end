@@ -32,18 +32,18 @@ const pinia = useStore()
 //   }
 // })
 
-//判断登录凭证
-const tokenPwd = localStorage.getItem('userAccount')
-if (tokenPwd) {
-  const token = JSON.parse(window.atob(tokenPwd))
-  const nowTime = Math.floor(new Date().getTime() / 1000 / 60 / 60)  //现在的时间戳（对应token中存的格式，要换成小时）
-  const tokenTime = token.time
-  if (!token.time || nowTime - tokenTime > 30) {  //时间大于30小时，就算过期了
-    alert("登录凭证过期，请重新登录")
-    localStorage.removeItem('userAccount')
-    pinia.sessionInfo = ''
-  }
-}
+// //判断登录凭证
+// const tokenPwd = localStorage.getItem('userAccount')
+// if (tokenPwd) {
+//   const token = JSON.parse(window.atob(tokenPwd))
+//   const nowTime = Math.floor(new Date().getTime() / 1000 / 60 / 60)  //现在的时间戳（对应token中存的格式，要换成小时）
+//   const tokenTime = token.time
+//   if (!token.time || nowTime - tokenTime > 30) {  //时间大于30小时，就算过期了
+//     alert("登录凭证过期，请重新登录")
+//     localStorage.removeItem('userAccount')
+//     pinia.userInfo = ''
+//   }
+// }
 
 </script>
 

@@ -1,0 +1,83 @@
+server:
+  # 服务器端口号
+  port: 8081
+
+spring:
+  # 配置数据库连接池
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/my_shiro?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      # 最小连接
+      minimum-idle: 5
+      # 最大连接
+      maximum-pool-size: 15
+      # 自动提交
+      auto-commit: true
+      # 最大空闲时间
+      idle-timeout: 30000
+      # 连接池名称
+      pool-name: DatebookHikariCP
+      # 最大生命周期
+      max-lifetime: 900000
+      # 连接超时时间
+      connection-timeout: 15000
+      # 心跳检测
+      connection-test-query: select 1
+
+  # 配置Redis
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 6000 #以秒为单位
+    password: 123456
+    database: 0
+    lettuce:
+      pool:
+        max-active: -1
+        max-wait: -1
+        max-idle: 16
+        min-idle: 8
+
+  main:
+    allow-bean-definition-overriding: true
+
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+  # mybatis_plus
+  #mybatis-plus:
+  # xml路径
+#  mapper-locations: classpath:mapping/*Mapper.xml
+
+# mybatis-plus相关配置
+mybatis-plus:
+  # xml扫描，多个目录用逗号或者分号分隔（告诉 Mapper 所对应的 XML 文件位置）
+  mapper-locations: classpath:mapper/*/*.xml
+  # 注意：对应实体类的路径
+  type-aliases-package: com.entity.sys,;com.common.basic.entity
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: auto
+      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
+      field-strategy: NOT_EMPTY
+      #数据库类型
+      db-type: MYSQL
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 返回map时true:当查询数据为空时字段返回为null,false:不加这个查询数据为空时，字段将被隐藏
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  config: classpath:logback-spring.xml
+
+api.url.prefix: /api

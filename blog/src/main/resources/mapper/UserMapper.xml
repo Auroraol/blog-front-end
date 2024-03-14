@@ -24,4 +24,41 @@
         birthday,email,personalBrief,
         avatarImgUrl,recentlyLanded
     </sql>
+    <insert id="insertSelective">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="phone != null">phone,</if>
+            <if test="username != null">username,</if>
+            <if test="password != null">password,</if>
+            <if test="gender != null">gender,</if>
+            <if test="truename != null">trueName,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="email != null">email,</if>
+            <if test="personalbrief != null">personalBrief,</if>
+            <if test="avatarimgurl != null">avatarImgUrl,</if>
+            <if test="recentlylanded != null">recentlyLanded,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=INTEGER},</if>
+            <if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
+            <if test="username != null">#{username,jdbcType=VARCHAR},</if>
+            <if test="password != null">#{password,jdbcType=VARCHAR},</if>
+            <if test="gender != null">#{gender,jdbcType=CHAR},</if>
+            <if test="truename != null">#{truename,jdbcType=VARCHAR},</if>
+            <if test="birthday != null">#{birthday,jdbcType=VARCHAR},</if>
+            <if test="email != null">#{email,jdbcType=VARCHAR},</if>
+            <if test="personalbrief != null">#{personalbrief,jdbcType=VARCHAR},</if>
+            <if test="avatarimgurl != null">#{avatarimgurl,jdbcType=VARCHAR},</if>
+            <if test="recentlylanded != null">#{recentlylanded,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+    <select id="selectAllByUsername" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where
+        username = #{username,jdbcType=VARCHAR}
+    </select>
 </mapper>

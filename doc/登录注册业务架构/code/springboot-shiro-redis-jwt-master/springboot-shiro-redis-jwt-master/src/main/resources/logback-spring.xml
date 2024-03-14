@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+scan：当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。
+scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒当scan为true时，此属性生效。默认的时间间隔为1分钟。
+debug：当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
+-->
+<configuration scan="false" scanPeriod="60 seconds" debug="false">
+    <!-- 定义日志的根目录 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%yellow(%date{yyyy-MM-dd HH:mm:ss}) %-5level [%-15.15(%thread)] %green(%-50.50(%logger{50})) %cyan(%msg%n)"/>
+
+    <property name="SQL_LOG_PATTERN"
+              value="%yellow(%date{yyyy-MM-dd HH:mm:ss}) %blue(%msg%n)"/>
+
+    <property name="CONSOLE_WARN_LOG_PATTERN"
+              value="%magenta(%date{yyyy-MM-dd HH:mm:ss}) %-5level [%-15.15(%thread)] %green( %-50.50(%logger{50} )) %blue(%msg%n)"/>
+
+    <property name="CONSOLE_ERROR_LOG_PATTERN"
+              value="%boldMagenta(%date{yyyy-MM-dd HH:mm:ss}) %-5level [%-15.15(%thread)] %green( %-50.50(%logger{50} )) %blue(%msg%n)"/>
+
+    <!-- ch.qos.logback.core.ConsoleAppender 表示控制台输出 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!--
+        日志输出格式：
+			%d表示日期时间，
+			%thread表示线程名，
+			%-5level：级别从左显示5个字符宽度
+			%logger{50} 表示logger名字最长50个字符，否则按照句点分割。
+			%msg：日志消息，
+			%n是换行符
+			%-15.15():如果记录的线程字符长度小于15(第一个)则用空格在右侧补齐,如果字符长度大于15(第二个),则从开头开始截断多余的字符
+			%-50.50()：如果记录的logger字符长度小于50(第一个)则用空格在右侧补齐,如果字符长度大于50(第二个),则从开头开始截断多余的字符
+			%highlight()：颜色，info为蓝色，warn为浅红，error为加粗红，debug为黑色
+			%boldMagenta:粗红
+			%magenta:洋红
+			$cyan:青色
+			%white:白色
+        -->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <springProfile name="dev">
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </springProfile>
+            <springProfile name="!dev">
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </springProfile>
+        </layout>
+    </appender>
+
+    <!-- sql输出   -->
+    <appender name="sql" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <springProfile name="dev">
+                <pattern>${SQL_LOG_PATTERN}</pattern>
+            </springProfile>
+            <springProfile name="!dev">
+                <pattern>${SQL_LOG_PATTERN}</pattern>
+            </springProfile>
+        </layout>
+    </appender>
+
+    <!--控制台打印警告信息的单独处理-->
+    <appender name="consoleWarn" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <springProfile name="dev">
+                <pattern>${CONSOLE_WARN_LOG_PATTERN}</pattern>
+            </springProfile>
+            <springProfile name="!dev">
+                <pattern>${CONSOLE_WARN_LOG_PATTERN}</pattern>
+            </springProfile>
+        </layout>
+    </appender>
+
+    <!--控制台打印错误信息的单独处理-->
+    <appender name="consoleError" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <springProfile name="dev">
+                <pattern>${CONSOLE_ERROR_LOG_PATTERN}</pattern>
+            </springProfile>
+            <springProfile name="!dev">
+                <pattern>${CONSOLE_ERROR_LOG_PATTERN}</pattern>
+            </springProfile>
+        </layout>
+    </appender>
+
+    <!--mapper包的单独输出(输出sql信息,至关重要)-->
+    <logger name="com.mh.mapper"  level="debug"   additivity="false">
+        <appender-ref ref="sql"/>
+    </logger>
+
+    <!--
+        root与logger是父子关系，没有特别定义则默认为root，任何一个类只会和一个logger对应，
+        要么是定义的logger，要么是root，判断的关键在于找到这个logger，然后判断这个logger的appender和level。
+    -->
+    <root level="info">
+<!--        <appender-ref ref="console"/>-->
+    </root>
+
+</configuration>

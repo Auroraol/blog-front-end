@@ -5,7 +5,7 @@ export const useStore = defineStore(Names.piniaStore, {
   state: () => {
     return {
       bodyWidth: 0, //做响应式的nav使用，判断窗口的宽度
-      sessionInfo: "", //判断登录状态，重新渲染nav里面的用户信息的dom
+      userInfo: "", //判断登录状态，重新渲染nav里面的用户信息的dom
       ifDelMessage: 0, //删除留言重新渲染dom
       pariseOrCollection: 0, //点赞或者收藏更新数据
       nickNameLength: 16, //昵称的最大字符数
@@ -20,5 +20,11 @@ export const useStore = defineStore(Names.piniaStore, {
     setBodyWidth(val: number) {
       this.bodyWidth = val;
     },
+    setUserInfo(val: string){
+      this.userInfo = val;
+    },
+    getUserInfo(){
+      return this.userInfo;
+    }
   },
 });

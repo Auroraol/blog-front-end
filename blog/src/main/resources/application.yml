@@ -1,8 +1,5 @@
 server:
   port: 9000
-  #配置代理地址
-  servlet:
-    context-path: /dev-api
 
 spring:
   datasource:
@@ -51,7 +48,8 @@ jasypt:
 
 ignored:
   urls:
-    - /user/**
+    - /login/**
+    - /register/**
     - /pages/**
     - /pageData/**
     - /article/**

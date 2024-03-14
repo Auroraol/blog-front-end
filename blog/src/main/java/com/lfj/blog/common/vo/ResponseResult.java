@@ -65,53 +65,102 @@ public class ResponseResult<T>{
 		return result;
 	}
 
-	// 服务异常
+	/**
+	 * 服务异常
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> systemError() {
 		return fail(ResponseCodeEnum.SYSTEM_ERROR);
 	}
 
-	// 操作失败
+	/**
+	 * 操作失败
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> operationError() {
 		return fail(ResponseCodeEnum.OPERATION_ERROR);
 	}
 
-	// 传入参数错误
+	/**
+	 * 传入参数错误
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> dataParamError() {
 		return fail(ResponseCodeEnum.DATA_PARAM_ERROR);
 	}
 
-	//账号已存在
+	/**
+	 * 账号已存在
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> accountAlreadyExists() {
 		return fail(ResponseCodeEnum.ACCOUNT_ALREADY_EXISTS);
 	}
 
-	//账号不存在
+	/**
+	 * 账号不存在
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> accountNotFoundError() {
 		return fail(ResponseCodeEnum.ACCOUNT_NOT_FOUND);
 	}
 
-	//账号己锁定
+	/**
+	 * 账号己锁定
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> accountLock() {
 		return fail(ResponseCodeEnum.ACCOUNT_LOCK);
 	}
 
-	// 账户密码不匹配
+	/**
+	 * 账户密码不匹配
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> accountError( ) {
 		return fail(ResponseCodeEnum.ACCOUNT_ERROR);
 	}
 
-	// token已失效,请重新登录
+	/**
+	 * 用户名已被注册
+	 * @return
+	 * @param <T>
+	 */
+	public static <T> ResponseResult<T> accountRegisteredError( ) {
+		return fail(ResponseCodeEnum.ACCOUNT_REGISTERED_ERROR);
+	}
+
+	/**
+	 * token已失效,请重新登录
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> tokenError( ) {
 		return fail(ResponseCodeEnum.TOKEN_ERROR);
 	}
 
-	// 没权限
+	/**
+	 * 没权限
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> noPermission(){
 
 		return fail(ResponseCodeEnum.HTTP_NO_PERMISSION);
 	}
 
-	// 没登录
+	/**
+	 * 没登录
+	 * @return
+	 * @param <T>
+	 */
 	public static <T> ResponseResult<T> noLogin() {
 		return  fail(ResponseCodeEnum.HTTP_NO_LOGIN);
 	}

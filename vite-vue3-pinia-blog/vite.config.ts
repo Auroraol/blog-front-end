@@ -6,13 +6,16 @@ import vue from "@vitejs/plugin-vue";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import * as path from "path";
 
-// https://vitejs.dev/config/
+
+
+
 export default ({ mode }) => {
   //参数mode为开放模式或生产模式
   //console.log(mode);  // development or product
   const env = loadEnv(mode, process.cwd()); // 获取.env文件里定义的环境变量
   //console.log(env);   //变量在命令行里打印出来
-console.log(env.VITE_APP_BASE_API)
+  //console.log(env.VITE_API_URL)
+  const port = Number(env.VITE_PORT) || 80
   return defineConfig({
     base: "./",
     // 配置插件
@@ -61,10 +64,10 @@ console.log(env.VITE_APP_BASE_API)
     // 配置前端服务地址和端口
     server: {
       host: "0.0.0.0", //使用IP能访问
-      port: env.VITE_PORT, // 端口号
+      port: port, // 端口号
       open: true, // 启动时自动在浏览器打开
       // https: true, // 是否开启 https
-      cors: false, //为开发服务器配置 CORS
+      cors: true, //为开发服务器配置 CORS
       hmr: true, // 热更新
       fs: {
         // 可以为项目根目录的上一级提供服务
@@ -77,10 +80,17 @@ console.log(env.VITE_APP_BASE_API)
           changeOrigin: true,
           ws: true,  // 允许websocket代理
           rewrite: (path) => {
-            return path.replace('^' + env.VITE_APP_BASE_API, '');
+            const regex = new RegExp(`^${env.VITE_APP_BASE_API}`);
+            return path.replace(regex, '');
           },
         },
       },
+      // '/api': {
+      //   target: 'http://localhost:9000',
+      //   changeOrigin: true,
+      //   rewrite: (path) => path.replace(/^\/api/, '')
+      // }
+    // }
     },
 
     /*

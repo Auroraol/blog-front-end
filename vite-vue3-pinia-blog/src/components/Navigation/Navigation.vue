@@ -74,7 +74,8 @@
           ></el-autocomplete>
           <el-menu-item v-if="!isMobile" index="/login">
             <div class="login" v-if="ifLog">登录/注册</div>
-            <nav-user-info class="welcome" v-else></nav-user-info>
+            <nav-user-info class="welcome" @click="goPersonalCenter" v-else></nav-user-info>
+            <!-- <nav-user-info class="welcome" ></nav-user-info> -->
           </el-menu-item>
         </el-menu>
       </div>
@@ -83,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+import { SortUp } from "@element-plus/icons-vue/dist/types";
 import { useRouter } from "vue-router";
 import { useStore } from "/@/store";
 const router = useRouter();
@@ -99,10 +101,7 @@ const handleSelect = (index: string) => {
 
 //登录
 const ifLog = ref(true); //当它是false时是已登录
-
-
 const pinia = useStore();
-
 let isMobile = ref(false); //根据页面响应使用哪个样式的标题栏
 
 // watchEffect(async () => {
@@ -135,16 +134,35 @@ const listenScreen = () => {
   });
 };
 
+// 在页面加载时从本地存储中获取用户信息并设置到 Pinia 中
+const initializeUserInfo = () => {
+  const storedUserInfo = localStorage.getItem('userInfo'); 
+  
+  if (storedUserInfo) {
+     pinia.setUserInfo(storedUserInfo);       
+}
+};
+
 // 监听
 watchEffect(async () => {
   listenScreen();
-    //登录了!修改状态
-    if (pinia.sessionInfo) {
-        ifLog.value = false
-    } else {
-        ifLog.value = true
-    }
+  // 登录了!修改状态
+  if (pinia.getUserInfo()) {
+    ifLog.value = false;
+  } else {
+    ifLog.value = true;
+  }
 });
+
+// 页面加载时初始化用户信息
+initializeUserInfo();
+
+
+// 记入个人中心
+const goPersonalCenter = () => {
+    // const token = JSON.parse(window.atob(localStorage.getItem("userAccount")!))
+    // goToPersonalCenterHook(token.account)
+}
 
 </script>
 <style scoped lang="less">

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.sys.SysLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.entity.sys.SysLog" >
+        <result column="id" property="id" />
+        <result column="log_time" property="logTime" />
+        <result column="log_name" property="logName" />
+        <result column="log_method" property="logMethod" />
+        <result column="log_ip" property="logIp" />
+        <result column="log_url" property="logUrl" />
+        <result column="status" property="status" />
+    </resultMap>
+
+</mapper>
