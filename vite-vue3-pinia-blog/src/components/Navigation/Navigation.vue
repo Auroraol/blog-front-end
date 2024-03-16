@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { SortUp } from "@element-plus/icons-vue/dist/types";
+// import { SortUp } from "@element-plus/icons-vue/dist/types";
 import { useRouter } from "vue-router";
 import { useStore } from "/@/store";
 const router = useRouter();
@@ -100,9 +100,9 @@ const handleSelect = (index: string) => {
 };
 
 //登录
-const ifLog = ref(true); //当它是false时是已登录
+const ifLog = ref<boolean>(true); //当它是false时是已登录
 const pinia = useStore();
-let isMobile = ref(false); //根据页面响应使用哪个样式的标题栏
+const isMobile = ref<boolean>(false); //根据页面响应使用哪个样式的标题栏
 
 const getScreen = () => {
   let screenWidth = document.body.clientWidth;
@@ -112,10 +112,10 @@ const getScreen = () => {
 const listenScreen = () => {
   let initScale = getScreen();
   if (initScale < 1) {
-    isMobile = true;
+    isMobile.value = true;
   }
   window.addEventListener("resize", () => {
-    isMobile = getScreen() < 1 ? true : false;
+    isMobile.value = getScreen() < 1 ? true : false;
   });
 };
 

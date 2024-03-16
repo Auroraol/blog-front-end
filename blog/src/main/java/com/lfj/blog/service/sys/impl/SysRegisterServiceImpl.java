@@ -6,6 +6,7 @@ import com.lfj.blog.entity.User;
 import com.lfj.blog.service.user.UserService;
 import com.lfj.blog.service.sys.SysRegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -27,7 +28,7 @@ public class SysRegisterServiceImpl implements SysRegisterService {
 		if (ObjectUtils.isEmpty(userService.selectAllByUsername(name))){
 			User user = new User();
 			// 密码加密保存
-			user.setPassword(registerInfo.getPassword());
+			user.setPassword(new BCryptPasswordEncoder().encode(registerInfo.getPassword()));
 			user.setUsername(name);
 			userService.insertSelective(user);
 		}

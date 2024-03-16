@@ -226,7 +226,6 @@ const register = async () => {
           if (data.code === 200000) {
             alert("注册成功!");
             name.value = false;
-            router.replace("/index");
           } else if (data.code === 400005) {
             alert("用户名已被注册");
           } else {
@@ -278,7 +277,7 @@ const updateNickName = async () => {
           nickname.value = "";
           name.value = true;
           ifLog.value = true;
-          router.replace("/index");
+          // router.replace("/index");
         } else if (data.code === 400006) {
           alert("昵称更新失败");
           nickname.value = "";
