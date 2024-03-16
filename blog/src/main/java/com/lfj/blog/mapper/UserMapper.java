@@ -19,6 +19,10 @@ public interface UserMapper extends BaseMapper<User> {
 
 	List<User> selectAllByUsername(@Param("username") String username);
 
+	// 更新nickname
+//	int
+//	(@Param("username") String userName, @Param("nickname") String nickName);
+	int updateNicknameByUsername(@Param("nickname") String nickname, @Param("username") String username);
 }
 
 

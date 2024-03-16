@@ -74,8 +74,8 @@
           ></el-autocomplete>
           <el-menu-item v-if="!isMobile" index="/login">
             <div class="login" v-if="ifLog">登录/注册</div>
+            <!-- 组件nav-user-info -->
             <nav-user-info class="welcome" @click="goPersonalCenter" v-else></nav-user-info>
-            <!-- <nav-user-info class="welcome" ></nav-user-info> -->
           </el-menu-item>
         </el-menu>
       </div>
@@ -103,21 +103,6 @@ const handleSelect = (index: string) => {
 const ifLog = ref(true); //当它是false时是已登录
 const pinia = useStore();
 let isMobile = ref(false); //根据页面响应使用哪个样式的标题栏
-
-// watchEffect(async () => {
-//     if (pinia.bodyWidth < 1050) {
-//         isMobile.value = false
-//     } else {
-//         isMobile.value = true
-//         }
-
-//     //登录了!修改状态
-//     if (pinia.sessionInfo) {
-//         ifLog.value = false
-//     } else {
-//         ifLog.value = true
-//     }
-// })
 
 const getScreen = () => {
   let screenWidth = document.body.clientWidth;
@@ -154,11 +139,15 @@ watchEffect(async () => {
   }
 });
 
-// 页面加载时初始化用户信息
-initializeUserInfo();
+
+ onMounted(() => {
+    // 页面加载时初始化用户信息
+    initializeUserInfo();
+ })
 
 
-// 记入个人中心
+
+// 点击头像进入个人中心
 const goPersonalCenter = () => {
     // const token = JSON.parse(window.atob(localStorage.getItem("userAccount")!))
     // goToPersonalCenterHook(token.account)

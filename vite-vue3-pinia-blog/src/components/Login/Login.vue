@@ -48,7 +48,6 @@
         <div>可加入在线聊天室</div>
       </div>
     </div>
-
     <div class="registerBox logBox" v-else>
       <div class="top">
         <div class="title">
@@ -134,12 +133,17 @@ import { useRouter } from "vue-router";
 import qs from "qs";
 import { ElNotification } from "element-plus";
 import { useRequest } from "vue-hooks-plus";
-import { getSysLogin, getUserInfo } from "./services";
+import {
+  getSysLogin,
+  getUserInfo,
+  getSysRegister,
+  getUpdateNickName,
+} from "./services";
 
 const pinia = useStore();
 const router = useRouter();
 const ifLog = ref(true);
-const name = ref(true);
+const name = ref(true); // 昵称
 
 //登录信息
 const logInfo = reactive({
@@ -151,7 +155,7 @@ const logInfo = reactive({
 const registerInfo = reactive({
   username: "",
   password: "",
-  againPassword: "",  // 重复密码
+  againPassword: "", // 重复密码
 });
 
 //昵称信息
@@ -159,7 +163,7 @@ const nickname = ref();
 
 //点击登录
 const login = async () => {
-  const userLogInfo = toRaw(logInfo);// 将一个由生成的响应式转化为对象普通对象
+  const userLogInfo = toRaw(logInfo); // 将一个由生成的响应式转化为对象普通对象
   // 发起请求
   const { data, error, loading, run } = useRequest(getSysLogin, {
     manual: true, // 手动触发请求
@@ -192,13 +196,13 @@ const getInformation = () => {
     onSuccess: (responseData) => {
       if (responseData && responseData.data) {
         // console.table(responseData.data);
-        const userAccount = window.encodeURIComponent(
-          JSON.stringify(responseData.data)
+        const userAccount = window.encodeURIComponent(  // 加密保存
+          JSON.stringify(responseData.data) //即使后端发送的数据已经是 JSON 格式，使用 JSON.stringify() 仍然是一个常见的做法，因为它可以确保数据被正确地序列化为 JSON 字符串。
         );
         // console.log(userAccount);
         // 保存到浏览器和pinia中
-        localStorage.setItem('userInfo', userAccount);
-        pinia.setUserInfo(userAccount);        
+        localStorage.setItem("userInfo", userAccount);
+        pinia.setUserInfo(userAccount);
       } else {
         console.error("未获取到有效的用户信息数据");
       }
@@ -210,29 +214,36 @@ const getInformation = () => {
 
 //点击注册
 const register = async () => {
-  const registerform = toRaw(registerInfo)  // 将一个由生成的响应式转化为对象普通对象
+  const registerform = toRaw(registerInfo); // 将一个由生成的响应式转化为对象普通对象
   if (registerform.password.length < 6 || registerform.username.length < 6) {
-      alert('用户名和密码都不能小于6位')
+    alert("用户名和密码都不能小于6位");
   } else {
-      if (registerform.password === registerform.againPassword) {
-          // 发起请求
-          const { data: res } = await useAxios.post('/register', registerform)
-          if (res.status === 200000) {
-              alert('注册成功!')
-              name.value = false
-          } else if (res.status === 1) {
-              alert('用户名已被注册')
+    if (registerform.password === registerform.againPassword) {
+      // 发起请求
+      const { data, run } = useRequest(getSysRegister, {
+        manual: true, // 手动触发请求
+        onSuccess: (data) => {
+          if (data.code === 200000) {
+            alert("注册成功!");
+            name.value = false;
+            router.replace("/index");
+          } else if (data.code === 400005) {
+            alert("用户名已被注册");
           } else {
-              alert('失败了..')
+            alert("失败了..");
           }
-      } else {
-          alert('两次输入的密码不一致 ')
-      }
+        },
+        onError: (error) => {
+          alert(error);
+        },
+      });
+
+      run(registerform);
+    } else {
+      alert("两次输入的密码不一致 ");
+    }
   }
 };
-
-
-
 
 const goRegister = () => {
   ifLog.value = false;
@@ -252,28 +263,37 @@ const skipNickName = () => {
 
 //更新昵称
 const updateNickName = async () => {
-  // if (nickname.value === '') {
-  //     alert('昵称不能为空')
-  // } else {
-  //     const uploadNick = toRaw(nickname.value)
-  //     const { data: res } = await useAxios.get('/updatanicknane', {
-  //         params: {
-  //             account: registerInfo.username,
-  //             nickName: uploadNick
-  //         }
-  //     })
-  //     if (res.status === 0) {
-  //         alert('昵称更新成功')
-  //         registerInfo.password = ''
-  //         registerInfo.username = ''
-  //         nickname.value = ''
-  //         name.value = true
-  //         ifLog.value = true
-  //     } else {
-  //         alert('昵称更新失败')
-  //         nickname.value = ''
-  //     }
-  // }
+  if (nickname.value === "") {
+    alert("昵称不能为空");
+  } else {
+    const uploadNick = toRaw(nickname.value);
+
+    const { data, run } = useRequest(getUpdateNickName, {
+      manual: true, // 手动触发请求
+      onSuccess: (data) => {
+        if (data.code === 200000) {
+          alert("昵称更新成功");
+          registerInfo.password = "";
+          registerInfo.username = "";
+          nickname.value = "";
+          name.value = true;
+          ifLog.value = true;
+          router.replace("/index");
+        } else if (data.code === 400006) {
+          alert("昵称更新失败");
+          nickname.value = "";
+        } else {
+          alert("失败了..");
+          nickname.value = "";
+        }
+      },
+      onError: (error) => {
+        alert(error);
+      },
+    });
+
+    run(registerInfo.username, uploadNick);
+  }
 };
 </script>
 

@@ -8,6 +8,7 @@ import com.lfj.blog.entity.User;
 import com.lfj.blog.handler.security.UserContext;
 import com.lfj.blog.mapper.UserMapper;
 import com.lfj.blog.service.user.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.List;
  * @description 针对表【user】的数据库操作Service实现
  * @createDate 2024-03-09 17:46:34
  */
+@Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 		implements UserService {
@@ -52,6 +54,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 	@Override
 	public List<User> selectAllByUsername(String username) {
 		return userMapper.selectAllByUsername(username);
+	}
+
+	@Override
+	public ResponseResult<String> updateTruename(String userName, String nickName) {
+
+			log.info(userName + "---" + nickName);
+			if (userMapper.updateNicknameByUsername(nickName, userName) == 0){
+				return  ResponseResult.account_updatetnickname_error();
+			}
+			return ResponseResult.success("success");
 	}
 }
 

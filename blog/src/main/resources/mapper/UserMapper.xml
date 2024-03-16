@@ -10,7 +10,7 @@
             <result property="username" column="username" jdbcType="VARCHAR"/>
             <result property="password" column="password" jdbcType="VARCHAR"/>
             <result property="gender" column="gender" jdbcType="CHAR"/>
-            <result property="truename" column="trueName" jdbcType="VARCHAR"/>
+            <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
             <result property="birthday" column="birthday" jdbcType="VARCHAR"/>
             <result property="email" column="email" jdbcType="VARCHAR"/>
             <result property="personalbrief" column="personalBrief" jdbcType="VARCHAR"/>
@@ -20,7 +20,7 @@
 
     <sql id="Base_Column_List">
         id,phone,username,
-        password,gender,trueName,
+        password,gender,nickName,
         birthday,email,personalBrief,
         avatarImgUrl,recentlyLanded
     </sql>
@@ -32,7 +32,7 @@
             <if test="username != null">username,</if>
             <if test="password != null">password,</if>
             <if test="gender != null">gender,</if>
-            <if test="truename != null">trueName,</if>
+            <if test="nickname != null">trueName,</if>
             <if test="birthday != null">birthday,</if>
             <if test="email != null">email,</if>
             <if test="personalbrief != null">personalBrief,</if>
@@ -46,7 +46,7 @@
             <if test="username != null">#{username,jdbcType=VARCHAR},</if>
             <if test="password != null">#{password,jdbcType=VARCHAR},</if>
             <if test="gender != null">#{gender,jdbcType=CHAR},</if>
-            <if test="truename != null">#{truename,jdbcType=VARCHAR},</if>
+            <if test="nickname != null">#{truename,jdbcType=VARCHAR},</if>
             <if test="birthday != null">#{birthday,jdbcType=VARCHAR},</if>
             <if test="email != null">#{email,jdbcType=VARCHAR},</if>
             <if test="personalbrief != null">#{personalbrief,jdbcType=VARCHAR},</if>
@@ -61,4 +61,10 @@
         where
         username = #{username,jdbcType=VARCHAR}
     </select>
+    <update id="updateNicknameByUsername">
+        update user
+        set nickname = #{nickname,jdbcType=VARCHAR}
+        where username = #{username,jdbcType=VARCHAR}
+    </update>
+
 </mapper>

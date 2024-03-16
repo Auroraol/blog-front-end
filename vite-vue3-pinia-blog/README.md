@@ -933,6 +933,18 @@ public class ResponseUtil {
 
 ![image-20240311191415030](README.assets/image-20240311191415030.png)
 
+
+
+
+
+# 更新昵称
+
+![image-20240315233101784](README.assets/image-20240315233101784.png)
+
+![image-20240315233045253](README.assets/image-20240315233045253.png)
+
+
+
 # 表设计
 
 ## 用户表：user

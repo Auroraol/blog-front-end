@@ -138,6 +138,15 @@ public class ResponseResult<T>{
 	}
 
 	/**
+	 * 	用户名已被注册
+	 * @return
+	 * @param <T>
+	 */
+	public static <T> ResponseResult<T> account_updatetnickname_error( ) {
+		return fail(ResponseCodeEnum.ACCOUNT_UPDATETNICKNAME_ERROR);
+	}
+
+	/**
 	 * token已失效,请重新登录
 	 * @return
 	 * @param <T>

@@ -21,4 +21,8 @@ public interface UserService extends IService<User> {
 	int insertSelective(User user);
 
 	List<User> selectAllByUsername(@Param("username") String username);
+
+	// 更新nickname
+	ResponseResult<String> updateTruename(@Param("username") String username, @Param("nickName") String nickName);
+
 }

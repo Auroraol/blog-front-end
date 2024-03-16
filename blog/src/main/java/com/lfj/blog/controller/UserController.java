@@ -25,4 +25,11 @@ public class UserController {
 	}
 
 
+	@GetMapping("/nickName")
+	public ResponseResult<String> updateNickName(
+		@RequestParam("userName") String userName,
+		@RequestParam("nickName") String nickName) {
+		return userService.updateTruename(userName, nickName);
+	}
+
 }

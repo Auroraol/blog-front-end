@@ -1,10 +1,11 @@
 // 模块 API
 import { request } from '/@/utils/network/axios'
-import { ResponseResult} from './data'
+import { TokenType} from './data'
+import { ResponseResult,UserType } from "/@/typings";
 
 //
 export async function getSysLogin(data: any){
-  return request<ResponseResult>(import.meta.env.VITE_APP_BASE_API + '/login/web', {
+  return request<ResponseResult<TokenType>>(import.meta.env.VITE_APP_BASE_API + '/login/web', {
     method: 'post',
     data: data,
     // headers: {
@@ -26,13 +27,13 @@ export async function getSysLogin(data: any){
 
 
 export async function getUserInfo(){
-  return request<ResponseResult>(import.meta.env.VITE_APP_BASE_API + '/user/info', {
+  return request<ResponseResult<UserType>>(import.meta.env.VITE_APP_BASE_API + '/user/info', {
     method: 'get',
-    needToken: true
+    needToken: true  //需要请求头携带token, 后端好进行认证
   })
 }
 /**
- {
+{
     "code": 200000,
     "data": {
         "id": 1,
@@ -40,13 +41,48 @@ export async function getUserInfo(){
         "username": "lfj",
         "password": "$2a$10$blFi3r.6OgxqXAtOrkq9C..0zbkor0fvR15tohFCLoXtkCF9mhfru",
         "gender": "male",
-        "truename": "刘丰洁",
+        "nickname": "收待发送",
         "birthday": "2002-11-06",
         "email": "1665834268@qq.com",
         "personalbrief": "",
         "avatarimgurl": "https://zhy-myblog.oss-cn-shenzhen.aliyuncs.com/public/user/avatar/张海洋/1575283189.png",
-        "recentlylanded": "2024-03-13 22:29:33"
+        "recentlylanded": "2024-03-16 10:44:20"
     },
+    "message": "响应成功"
+}
+ */
+
+
+export async function getSysRegister(data: any){
+  return request<ResponseResult<string>>(import.meta.env.VITE_APP_BASE_API + '/register/web', {
+    method: 'post',
+    data: data,
+  }) 
+}
+/**
+{
+    "code": 200000,
+    "data": "success",
+    "message": "响应成功"
+}
+*/
+
+
+export async function getUpdateNickName(userName: string, nickName:string){
+  return request<ResponseResult<string>>(import.meta.env.VITE_APP_BASE_API + '/user/nickName', {
+    method: 'get',
+    params : {
+      userName,
+      nickName
+    },
+    needToken: true  //需要请求头携带token, 后端好进行认证
+  }) 
+}
+/**
+ *GET http://localhost:9000/user/nickName?username=lfj&nickName=ssss
+ {
+    "code": 200000,
+    "data": "success",
     "message": "响应成功"
 }
  */

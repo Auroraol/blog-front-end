@@ -57,6 +57,8 @@
 import { ref, onMounted } from 'vue'
 import { useStore } from '/@/store';
 import { useRouter } from "vue-router";
+import { UserType } from "/@/typings";
+
 
 const router = useRouter()
 const pinia = useStore()
@@ -65,27 +67,25 @@ const TableVisibleNickname = ref(false)
 const TableVisibleOutlog = ref(false)
 const newNickName = ref('')
 
-//获取session里面的account
-// const sessionInfo = JSON.parse(window.atob(localStorage.getItem('userAccount')!))
 
-type User = {
-    id: number
-    account: string
-    password: string
-    nickName: string
-    headImg: string
-    ifroot: boolean
-}
-let userInfo = ref<User>({
-    id: -1,
-    account: 'account',
-    password: 'password',
-    nickName: 'nickName',
-    headImg: '',
-    ifroot: false
+
+let userInfo = reactive<UserType>({
+id: -1,
+    phone: "",
+    username: "account",
+    password: "password",
+    gender: "",
+    nickname: "nickName",
+    birthday: "",
+    email: "",
+    personalbrief: "",
+    avatarimgurl: "",
+    recentlylanded: ""
 })  //给一个初始值作为key，当请求到数据时更新这个变量，key也就随之更新，就会更新dom
 
 onMounted(async () => {
+    // 获取session里面的account
+    userInfo = JSON.parse(decodeURIComponent(pinia.getUserInfo()!));    
     //登录了，请求用户的信息
     // const { data: res } = await useAxios.get('/userinfo', {
     //     params: {

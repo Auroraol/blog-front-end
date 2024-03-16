@@ -46,8 +46,8 @@ public class User implements Serializable {
 	/**
 	 *
 	 */
-	@TableField(value = "trueName")
-	private String truename;
+	@TableField(value = "nickname")
+	private String nickname;
 	/**
 	 *
 	 */

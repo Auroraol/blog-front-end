@@ -26,6 +26,7 @@ public class SysRegisterServiceImpl implements SysRegisterService {
 		// 如果用户名不存在, 则用户注册
 		if (ObjectUtils.isEmpty(userService.selectAllByUsername(name))){
 			User user = new User();
+			// 密码加密保存
 			user.setPassword(registerInfo.getPassword());
 			user.setUsername(name);
 			userService.insertSelective(user);
