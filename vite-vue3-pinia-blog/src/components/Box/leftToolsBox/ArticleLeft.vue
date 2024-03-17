@@ -14,7 +14,7 @@
           </div>
         </el-col>
       </el-row> style="margin-top: 20px"-->
-      <el-row >
+      <el-row>
         <el-col :span="6"
           ><div class="grid-content ep-bg-purple" />
           <div class="block">
@@ -29,8 +29,10 @@
           </div>
           <div class="personal-card-show-words">
             <small style="font-size: 13px; color: #808080ad"
-              >昨日之深渊，今日之浅谈</small
+              >昨日之深渊，今日之浅谈     
+              </small
             >
+            
           </div>
         </el-col>
       </el-row>
@@ -264,15 +266,15 @@ const state = reactive({
   border-radius: 50%;
 }
 
-::v-deep .el-calendar-table tr td:first-child {
+:v-deep .el-calendar-table tr td:first-child {
   border-left: none !important;
 }
 
-::v-deep .el-calendar-table tr:first-child td {
+:v-deep .el-calendar-table tr:first-child td {
   border-top: none;
 }
 
-::v-deep .el-calendar-table td {
+:v-deep .el-calendar-table td {
   border-bottom: none;
   border-right: none;
   vertical-align: top;
@@ -280,12 +282,12 @@ const state = reactive({
   transition: background-color 0.2s ease;
 }
 
-::v-deep .el-calendar-table .el-calendar-day {
+:v-deep .el-calendar-table .el-calendar-day {
   width: 45px;
   height: 45px;
 }
 
-::v-deep .el-calendar-table thead th {
+:v-deep .el-calendar-table thead th {
   padding: 12px 0;
   color: #606266;
   font-weight: normal;
@@ -304,5 +306,13 @@ const state = reactive({
     );
     border-radius: 1rem;
   }
+}
+
+.tag-img {
+  margin-top: 8px;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-weight: bold;
+  font-size: 10px;
 }
 </style>

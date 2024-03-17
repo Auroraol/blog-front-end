@@ -56,14 +56,15 @@ const routes = [
       title: '登录'
   }
 },
-//  {
-//   path: '/more',
-//   name: 'more',
-//   component: () => import('/@/view/More.vue'),
-//   meta: {
-//       title: '更多'
-//   }
-// }, {
+ {
+  path: '/about',
+  name: 'about',
+  component: () => import('/@/view/About.vue'),
+  meta: {
+      title: '更多'
+  }
+}
+// , {
 //   path: '/articleeditor',
 //   name: 'articleeditor',
 //   component: () => import('/@/view/Editor.vue'),

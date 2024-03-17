@@ -23,10 +23,10 @@
           <!-- 置顶文章盒子 -->
           <Suspense>
             <template #default>
-              <top-article-box
+              <!-- <top-article-box
                 class="itemBox"
                 :info="topArticleInfo"
-              ></top-article-box>
+              ></top-article-box> -->
             </template>
             <!-- 加载完成前的载入动画 -->
             <template #fallback>

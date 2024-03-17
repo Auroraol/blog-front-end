@@ -5,7 +5,7 @@
                 <div>
                     <a target="_blank" class="webRecord"
                         href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=13068202000222">
-                        <!-- <img src="/public/image/imgs/备案图标.png" /> -->
+                        <img src="/image/imgs/record.png" />
                         <p>冀公网安备13068202000222号</p>
                     </a>
                 </div>

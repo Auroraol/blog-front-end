@@ -2,11 +2,11 @@
 <template>
   <el-row>
     <el-col :span="6">
-      <div class="grid-content bg-purple">
+      <div>
       </div>
     </el-col>
     <el-col :span="18">
-      <div class="grid-content bg-purple">
+      <div class="grid-content">
         <el-menu
           :default-active="activeIndex"
           class="el-menu-demo"
@@ -57,7 +57,7 @@
               >聊天室</router-link
             >
           </el-menu-item>
-          <el-menu-item v-if="!isMobile" index="/more">
+          <el-menu-item v-if="!isMobile" index="/about">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-gengduo4"></use></svg
             >关于
@@ -75,7 +75,11 @@
           <el-menu-item v-if="!isMobile" index="/login">
             <div class="login" v-if="ifLog">登录/注册</div>
             <!-- 组件nav-user-info -->
-            <nav-user-info class="welcome" @click="goPersonalCenter" v-else></nav-user-info>
+            <nav-user-info
+              class="welcome"
+              @click="goPersonalCenter"
+              v-else
+            ></nav-user-info>
           </el-menu-item>
         </el-menu>
       </div>
@@ -93,16 +97,16 @@ const activeIndex = ref("1");
 const handleSelect = (index: string) => {
   activeIndex.value = index;
   if (index === "6") {
-    // Handle more button click
-  } else {
+  } 
+  else {
     router.push({ path: `${index}` });
   }
 };
 
 //登录
-const ifLog = ref<boolean>(true); //当它是false时是已登录
+const ifLog = ref(true); //当它是false时是已登录
 const pinia = useStore();
-const isMobile = ref<boolean>(false); //根据页面响应使用哪个样式的标题栏
+const isMobile = ref(false); //根据页面响应使用哪个样式的标题栏
 
 const getScreen = () => {
   let screenWidth = document.body.clientWidth;
@@ -121,11 +125,11 @@ const listenScreen = () => {
 
 // 在页面加载时从本地存储中获取用户信息并设置到 Pinia 中
 const initializeUserInfo = () => {
-  const storedUserInfo = localStorage.getItem('userInfo'); 
-  
+  const storedUserInfo = localStorage.getItem("userInfo");
+
   if (storedUserInfo) {
-     pinia.setUserInfo(storedUserInfo);       
-}
+    pinia.setUserInfo(storedUserInfo);
+  }
 };
 
 // 监听
@@ -139,22 +143,20 @@ watchEffect(async () => {
   }
 });
 
-
- onMounted(() => {
-    // 页面加载时初始化用户信息
-    initializeUserInfo();
- })
-
-
+onMounted(() => {
+  // 页面加载时初始化用户信息
+  initializeUserInfo();
+});
 
 // 点击头像进入个人中心
 const goPersonalCenter = () => {
-    // const token = JSON.parse(window.atob(localStorage.getItem("userAccount")!))
-    // goToPersonalCenterHook(token.account)
-}
-
+  // const token = JSON.parse(window.atob(localStorage.getItem("userAccount")!))
+  // goToPersonalCenterHook(token.account)
+};
 </script>
 <style scoped lang="less">
+
+
 .el-menu {
   border-right: none;
 }
@@ -169,7 +171,8 @@ const goPersonalCenter = () => {
   align-items: center;
 }
 
-.el-menu-item,.el-sub-menu  {
+.el-menu-item,
+.el-sub-menu {
   display: flex;
   align-items: center;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
@@ -201,7 +204,7 @@ const goPersonalCenter = () => {
   color: #fff;
 }
 
- .welcome {
-        margin-right: 3rem;
-    }
+.welcome {
+  margin-right: 3rem;
+}
 </style>
