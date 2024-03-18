@@ -6,16 +6,15 @@
  
     <div class="infoBox" v-show="ifBox">
       <div class="boxImg" :key="userInfo.id">
-        <p>{{ userInfo.nickName }}</p>
+        <p>{{ userInfo.nickname }}</p>
       </div>
       <div class="operation" @click="changeNikeName">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-bianji"></use>
         </svg>
-        <span>更换昵称{{ userInfo.nickName }}</span>
+        <span>更换昵称</span>
         <Teleport to="body">
           <el-dialog v-model="TableVisibleNickname" title="更换昵称">
-            v-model="newNickName"
             <el-input
               :maxlength="pinia.nickNameLength"
               placeholder="输入新的昵称!"

@@ -72,7 +72,7 @@
             class="search"
             suffix-icon="el-icon-search"
           ></el-autocomplete>
-          <el-menu-item v-if="!isMobile" index="/login">
+          <el-menu-item v-if="!isMobile">
             <div class="login" v-if="ifLog">登录/注册</div>
             <!-- 组件nav-user-info -->
             <nav-user-info
@@ -96,7 +96,8 @@ const activeIndex = ref("1");
 
 const handleSelect = (index: string) => {
   activeIndex.value = index;
-  if (index === "6") {
+  if (index === "/xxx") {
+    // 某个页面
   } 
   else {
     router.push({ path: `${index}` });
@@ -150,8 +151,7 @@ onMounted(() => {
 
 // 点击头像进入个人中心
 const goPersonalCenter = () => {
-  // const token = JSON.parse(window.atob(localStorage.getItem("userAccount")!))
-  // goToPersonalCenterHook(token.account)
+  router.push("/personalcenter");
 };
 </script>
 <style scoped lang="less">

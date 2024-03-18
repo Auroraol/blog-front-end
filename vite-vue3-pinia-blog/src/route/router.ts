@@ -71,14 +71,31 @@ const routes = [
 //   meta: {
 //       title: '编辑文章'
 //   }
-// }, {
-//   path: '/personalcenter',
-//   name: 'personalcenter',
-//   component: () => import('/@/view/PersonalCenter.vue'),
-//   meta: {
-//       title: '个人中心'
-//   }
-// }, {
+// }
+,{
+  path: '/personalcenter',
+  name: 'personalcenter',
+  component: () => import('/@/view/personalcenter.vue'),
+  meta: {
+      title: '个人中心'
+  },
+  children: [
+    //TODO
+    // {
+    //   path: 'a',
+    //   component: () => import('@/components/me/a.vue'),
+    // },
+    // {
+    //   path: 'b',
+    //   component: () => import('@/components/me/b.vue'),
+    // },
+    // {
+    //   path: 'c',
+    //   component: () => import('@/components/me/c.vue'),
+    // },
+  ]  
+},
+//  {
 //   path: '/otherspersonalcenter',
 //   name: 'otherspersonalcenter',
 //   component: () => import('/@/view/OthersPersonalCenter.vue'),
