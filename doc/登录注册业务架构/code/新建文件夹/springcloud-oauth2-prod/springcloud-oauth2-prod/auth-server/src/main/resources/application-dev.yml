@@ -12,6 +12,7 @@ spring:
         max-active: 8
         max-wait: -1ms
         min-idle: 0
+    database: 12
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
