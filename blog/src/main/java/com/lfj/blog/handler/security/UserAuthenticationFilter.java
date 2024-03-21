@@ -10,6 +10,7 @@ import com.lfj.blog.utils.token.SecretKeyUtil;
 import com.lfj.blog.utils.token.SecurityKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -61,12 +62,14 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilter {
 				chain.doFilter(request, response);
 				return;
 			}
-			//获取用户信息，存入context
-			UsernamePasswordAuthenticationToken authentication = getAuthentication(jwt, response);
+
+			//获取用户信息，存入context上下文
+			UsernamePasswordAuthenticationToken authentication = getAuthentication(jwt, response,request,  chain);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		} catch (Exception e) {
 			log.error("BuyerAuthenticationFilter-> member authentication exception:", e);
 		}
+		// 继续过滤链
 		chain.doFilter(request, response);
 	}
 
@@ -77,7 +80,11 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilter {
 	 * @param response
 	 * @return
 	 */
-	private UsernamePasswordAuthenticationToken getAuthentication(String jwt, HttpServletResponse response) {
+	private UsernamePasswordAuthenticationToken getAuthentication(String jwt,
+																  HttpServletResponse response,
+																  HttpServletRequest request,
+																  FilterChain chain)
+			throws ServletException, IOException {
 
 		try {
 			Claims claims = Jwts.parser()
@@ -89,6 +96,7 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilter {
 			String json = claims.get(SecurityKey.USER_CONTEXT).toString();
 			AuthUser authUser = JSON.parseObject(json, AuthUser.class);
 
+
 			//校验redis中是否有权限
 			Boolean hasKey = redisTemplate.hasKey(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwt);
 			if (hasKey != null && hasKey) {
@@ -99,14 +107,17 @@ public class UserAuthenticationFilter extends BasicAuthenticationFilter {
 				authentication.setDetails(authUser);
 				return authentication;
 			}
-//			ResponseUtil.output(response, 401001, ResponseResult.noLogin());
-//
+
 			return null;
 		} catch (ExpiredJwtException e) {
-			log.debug("user analysis exception:", e);
+			// 如果捕获到 ExpiredJwtException 异常，则 JWT 已经过期
+//			ResponseUtil.output(response, ResponseResult.tokenError());  // 400100
+			return null;
+
 		} catch (Exception e) {
 			log.error("user analysis exception:", e);
 		}
 		return null;
 	}
+
 }

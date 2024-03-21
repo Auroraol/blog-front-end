@@ -962,3 +962,82 @@ public class ResponseUtil {
 | personalBrief  | varchar | 255  | false | false | 个人简介     |
 | avatarImgUrl   | varchar | 255  | false | true  | 头像url      |
 | recentlyLanded | varchar | 255  | false | false | 最近登录时间 |
+
+
+
+
+
+# 个人中心
+
+![image-20240318225848609](README.assets/image-20240318225848609.png)
+
+
+
+
+
+# 文章
+
+## 使用md-editor-v3
+
+写文章
+
+```vue
+<template>
+  <MdEditor v-model="text" previewTheme="vuepress" codeTheme="a11y"/>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
+
+const text = ref('Hello Editor!');
+</script>
+```
+
+看文章
+
+```vue
+<template>
+	<!--文章内容-->
+  <MdPreview :editorId="id" :modelValue="text" previewTheme="vuepress" codeTheme="a11y"/>
+	<!--文章目录-->
+  <MdCatalog :editorId="id" :scrollElement="scrollElement" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { MdPreview, MdCatalog } from 'md-editor-v3';
+// preview.css相比style.css少了编辑器那部分样式
+import 'md-editor-v3/lib/preview.css';
+
+const id = 'preview-only';
+const text = ref(`
+# Hello Editor
+# Hello 
+This is a sample Markdown content. You can use Markdown syntax to format text, such as:
+
+- **Bold text**
+- *Italic text*
+- Code blocks
+
+\`\`\`javascript
+function greet(name) {
+    return 'Hello, ' + name + '!';
+}
+\`\`\`
+## 第一
+Enjoy writing in Markdown!
+## 第二
+### 一
+`);
+    
+//md-catalog目录的监听设置    
+const scrollElement = document.documentElement;
+</script>
+```
+
+**效果**
+
+![image-20240319172604269](README.assets/image-20240319172604269.png)
+

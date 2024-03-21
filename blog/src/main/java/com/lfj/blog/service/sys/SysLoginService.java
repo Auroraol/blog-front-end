@@ -9,4 +9,6 @@ import com.lfj.blog.common.vo.ResponseResult;
  */
 public interface  SysLoginService {
 	ResponseResult<Token> login(String username, String password);
+
+
 }

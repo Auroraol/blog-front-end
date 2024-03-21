@@ -21,7 +21,7 @@ public enum ResponseCodeEnum {
 
 	TOKEN_ERROR(401000,"token 已失效,请重新登录"),
 	HTTP_NO_PERMISSION(403000,"抱歉，你没有访问权限"),
-	HTTP_NO_LOGIN(401001, "登录已失效，请重新登录");
+	HTTP_NO_LOGIN(401002, "登录已失效，请重新登录");
 
 	private final int code;
 	private final String message;

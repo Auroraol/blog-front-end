@@ -8,6 +8,9 @@ import {
 import NoFond from "./no-fond";
 // 导出多个要导出一个数组形式，在router.js中使用,必须使用扩展运算全部导入
 
+import {  getUserAccountInfo  } from '/@/utils/network/auth.js'
+
+
 //引入main.ts
 import app from "../main";
 import { useStore } from "../store";
@@ -95,6 +98,11 @@ const routes = [
     // },
   ]  
 },
+// {
+//   path: '/archives',
+//   component: () => import('/@/view/archives/index'),
+//   hidden: true
+// },
 //  {
 //   path: '/otherspersonalcenter',
 //   name: 'otherspersonalcenter',
@@ -255,19 +263,20 @@ const router = createRouter({
 // 在路由元信息配置守卫 requiredPath为true, 适合守卫多个页面 vue3next() 变成return true
 router.beforeEach((to, from, next) => {
   //判断是否是登录状态
-  const sessionAccount = localStorage.getItem('userAccount')
+  // const sessionAccount = localStorage.getItem('userAccount')
+  const sessionAccount = getUserAccountInfo();
   if (sessionAccount) {
       const pinia = useStore()
-      pinia.sessionInfo = sessionAccount
+      pinia.userInfo = sessionAccount
   }
 
-  //进入写文页面，判断是否有权限
-  // if (to.path === '/write') {
-  //     if (!sessionAccount) {
-  //         alert('还没有登录，去登录吧')
-  //         router.push('/login')
-  //     }
-  // }
+  // 进入写文页面，判断是否有权限
+  if (to.path === '/write') {
+      if (!sessionAccount) {
+          alert('还没有登录，去登录吧')
+          router.push('/login')
+      }
+  }
 
   window.document.title = to.meta.title as string
   //到新页面要把页面滚动到最顶

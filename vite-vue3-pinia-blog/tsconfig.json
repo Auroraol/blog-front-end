@@ -28,6 +28,6 @@
     "src/**/*.vue",
     "auto-imports.d.ts",
     "components.d.ts"
-  ],
+, "src/utils/network/axios.js"  ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

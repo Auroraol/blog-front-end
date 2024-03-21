@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: auth-server #服务名称
+  redis:
+    host: 127.0.0.1
+    password:
+    port: 6379
+    timeout: 3000
+    lettuce:
+      pool:
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
+        min-idle: 0
+
+
+server:
+  port: 8001
+
+#服务器发现注册配置
+eureka:
+  client:
+    serviceUrl:
+      #配置服务中心(可配置多个,用逗号隔开)
+      defaultZone:  http://localhost:9000/eureka/
+  instance:
+    prefer-ip-address: true #使用ip地址注册
+    instance-id: ${spring.cloud.client.ip-address}:${server.port} #向注册中心中注册服务id
+    #lease-renewal-interval-in-seconds: 5 #向注册中心中注册服务id
+    #lease-expiration-duration-in-seconds: 10 #续约到期的时间
+
+##开启日志DEBUG级别，便于查看调试信息
+logging.level.org.springframework.security: DEBUG
+
+ignored:
+  urls:
+    - /test/no_need_token
+    - /login
+

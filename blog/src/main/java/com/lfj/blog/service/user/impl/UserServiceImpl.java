@@ -1,18 +1,28 @@
 package com.lfj.blog.service.user.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lfj.blog.common.cache.CachePrefix;
 import com.lfj.blog.common.security.AuthUser;
+import com.lfj.blog.common.security.Token;
+import com.lfj.blog.common.security.UserEnums;
 import com.lfj.blog.common.vo.ResponseResult;
 import com.lfj.blog.entity.User;
 import com.lfj.blog.handler.security.UserContext;
 import com.lfj.blog.mapper.UserMapper;
 import com.lfj.blog.service.user.UserService;
+import com.lfj.blog.utils.token.SecurityKey;
+import com.lfj.blog.utils.token.TokenUtils;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 16658
@@ -26,6 +36,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
 	@Autowired
 	UserMapper userMapper;
+
+	@Autowired
+	private StringRedisTemplate redisTemplate;
 
 	@Override
 	public ResponseResult<User> getUserInfo() {
@@ -42,7 +55,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 			return ResponseResult.success(userList.get(0));
 		}
 		//返回 登录已过期
-		return ResponseResult.tokenError();
+		return ResponseResult.noLogin();
 
 	}
 
@@ -63,7 +76,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 			if (userMapper.updateNicknameByUsername(nickName, userName) == 0){
 				return  ResponseResult.account_updatetnickname_error();
 			}
-			return ResponseResult.success("success");
+		   return ResponseResult.success("success");
 	}
 }
 

@@ -1,6 +1,7 @@
 <!-- Navigation.vue -->
 <template>
-  <el-row>
+<el-affix >
+  <el-row class="nav">
     <el-col :span="6">
       <div>
       </div>
@@ -62,6 +63,7 @@
               <use xlink:href="#icon-gengduo4"></use></svg
             >关于
           </el-menu-item>
+          <!-- 搜索框 -->
           <el-autocomplete
             v-if="!isMobile"
             style="padding: 0 70px"
@@ -72,31 +74,32 @@
             class="search"
             suffix-icon="el-icon-search"
           ></el-autocomplete>
-          <el-menu-item v-if="!isMobile">
-            <div class="login" v-if="ifLog">登录/注册</div>
+          <el-menu-item index="info" v-if="!isMobile">
+            <div class="login" @click="login" v-if="ifLog">登录/注册</div>
             <!-- 组件nav-user-info -->
             <nav-user-info
-              class="welcome"
-              @click="goPersonalCenter"
               v-else
-            ></nav-user-info>
+            ></nav-user-info> 
           </el-menu-item>
         </el-menu>
       </div>
     </el-col>
   </el-row>
+</el-affix>
 </template>
 
 <script setup lang="ts">
 // import { SortUp } from "@element-plus/icons-vue/dist/types";
 import { useRouter } from "vue-router";
 import { useStore } from "/@/store";
+import { getAccessToken, getRefreshToken, getUserAccountInfo, removeUserAccountInfo  } from '/@/utils/network/auth.js'
+
 const router = useRouter();
 const activeIndex = ref("1");
 
 const handleSelect = (index: string) => {
   activeIndex.value = index;
-  if (index === "/xxx") {
+  if (index === "info") {
     // 某个页面
   } 
   else {
@@ -105,6 +108,11 @@ const handleSelect = (index: string) => {
 };
 
 //登录
+const login = () => {
+    router.push('/login')
+}
+
+
 const ifLog = ref(true); //当它是false时是已登录
 const pinia = useStore();
 const isMobile = ref(false); //根据页面响应使用哪个样式的标题栏
@@ -126,7 +134,8 @@ const listenScreen = () => {
 
 // 在页面加载时从本地存储中获取用户信息并设置到 Pinia 中
 const initializeUserInfo = () => {
-  const storedUserInfo = localStorage.getItem("userInfo");
+  // const storedUserInfo = localStorage.getItem("userAccount"); 
+  const storedUserInfo = getUserAccountInfo();
 
   if (storedUserInfo) {
     pinia.setUserInfo(storedUserInfo);
@@ -149,13 +158,11 @@ onMounted(() => {
   initializeUserInfo();
 });
 
-// 点击头像进入个人中心
-const goPersonalCenter = () => {
-  router.push("/personalcenter");
-};
 </script>
 <style scoped lang="less">
-
+.nav{
+  background-color: #2580B3;
+}
 
 .el-menu {
   border-right: none;
@@ -204,7 +211,4 @@ const goPersonalCenter = () => {
   color: #fff;
 }
 
-.welcome {
-  margin-right: 3rem;
-}
 </style>

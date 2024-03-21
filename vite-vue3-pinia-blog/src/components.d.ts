@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
     ArticleLeft: typeof import('./components/Box/leftToolsBox/ArticleLeft.vue')['default']
     ArticleRight: typeof import('./components/Box/RightToolsBox/ArticleRight.vue')['default']
     CusCalendar: typeof import('./components/CusCalendar/index.vue')['default']
+    ElAffix: typeof import('element-plus/es')['ElAffix']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -22,6 +23,10 @@ declare module '@vue/runtime-core' {
     ElCol: typeof import('element-plus/es')['ElCol']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElDropdown: typeof import('element-plus/es')['ElDropdown']
+    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
+    ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
+    ElForm: typeof import('element-plus/es')['ElForm']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElMain: typeof import('element-plus/es')['ElMain']
@@ -51,6 +56,7 @@ declare module '@vue/runtime-core' {
     UserfocusShow: typeof import('./components/personalCenter/userfocus/userfocusShow.vue')['default']
     UserInfo: typeof import('./components/personalCenter/userInfo.vue')['default']
     Write: typeof import('./components/Write/Write.vue')['default']
+    'Write copy': typeof import('./components/Write/Write copy.vue')['default']
   }
 }
 

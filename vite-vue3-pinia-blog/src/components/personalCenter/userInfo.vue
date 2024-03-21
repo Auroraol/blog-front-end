@@ -141,12 +141,15 @@ import { useStore } from "/@/store";
 import { ElMessage } from 'element-plus'
 import { ref, reactive, defineAsyncComponent, watchEffect } from 'vue'
 import { useRouter } from 'vue-router';
+import { getAccessToken, getRefreshToken, getUserAccountInfo, removeUserAccountInfo  } from '/@/utils/network/auth.js'
+
 const uploadHeadImg = defineAsyncComponent(() => import('/@/components/personalCenter/uploadHead.vue'))
 
 const pinia = useStore()
 const router = useRouter()
 //请求用户信息
-const tokenInfo = JSON.parse(window.atob(localStorage.getItem('userAccount')!))
+// const tokenInfo = JSON.parse(window.atob(localStorage.getItem('userAccount')!))
+const tokenInfo = JSON.parse(window.atob(getUserAccountInfo()!))
 const { data: res } = await useAxios.get('/userinfo', {
     params: {
         account: tokenInfo.account
@@ -171,7 +174,8 @@ const changePersonalIntroduce = async () => {
     }
 
     //获取用户账号
-    const token = JSON.parse(window.atob(localStorage.getItem('userAccount')!))
+    // const token = JSON.parse(window.atob(localStorage.getItem('userAccount')!))
+    const token = JSON.parse(window.atob(getUserAccountInfo()!))
     const changeIntroduceJson = {
         account: token.account,
         data: newIntroduce

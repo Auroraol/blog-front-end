@@ -139,6 +139,7 @@ import {
   getSysRegister,
   getUpdateNickName,
 } from "./services";
+import { setAccessToken, setRefreshToken, setUserAccountInfo  } from '/@/utils/network/auth.js'
 
 const pinia = useStore();
 const router = useRouter();
@@ -167,7 +168,6 @@ const login = async () => {
   // 发起请求
   const { data, error, loading, run } = useRequest(getSysLogin, {
     manual: true, // 手动触发请求
-    devKey: "demo1", // 开发者密钥
     onSuccess: (data) => {
       //注意: 在手动触发的情况下, ts中使用data,error,....中的属性
       if (data.code === 400002) {
@@ -176,10 +176,15 @@ const login = async () => {
         alert("账户密码不匹配");
       } else if (data.code === 200000) {
         //前端接收到JWT后，将其存储在本地
-        localStorage.setItem("accessToken", data.data.accessToken);
-        localStorage.setItem("refreshToken", data.data.refreshToken);
+        setAccessToken(data.data.accessToken)
+        setRefreshToken(data.data.refreshToken)
         // 得到用户信息
         getInformation();
+        ElMessage({
+          message: "登录成功",
+          type: "success",
+          duration: 1000,
+        });
         router.replace("/index");
       }
     },
@@ -195,16 +200,19 @@ const getInformation = () => {
   const { data: responseData, run: infoRun } = useRequest(getUserInfo, {
     onSuccess: (responseData) => {
       if (responseData && responseData.data) {
-        // console.table(responseData.data);
-        const userAccount = window.encodeURIComponent(  // 加密保存
+        // // console.table(responseData.data);
+        const userAccount = window.encodeURIComponent(
+          // 加密保存
           JSON.stringify(responseData.data) //即使后端发送的数据已经是 JSON 格式，使用 JSON.stringify() 仍然是一个常见的做法，因为它可以确保数据被正确地序列化为 JSON 字符串。
         );
+        // // 
+        // // 保存到浏览器和pinia中
+        // localStorage.setItem("userAccount", userAccount);
         // console.log(userAccount);
-        // 保存到浏览器和pinia中
-        localStorage.setItem("userInfo", userAccount);
+        setUserAccountInfo(userAccount);
         pinia.setUserInfo(userAccount);
       } else {
-        console.error("未获取到有效的用户信息数据");
+        
       }
     },
   });

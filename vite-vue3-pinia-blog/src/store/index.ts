@@ -8,7 +8,7 @@ export const useStore = defineStore(Names.piniaStore, {
       userInfo: "", //判断登录状态，重新渲染nav里面的用户信息的dom
       ifDelMessage: 0, //删除留言重新渲染dom
       pariseOrCollection: 0, //点赞或者收藏更新数据
-      nickNameLength: 16, //昵称的最大字符数
+      nickNameLength: 5, //昵称的最大字符数
       articleCommentsAdd: 0, //文章评论更新后更新dom
       refreshSearchRes: 0, //搜索页面重新搜索刷新搜索结果
     };

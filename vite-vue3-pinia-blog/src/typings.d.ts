@@ -1,4 +1,11 @@
  // TODO 全局公共的 TS 类型声明
+ // Token数据类型定义
+export type TokenType = {
+  accessToken: string;
+  refreshToken: string;
+}
+
+
 // USER用户数据类型定义
 export type UserType = {
     id: number;

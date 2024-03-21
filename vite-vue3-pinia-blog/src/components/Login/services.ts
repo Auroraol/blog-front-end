@@ -1,7 +1,6 @@
 // 模块 API
-import { request } from '/@/utils/network/axios'
-import { TokenType} from './data'
-import { ResponseResult,UserType } from "/@/typings";
+import { get, request } from '../../utils/network/axios'
+import { ResponseResult,UserType,TokenType } from "/@/typings";
 
 //
 export async function getSysLogin(data: any){
@@ -26,11 +25,16 @@ export async function getSysLogin(data: any){
 */
 
 
+// export async function getUserInfo(){
+//   return request<ResponseResult<UserType>>(import.meta.env.VITE_APP_BASE_API + '/user/info', {
+//     method: 'get',
+//   }, true) 
+// }
 export async function getUserInfo(){
   return request<ResponseResult<UserType>>(import.meta.env.VITE_APP_BASE_API + '/user/info', {
     method: 'get',
-    needToken: true  //需要请求头携带token, 后端好进行认证
-  })
+    isNeedToken: true
+  }) 
 }
 /**
 {
@@ -68,6 +72,16 @@ export async function getSysRegister(data: any){
 */
 
 
+// export async function getUpdateNickName(userName: string, nickName:string){
+//   return request<ResponseResult<string>>(import.meta.env.VITE_APP_BASE_API + '/user/nickName', {
+//     method: 'get',
+//     params : {
+//       userName,
+//       nickName
+//     },
+//   }, true) 
+// }
+
 export async function getUpdateNickName(userName: string, nickName:string){
   return request<ResponseResult<string>>(import.meta.env.VITE_APP_BASE_API + '/user/nickName', {
     method: 'get',
@@ -75,9 +89,11 @@ export async function getUpdateNickName(userName: string, nickName:string){
       userName,
       nickName
     },
-    needToken: true  //需要请求头携带token, 后端好进行认证
+    isNeedToken: true
   }) 
 }
+
+
 /**
  *GET http://localhost:9000/user/nickName?username=lfj&nickName=ssss
  {

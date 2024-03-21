@@ -50,10 +50,4 @@ ignored:
   urls:
     - /login/**
     - /register/**
-    - /pages/**
-    - /pageData/**
-    - /article/**
-    - /goods/**
-    - /members/**
-    - /category/**
-    - /common/**
+    - /auth/**

@@ -31,5 +31,4 @@ public class UserController {
 		@RequestParam("nickName") String nickName) {
 		return userService.updateTruename(userName, nickName);
 	}
-
 }

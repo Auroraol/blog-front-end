@@ -1,6 +1,8 @@
 package com.lfj.blog.service.sys.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.lfj.blog.common.cache.CachePrefix;
 import com.lfj.blog.common.security.AuthUser;
 import com.lfj.blog.common.security.Token;
@@ -9,7 +11,9 @@ import com.lfj.blog.common.vo.ResponseResult;
 import com.lfj.blog.entity.User;
 import com.lfj.blog.service.user.UserService;
 import com.lfj.blog.service.sys.SysLoginService;
+import com.lfj.blog.utils.token.SecurityKey;
 import com.lfj.blog.utils.token.TokenUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,7 +35,6 @@ public class SysLoginServiceImpl implements SysLoginService {
 
 	@Autowired
 	private StringRedisTemplate redisTemplate;
-
 
 
 	public static void main(String[] args) {
@@ -70,21 +73,20 @@ public class SysLoginServiceImpl implements SysLoginService {
 	}
 
 
-
 	private Token genToken(User user) {
 		Token token = new Token();
 		// token存放信息
 		AuthUser authUser = new AuthUser(user.getUsername(), String.valueOf(user.getId()),
 				user.getUsername(), UserEnums.USER);
 		// 7天(一般过期时间设置成30分钟)
-		String jwtAccessToken = TokenUtils.createToken(user.getUsername(), authUser, 7 * 24 * 60 * 60 * 1000L);
-//		String jwtAccessToken = TokenUtils.createToken(user.getUsername(), authUser, 30 * 60 * 1000L);
+//		String jwtAccessToken = TokenUtils.createToken(user.getUsername(), authUser, 7 * 24 * 60 * 60 * 1000L);
+		String jwtAccessToken = TokenUtils.createToken(user.getUsername(), authUser,  10 * 1000L);
 
 		token.setAccessToken(jwtAccessToken);
-		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwtAccessToken
-				,"1", 7, TimeUnit.DAYS); // 储存到Redis中 前缀+用户类型+jwtToken
 //		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwtAccessToken
-//				,"1", 30, TimeUnit.MINUTES); // 储存到Redis中 前缀+用户类型+jwtToken
+//				,"1", 7, TimeUnit.DAYS); // 储存到Redis中 前缀+用户类型+jwtToken
+		redisTemplate.opsForValue().set(CachePrefix.ACCESS_TOKEN.name() + UserEnums.USER.name() + jwtAccessToken
+				,"1", 10, TimeUnit.SECONDS); // 储存到Redis中 前缀+用户类型+jwtToken
 
 		// 15天
 		//设置刷新token，当accessToken过期的时候，可以通过refreshToken来 重新获取accessToken 而不用访问数据库
@@ -95,6 +97,4 @@ public class SysLoginServiceImpl implements SysLoginService {
 
 		return token;
 	}
-
-
 }
