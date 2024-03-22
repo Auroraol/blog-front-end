@@ -8,9 +8,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
+ * 用户表
+ *
  * @TableName user
  */
 @TableName(value = "user")
@@ -19,59 +22,69 @@ public class User implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 	/**
-	 *
+	 * 用户id
 	 */
 	@TableId(value = "id", type = IdType.AUTO)
 	private Integer id;
 	/**
-	 *
-	 */
-	@TableField(value = "phone")
-	private String phone;
-	/**
-	 *
+	 * 用户名
 	 */
 	@TableField(value = "username")
 	private String username;
 	/**
-	 *
+	 * 密码
 	 */
 	@TableField(value = "password")
 	private String password;
 	/**
-	 *
+	 * 手机号
 	 */
-	@TableField(value = "gender")
-	private String gender;
+	@TableField(value = "mobile")
+	private Long mobile;
 	/**
-	 *
+	 * 昵称
 	 */
 	@TableField(value = "nickname")
 	private String nickname;
 	/**
-	 *
+	 * 性别，1：男，0：女，默认为1
+	 */
+	@TableField(value = "gender")
+	private Integer gender;
+	/**
+	 * 生日
 	 */
 	@TableField(value = "birthday")
-	private String birthday;
+	private LocalDate birthday;
 	/**
-	 *
+	 * 电子邮箱
 	 */
 	@TableField(value = "email")
 	private String email;
 	/**
-	 *
+	 * 简介|个性签名
 	 */
-	@TableField(value = "personalBrief")
-	private String personalbrief;
+	@TableField(value = "brief")
+	private String brief;
 	/**
-	 *
+	 * 用户头像
 	 */
-	@TableField(value = "avatarImgUrl")
-	private String avatarimgurl;
+	@TableField(value = "avatar")
+	private String avatar;
 	/**
-	 *
+	 * 状态，0：正常，1：锁定，2：禁用，3：过期
 	 */
-	@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-	@TableField(value = "recentlyLanded")
-	private LocalDateTime recentlylanded;
+	@TableField(value = "status")
+	private Integer status;
+	/**
+	 * 是否管理员，1：是，0：否
+	 */
+	@TableField(value = "admin")
+	private Integer admin;
+	/**
+	 * 创建时间
+	 */
+	@TableField(value = "create_time")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+	private LocalDateTime createTime;
 }

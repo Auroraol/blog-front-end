@@ -1,7 +1,7 @@
 package com.lfj.blog.handler;
 
-import com.lfj.blog.common.vo.ResponseResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lfj.blog.common.response.ApiResponseResult;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -58,16 +58,16 @@ public class RestResponseBodyAdviceHandler implements ResponseBodyAdvice<Object>
 		if(stringConverter.equalsIgnoreCase(selectedConverterType.getName())){
 			HttpHeaders headers= response.getHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-			return objectMapper.writeValueAsString(ResponseResult.success(body));
+			return objectMapper.writeValueAsString(ApiResponseResult.success(body));
 		}
 		/**
 		 *
 		 * 如果响应结果已经是DataResult类型，则直接返回
 		 */
-		if(body instanceof ResponseResult){
+		if(body instanceof ApiResponseResult){
 			return body;
 		}
 
-		return ResponseResult.success(body);
+		return ApiResponseResult.success(body);
 	}
 }

@@ -1,0 +1,53 @@
+server:
+  port: 9000
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/myblog
+    username: root
+    password: CODE(yTDT90o8m/N9uwVvJybwjg==)
+
+  # redis配置
+  redis:
+    host: 192.168.200.134
+    port: 6379
+    password: 741106
+    # lettuce配置(需引入 commons-pool2依赖)
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 200
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1
+        # 连接池中的最大空闲连接
+        max-idle: 10
+        # 连接池中的最小空闲连接
+        min-idle: 0
+
+#mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration: # sql日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+# 加密配置
+jasypt:
+  encryptor:
+    password: 35579B7F9C8CB15E  #加解密的密钥，自定义即可，必填项
+    algorithm: PBEWithMD5AndDES  #指定解密算法，加解密必须一致. # 加密算法,jasypt3.0后，默认支持的算法为 PBEWITHHMACSHA512ANDAES_256 ，该算法需要JDK1.9 以上支持或者添加JCE(Java Cryptography Extension 无限强度权限策略文件)支持
+    string-output-type: base64  #设置加密内容输出的编码形式，可用的编码类型有 base64(默认值)、hexadecimal（16进制）
+    poolSize: 3
+    property:
+      #自定义的前后缀标记，默认ENC()
+      prefix: CODE(
+      suffix: )
+
+
+ignored:
+  urls:
+    - /login/**
+    - /register/**
+    - /auth/**

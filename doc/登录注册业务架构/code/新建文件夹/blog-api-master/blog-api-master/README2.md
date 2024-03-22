@@ -92,7 +92,24 @@ export function sendCode(params) {
 | refresh_token_expire |    refresh_token_expire有效时长    |
 | enable_refresh_token | 是否启用 refresh_token，1:是，0:否 |
 
+```sql
+DROP TABLE IF EXISTS `client`;
+CREATE TABLE `client` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `client_id` varchar(50) NOT NULL COMMENT '客户端id，客户端唯一标识',
+  `client_secret` varchar(255) NOT NULL COMMENT '客户端密码',
+  `access_token_expire` bigint(20) DEFAULT NULL COMMENT 'access_token有效时长',
+  `refresh_token_expire` bigint(20) DEFAULT NULL COMMENT 'refresh_token_expire有效时长',
+  `enable_refresh_token` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否支持刷新refresh_token,1:是，0:否',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_client_id` (`client_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='客户端表';
+
+```
+
 ### 保存客户端
+
+#### API 接口
 
 请求方法：POST
 
@@ -108,12 +125,12 @@ export function sendCode(params) {
 
 ```json
 {
-  "accessTokenExpire": "access_Token有效时间",
-  "clientId": "客户端id",
-  "clientSecret": "客户端秘钥",
-  "id": "id",
-  "refreshTokenExpire": "refresh_token有效时间",
-  "enableRefreshToken": "是否启用refresh_token,1:是，0:否"
+    "id": "id",
+    "clientId": "客户端id, 唯一",
+    "clientSecret": "客户端秘钥",
+    "accessTokenExpire": "access_Token有效时间",
+    "refreshTokenExpire": "refresh_token有效时间",
+    "enableRefreshToken": "是否启用refresh_token,1:是，0:否"
 }
 ```
 
@@ -127,23 +144,40 @@ export function sendCode(params) {
 **保存成功：**
 
 ```json
-{  
-    "code": 0,  
-    "message": "成功"
+{
+    "code": 200000,
+    "data": null,
+    "message": "响应成功"
 }
 ```
+
+#### Postman
+
+```
+POST http://localhost:9000/client/save
+```
+
+**新增或更新客户端**
+
+![image-20240321223129070](README2.assets/image-20240321223129070.png)
+
+**id为null时新增需要管理员权限**
+
+![image-20240321223153561](README2.assets/image-20240321223153561.png)
+
+
 
 后端
 
 ```java
-    @PostMapping("/save")
-    @ApiOperation(value = "新增或更新客户端,id为null时新增",notes = "需要accessToken，需要管理员权限")
-    public ApiResponse save(@Validated @RequestBody Client client) {
-        validateExist(client);
-        clientService.saveOrUpdate(client);
-        clientService.clearCache();
-        return createResponse();
-    }
+	@PostMapping("/save")
+	@ApiOperation(value = "新增或更新客户端,id为null时新增", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult<Object> save(@Validated @RequestBody Client client) {
+		clientService.validateExist(client);
+		if (clientService.saveOrUpdate(client))
+			return ApiResponseResult.success();
+		return ApiResponseResult.operationError();
+	}
 ```
 
 前端
@@ -160,6 +194,8 @@ export function saveClient(data) {
 
 ### 删除客户端
 
+#### API 接口
+
 请求方法：DELETE
 
 请求地址：/client/delete/{id}
@@ -173,22 +209,37 @@ export function saveClient(data) {
 **删除成功：**
 
 ```json
-{  
-    "code": 0,  
-    "message": "成功"
+{
+    "code": 200000,
+    "data": null,
+    "message": "响应成功"
 }
 ```
+
+#### Postman
+
+```
+DELETE http://localhost:9000/client/delete/1
+```
+
+**删除成功**
+
+![image-20240321223838837](README2.assets/image-20240321223838837.png)
+
+**删除失败**
+
+![image-20240321224807253](README2.assets/image-20240321224807253.png)
 
 后端
 
 ```java
-    @DeleteMapping("/delete/{id}")
-    @ApiOperation(value = "删除客户端",notes = "需要accessToken，需要管理员权限")
-    public ApiResponse delete(@ApiParam("id") @PathVariable(value = "id") int id) {
-        clientService.removeById(id);
-        clientService.clearCache();
-        return createResponse();
-    }
+	@DeleteMapping("/delete/{id}")
+	@ApiOperation(value = "删除客户端", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult<Object> delete(@ApiParam("id") @PathVariable(value = "id") int id) {
+		if (clientService.removeById(id))
+			return ApiResponseResult.success();
+		return ApiResponseResult.operationError();
+	}
 ```
 
 前端
@@ -205,6 +256,8 @@ export function deleteClient(id) {
 
 ### 分页获取客户端
 
+#### API 接口
+
 请求方法：GET
 
 请求地址：/client/page
@@ -217,48 +270,55 @@ size：每页数量，非必传，默认5
 
 需要管理员权限： 是
 
-获取成功：
+**获取成功：**
 
 ```json
 {
-  "code": 0,
-  "message": "成功",
-  "data": {
-    "records": [
-      {
-        "id": 1,
-        "clientId": "pc",
-        "clientSecret": "123456",
-        "accessTokenExpire": 7200,
-        "refreshTokenExpire": 2592000,
-        "enableRefreshToken": 1
-      },
-      {
-        "id": 2,
-        "clientId": "test",
-        "clientSecret": "test",
-        "enableRefreshToken": 0
-      }
-    ],
-    "total": 2,
-    "size": 5,
-    "current": 1,
-    "searchCount": true,
-    "pages": 1
-  }
+    "code": 200000,
+    "data": {
+        "records": [
+            {
+                "id": 1,
+                "clientId": "1",
+                "clientSecret": "客户端秘钥",
+                "accessTokenExpire": 7,
+                "refreshTokenExpire": 15,
+                "enableRefreshToken": 1
+            }
+        ],
+        "total": 2,
+        "size": 1,
+        "current": 1,
+        "orders": [],
+        "optimizeCountSql": true,
+        "searchCount": true,
+        "maxLimit": null,
+        "countId": null,
+        "pages": 2
+    },
+    "message": "响应成功"
 }
 ```
+
+#### Postman
+
+```
+GET http://localhost:9000/client/page?current=1&size=1
+```
+
+![image-20240321232131572](README2.assets/image-20240321232131572.png)
 
 后端
 
 ```java
-    @GetMapping("/page")
-    @PreAuthorize("hasAuthority('admin')")
-    @ApiOperation(value = "分页获取客户端列表",notes = "需要accessToken，需要管理员权限")
-    public ApiResponse<IPage<Client>> page(@ApiParam("页码") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
-                                           @ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size) {
-        return createResponse(clientService.page(new Page<>(current,size)));
-    }
+	@GetMapping("/page")
+	@PreAuthorize("hasAuthority('admin')")
+	@ApiOperation(value = "分页获取客户端列表", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult<Page<Client>> page(@ApiParam("页码") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
+												@ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size) {
+		return ApiResponseResult.success(clientService.getUserListWithPagination(current, size));
+	}
+
 ```
 
 前端
@@ -278,17 +338,13 @@ export function pageClient(params) {
 后端
 
 ```java
-package cn.poile.blog.controller;
+package com.lfj.blog.controller;
 
 
-import cn.poile.blog.common.constant.ErrorEnum;
-import cn.poile.blog.common.exception.ApiException;
-import cn.poile.blog.common.response.ApiResponse;
-import cn.poile.blog.entity.Client;
-import cn.poile.blog.service.IClientService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lfj.blog.common.response.ApiResponseResult;
+import com.lfj.blog.entity.Client;
+import com.lfj.blog.service.ClientService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -307,54 +363,39 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/client")
-@Api(tags = "客户端服务",value = "/client")
-public class ClientController extends BaseController {
+@Api(tags = "客户端服务", value = "/client")
+public class ClientController {
 
-    @Autowired
-    private IClientService clientService;
+	@Autowired
+	private ClientService clientService;
 
-    @GetMapping("/page")
-    @PreAuthorize("hasAuthority('admin')")
-    @ApiOperation(value = "分页获取客户端列表",notes = "需要accessToken，需要管理员权限")
-    public ApiResponse<IPage<Client>> page(@ApiParam("页码") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
-                                           @ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size) {
-        return createResponse(clientService.page(new Page<>(current,size)));
-    }
+	@GetMapping("/page")
+	@PreAuthorize("hasAuthority('admin')")
+	@ApiOperation(value = "分页获取客户端列表", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult<Page<Client>> page(@ApiParam("页码") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
+												@ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size) {
+		return ApiResponseResult.success(clientService.getUserListWithPagination(current, size));
+	}
 
-    @DeleteMapping("/delete/{id}")
-    @ApiOperation(value = "删除客户端",notes = "需要accessToken，需要管理员权限")
-    public ApiResponse delete(@ApiParam("id") @PathVariable(value = "id") int id) {
-        clientService.removeById(id);
-        clientService.clearCache();
-        return createResponse();
-    }
 
-    @PostMapping("/save")
-    @ApiOperation(value = "新增或更新客户端,id为null时新增",notes = "需要accessToken，需要管理员权限")
-    public ApiResponse save(@Validated @RequestBody Client client) {
-        validateExist(client);
-        clientService.saveOrUpdate(client);
-        clientService.clearCache();
-        return createResponse();
-    }
+	@DeleteMapping("/delete/{id}")
+	@ApiOperation(value = "删除客户端", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult<Object> delete(@ApiParam("id") @PathVariable(value = "id") int id) {
+		if (clientService.removeById(id))
+			return ApiResponseResult.success();
+		return ApiResponseResult.operationError();
+	}
 
-    /**
-     * 校验是否已存在
-     * @param client
-     */
-    private void validateExist(Client client) {
-        if (client.getId() == null) {
-            QueryWrapper<Client> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(Client::getClientId,client.getClientId());
-            int count = clientService.count(queryWrapper);
-            if (count != 0) {
-                throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(),"客户端已存在");
-            }
-        }
-    }
+	@PostMapping("/save")
+	@ApiOperation(value = "新增或更新客户端,id为null时新增", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult<Object> save(@Validated @RequestBody Client client) {
+		clientService.validateExist(client);
+		if (clientService.saveOrUpdate(client))
+			return ApiResponseResult.success();
+		return ApiResponseResult.operationError();
+	}
 
 }
-
 ```
 
 前端
@@ -715,3 +756,65 @@ public class AuthenticationController extends BaseController {
 
 ```
 
+
+
+
+
+# 用户
+
+系统用户
+
++ 系统管理员:   拥有全部权限
++ 普通用户:  拥有评论、留言等权限
+
+## 数据库用户表设计
+
+|   字段名    |                   描述                   |
+| :---------: | :--------------------------------------: |
+|     id      |                    id                    |
+|  username   |                  用户名                  |
+|  password   |                   密码                   |
+|   mobile    |                  手机号                  |
+|  nickname   |                   昵称                   |
+|   gender    |           性别，1：男 ，0：女            |
+|  birthday   |                   生日                   |
+|    email    |                   邮箱                   |
+|    brief    |                 个性签名                 |
+|   avatar    |                   头像                   |
+|   status    | 状态，0：正常，1：锁定，2：禁用，3：过期 |
+|    admin    |         是否管理员，1：是，0：否         |
+| create_time |                 注册时间                 |
+
+## 用户注册
+
+请求方法：POST
+
+请求地址：/user/register
+
+请求数据格式：application/json
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+请求体json：
+
+```json
+{
+  "code": "验证码",
+  "mobile": "手机号",
+  "password": "密码",
+  "username": "用户名"
+}
+```
+
+接口说明：验证码调发送验证码接口获取；用户名只能字母开头，允许2-16字节，允许字母数字下划线；密码不能少于6位数。
+
+注册成功：
+
+```json
+{  
+    "code": 0,  
+    "message": "成功"
+}
+```

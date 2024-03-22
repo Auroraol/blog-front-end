@@ -25,4 +25,10 @@ public interface IClientService extends IService<Client> {
      */
     void clearCache();
 
+    /**
+     * 校验是否已存在
+     * @param client
+     */
+    void validateExist(Client client);
+
 }

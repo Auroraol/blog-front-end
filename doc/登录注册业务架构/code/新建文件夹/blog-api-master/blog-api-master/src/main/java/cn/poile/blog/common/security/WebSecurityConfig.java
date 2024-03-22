@@ -102,22 +102,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         List<String> ignorePropertiesList = ignoreProperties.getList();
         int size = ignorePropertiesList.size();
-        http.cors()
+        //
+        http.cors()   //允许跨域
                 .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(ignorePropertiesList.toArray(new String[size])).permitAll()
+                .antMatchers(ignorePropertiesList.toArray(new String[size])).permitAll()  //配置的url 不需要授权
+                //任何请求
                 .anyRequest().authenticated()
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
+        //添加认证过滤器(自定义)
         http.addFilterBefore(authorizationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        //自定义权限拒绝处理类// 权限拦截器，提示用户没有当前权限
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
     }
 
+//    认证失败的返回权限不足
     private AuthenticationEntryPoint authenticationEntryPoint() {
         return (HttpServletRequest var1, HttpServletResponse var2, AuthenticationException var3) -> {
             if (var3 instanceof InsufficientAuthenticationException) {

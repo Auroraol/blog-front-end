@@ -1,5 +1,7 @@
 package cn.poile.blog.service.impl;
 
+import cn.poile.blog.common.constant.ErrorEnum;
+import cn.poile.blog.common.exception.ApiException;
 import cn.poile.blog.entity.Client;
 import cn.poile.blog.mapper.ClientMapper;
 import cn.poile.blog.service.IClientService;
@@ -43,5 +45,22 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
     @CacheEvict(value = "client",allEntries = true)
     public void clearCache() {
         log.info("清空client缓存");
+    }
+
+
+    /**
+     * 校验是否已存在
+     * @param client
+     */
+    public void validateExist(Client client) {
+        if (client.getId() == null) {
+            QueryWrapper<Client> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(Client::getClientId,client.getClientId());
+            int count = this.count(queryWrapper);
+            if (count != 0) {
+                // 抛出自定义异常
+                throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(),"客户端已存在");
+            }
+        }
     }
 }

@@ -1,10 +1,13 @@
 package com.lfj.blog.handler.exception;
 
-import com.lfj.blog.common.vo.ResponseResult;
-import com.lfj.blog.exception.BizException;
+import com.lfj.blog.common.response.ApiResponseResult;
+import com.lfj.blog.exception.ApiException;
+import com.lfj.blog.exception.MobileCodeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static com.lfj.blog.common.response.enums.ResponseCodeEnum.INVALID_REQUEST;
 
 /**
  * @Author: LFJ
@@ -15,17 +18,38 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
-	//如果抛出BizException的话, 调用
-	@ExceptionHandler(BizException.class)
-	public ResponseResult BizExceptionHandler(BizException e) {
-		log.error("业务异常：{}", e.getMessage());
-		return ResponseResult.fail(e.getCode(), e.getMessage());
+
+	/**
+	 * 手机号验证不正确 异常
+	 *
+	 * @return
+	 */
+	@ExceptionHandler(MobileCodeException.class)
+	public ApiResponseResult handleBadMobileCodeException(MobileCodeException e) {
+		return ApiResponseResult.fail(INVALID_REQUEST.getCode(), e.getMessage());
 	}
-//
-	//如果抛出Exception的话, 调用
+
+	/**
+	 * 自定义异常, 如果抛出ApiException的话, 调用
+	 *
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(ApiException.class)
+	public ApiResponseResult BizExceptionHandler(ApiException e) {
+		log.error("业务异常：{}", e.getMessage());
+		return ApiResponseResult.fail(e.getCode(), e.getMessage());
+	}
+
+	/**
+	 * 其他未知异常, 如果抛出Exception的话及其他未知异常, 调用
+	 *
+	 * @param e
+	 * @return
+	 */
 	@ExceptionHandler(Exception.class)
-	public ResponseResult exceptionHandler(Exception e) {
+	public ApiResponseResult exceptionHandler(Exception e) {
 		log.error("系统异常：{}", e.getMessage());
-		return ResponseResult.systemError();
+		return ApiResponseResult.systemError();
 	}
 }

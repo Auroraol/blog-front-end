@@ -41,5 +41,4 @@ public class SmsController extends BaseController{
         smsCodeService.sendSmsCode(mobile);
         return createResponse();
     }
-
 }
