@@ -27,7 +27,7 @@ public interface AuthenticationService {
 	 * @param client 客户端
 	 * @return
 	 */
-	AuthenticationToken mobileCodeAuthenticate(long mobile, String code, Client client);
+	AuthenticationToken mobileCodeAuthenticate(String mobile, String code, Client client);
 
 	/**
 	 * 移除 accessToken 相关

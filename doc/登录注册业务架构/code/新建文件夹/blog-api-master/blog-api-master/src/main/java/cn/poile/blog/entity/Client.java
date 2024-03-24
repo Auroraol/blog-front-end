@@ -51,6 +51,4 @@ public class Client implements Serializable {
 
     @ApiModelProperty(value = "是否启用refresh_token,1:是，0:否")
     private Integer enableRefreshToken;
-
-
 }

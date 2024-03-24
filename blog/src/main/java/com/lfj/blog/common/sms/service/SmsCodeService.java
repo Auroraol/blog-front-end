@@ -1,19 +1,16 @@
-package com.lfj.blog.common.sms;
+package com.lfj.blog.common.sms.service;
 
 /**
  * 短信服务
- *
- * @author: yaohw
- * @create: 2019/11/4 10:34 下午
  */
 public interface SmsCodeService {
 	/**
 	 * 发送短信验证码
 	 *
-	 * @param mobile
+	 * @param mobile 手机号
 	 * @return
 	 */
-	boolean sendSmsCode(long mobile);
+	boolean sendSmsCode(String mobile);
 
 	/**
 	 * 缓存短信验证码
@@ -21,7 +18,7 @@ public interface SmsCodeService {
 	 * @param mobile
 	 * @param code
 	 */
-	void cacheSmsCode(long mobile, String code);
+	void cacheSmsCode(String mobile, String code);
 
 	/**
 	 * 校验短信验证码
@@ -30,7 +27,7 @@ public interface SmsCodeService {
 	 * @param code
 	 * @return
 	 */
-	boolean checkSmsCode(long mobile, String code);
+	boolean checkSmsCode(String mobile, String code);
 
 	/**
 	 * 删除验证码
@@ -38,5 +35,5 @@ public interface SmsCodeService {
 	 * @param mobile
 	 * @return
 	 */
-	boolean deleteSmsCode(long mobile);
+	boolean deleteSmsCode(String mobile);
 }

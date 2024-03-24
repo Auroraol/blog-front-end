@@ -428,6 +428,20 @@ export function deleteClient(id) {
 }
 ```
 
+## 短信发送
+
+具体代码见:  
+
+<img src="README2.assets/image-20240324132814183.png" alt="image-20240324132814183" style="zoom:67%;" />
+
+### API 接口
+
+```
+POST http://localhost:9000/sms/send
+```
+
+![image-20240323153651633](README2.assets/image-20240323153651633.png)
+
 ## 认证
 
 认证区分客户端，因此，登录、退出、刷新access_token接口都需要在请求头带上客户端信息。
@@ -760,14 +774,14 @@ public class AuthenticationController extends BaseController {
 
 
 
-# 用户
+## 用户
 
 系统用户
 
 + 系统管理员:   拥有全部权限
 + 普通用户:  拥有评论、留言等权限
 
-## 数据库用户表设计
+### 数据库用户表设计
 
 |   字段名    |                   描述                   |
 | :---------: | :--------------------------------------: |
@@ -785,7 +799,7 @@ public class AuthenticationController extends BaseController {
 |    admin    |         是否管理员，1：是，0：否         |
 | create_time |                 注册时间                 |
 
-## 用户注册
+### 用户注册
 
 请求方法：POST
 
@@ -808,7 +822,10 @@ public class AuthenticationController extends BaseController {
 }
 ```
 
-接口说明：验证码调发送验证码接口获取；用户名只能字母开头，允许2-16字节，允许字母数字下划线；密码不能少于6位数。
+接口说明：
+
++ 验证码调发送验证码接口获取；
++ 用户名只能字母开头，允许2-16字节，允许字母数字下划线；密码不能少于6位数。
 
 注册成功：
 
@@ -818,3 +835,8 @@ public class AuthenticationController extends BaseController {
     "message": "成功"
 }
 ```
+
+
+
+
+

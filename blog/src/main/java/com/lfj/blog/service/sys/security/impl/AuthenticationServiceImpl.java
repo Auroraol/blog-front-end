@@ -4,7 +4,7 @@ package com.lfj.blog.service.sys.security.impl;
 import com.lfj.blog.common.security.AuthenticationToken;
 import com.lfj.blog.common.security.MobileCodeAuthenticationToken;
 import com.lfj.blog.common.security.RedisTokenStore;
-import com.lfj.blog.common.sms.SmsCodeService;
+import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.entity.Client;
 import com.lfj.blog.service.sys.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	 * @return
 	 */
 	@Override
-	public AuthenticationToken mobileCodeAuthenticate(long mobile, String code, Client client) {
+	public AuthenticationToken mobileCodeAuthenticate(String mobile, String code, Client client) {
 		MobileCodeAuthenticationToken authenticationToken = new MobileCodeAuthenticationToken(mobile, code);
 		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 		AuthenticationToken storeAccessToken = tokenStore.storeToken(authenticate, client);

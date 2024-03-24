@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Validated
 @ApiModel(value = "用户注册请json", description = "用户注册")
 public class UserRegisterRequest {
 
@@ -35,7 +37,7 @@ public class UserRegisterRequest {
 	@NotNull(message = "手机号不能为空")
 	@IsPhone
 	@ApiModelProperty("手机号")
-	private long mobile;
+	private String mobile;
 
 	@NotBlank(message = "验证码不能为空")
 	@ApiModelProperty("验证码")

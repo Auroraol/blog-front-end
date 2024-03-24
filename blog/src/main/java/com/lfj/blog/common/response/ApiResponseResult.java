@@ -1,5 +1,6 @@
 package com.lfj.blog.common.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL) // 为空字段不进行序列化
 public class ApiResponseResult<T> {
 	private int code;
 	private T data;

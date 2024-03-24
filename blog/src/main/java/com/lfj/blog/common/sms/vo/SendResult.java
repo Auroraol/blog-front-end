@@ -5,9 +5,6 @@ import lombok.Data;
 
 /**
  * 短信发送结果
- *
- * @author: yaohw
- * @create: 2019-12-03 16:43
  **/
 @Data
 @AllArgsConstructor

@@ -7,7 +7,7 @@ import com.lfj.blog.common.constant.RoleConstant;
 import com.lfj.blog.common.constant.UserConstant;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
 import com.lfj.blog.common.security.details.vo.UserVo;
-import com.lfj.blog.common.sms.SmsCodeService;
+import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.controller.model.request.UserRegisterRequest;
 import com.lfj.blog.entity.User;
 import com.lfj.blog.exception.ApiException;
@@ -111,22 +111,22 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 	@Override
 	@Transactional(rollbackFor = Exception.class)  // 开启事务
 	public void register(UserRegisterRequest request) {
-		long mobile = request.getMobile();
+		String mobile = request.getMobile();
 		String code = request.getCode();
 		checkSmsCode(mobile, code); // 检测手机号和验证码是否对
 		String username = request.getUsername();
-		User userDao = selectUserByUsernameOrMobile(username, mobile);
+		User userDao = selectUserByUsernameOrMobile(username, Long.valueOf(mobile));
 		if (userDao != null && username.equals(userDao.getUsername())) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "用户名已存在");
 		}
-		if (userDao != null && mobile == userDao.getMobile()) {
+		if (userDao != null && Long.valueOf(mobile) == userDao.getMobile()) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "手机号已被使用");
 		}
 		User user = new User();
 		user.setUsername(username);
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
-		user.setMobile(mobile);
+		user.setMobile(Long.valueOf(mobile));
 		String suffix = String.valueOf(mobile).substring(5);
 		user.setNickname("用户" + suffix);
 		user.setGender(UserConstant.GENDER_MALE);
@@ -497,7 +497,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 	 * @param mobile
 	 * @param code
 	 */
-	private void checkSmsCode(long mobile, String code) {
+	private void checkSmsCode(String mobile, String code) {
 		if (!smsCodeService.checkSmsCode(mobile, code)) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "验证码不正确");
 		}

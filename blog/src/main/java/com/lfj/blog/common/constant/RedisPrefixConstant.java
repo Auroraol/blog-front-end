@@ -1,8 +1,7 @@
 package com.lfj.blog.common.constant;
 
 /**
- * @author: yaohw
- * @create: 2019-10-30 15:20
+ * Redis缓存前缀
  **/
 public class RedisPrefixConstant {
 

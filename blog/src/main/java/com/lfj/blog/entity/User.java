@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -18,6 +21,8 @@ import java.time.LocalDateTime;
  */
 @TableName(value = "user")
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@ApiModel(value = "User对象", description = "用户表")
 public class User implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
@@ -25,21 +30,25 @@ public class User implements Serializable {
 	 * 用户id
 	 */
 	@TableId(value = "id", type = IdType.AUTO)
+	@ApiModelProperty(value = "用户id")
 	private Integer id;
 	/**
 	 * 用户名
 	 */
 	@TableField(value = "username")
+	@ApiModelProperty(value = "用户名")
 	private String username;
 	/**
 	 * 密码
 	 */
 	@TableField(value = "password")
+	@ApiModelProperty(value = "密码")
 	private String password;
 	/**
 	 * 手机号
 	 */
 	@TableField(value = "mobile")
+	@ApiModelProperty(value = "手机号")
 	private Long mobile;
 	/**
 	 * 昵称

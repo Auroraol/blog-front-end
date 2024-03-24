@@ -123,6 +123,14 @@
         </dependency>
         <!--认证安全security结束-->
         <!--redis相关-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
         <!-- cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -158,6 +166,12 @@
             <groupId>com.github.qcloudsms</groupId>
             <artifactId>qcloudsms</artifactId>
             <version>1.0.5</version>
+        </dependency>
+        <!--阿里云 sms sdk 依赖-->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibabacloud-dysmsapi20170525</artifactId>
+            <version>2.0.23</version>
         </dependency>
         <!--短信结束-->
         <!-- thymeleaf -->

@@ -4,8 +4,17 @@ import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.exception.ApiException;
 import com.lfj.blog.exception.MobileCodeException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static com.lfj.blog.common.response.enums.ResponseCodeEnum.INVALID_REQUEST;
 
@@ -27,6 +36,33 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MobileCodeException.class)
 	public ApiResponseResult handleBadMobileCodeException(MobileCodeException e) {
 		return ApiResponseResult.fail(INVALID_REQUEST.getCode(), e.getMessage());
+	}
+
+
+	/**
+	 * RequestParam 参数格式校验不通过 异常(Validator校验框架臃肿所以单独拦截参数校验的异常)
+	 *
+	 * @return
+	 */
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ApiResponseResult handleConstraintViolationException(ConstraintViolationException ex) {
+		Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+		List<ConstraintViolation<?>> list = new ArrayList<>(constraintViolations);
+		ConstraintViolation<?> constraintViolation = list.get(0);
+		return ApiResponseResult.fail(INVALID_REQUEST.getCode(), constraintViolation.getMessage());
+	}
+
+	/**
+	 * RequestBody 参数校验不通过 异常(Validator校验框架臃肿所以单独拦截参数校验的异常)
+	 *
+	 * @param ex
+	 * @return
+	 */
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ApiResponseResult handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		BindingResult bindingResult = ex.getBindingResult();
+		List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+		return ApiResponseResult.fail(INVALID_REQUEST.getCode(), fieldErrors.get(0).getDefaultMessage());
 	}
 
 	/**

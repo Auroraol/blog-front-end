@@ -1,6 +1,6 @@
 package com.lfj.blog.common.security;
 
-import com.lfj.blog.common.sms.SmsCodeService;
+import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.exception.MobileCodeException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
@@ -40,14 +40,14 @@ public class MobileCodeAuthenticationProvider implements AuthenticationProvider,
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		Long mobile = (Long) authentication.getPrincipal();
+		String mobile = (String) authentication.getPrincipal();
 		String code = (String) authentication.getCredentials();
 		if (!smsCodeService.checkSmsCode(mobile, code)) {
 			throw new MobileCodeException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Invalid code"));
 		}
 		UserDetails user;
 		try {
-			user = userDetailsService.loadUserByUsername(Long.toString(mobile));
+			user = userDetailsService.loadUserByUsername(mobile);
 		} catch (UsernameNotFoundException var6) {
 
 			throw new UsernameNotFoundException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));

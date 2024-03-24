@@ -5,7 +5,7 @@ import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
 import com.lfj.blog.common.security.AuthenticationToken;
 import com.lfj.blog.common.security.RedisTokenStore;
-import com.lfj.blog.common.sms.SmsCodeService;
+import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.common.validator.annotation.IsPhone;
 import com.lfj.blog.controller.model.dto.AccessTokenDTO;
 import com.lfj.blog.entity.Client;
@@ -73,7 +73,7 @@ public class AuthenticationController {
 
 	@PostMapping("/mobile/login")
 	@ApiOperation(value = "手机号验证码登录", notes = "验证码调用发送验证码接口获取")
-	public ApiResponseResult<AccessTokenDTO> mobileLogin(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam long mobile,
+	public ApiResponseResult<AccessTokenDTO> mobileLogin(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam String mobile,
 														 @ApiParam("手机号验证码") @NotBlank(message = "验证码不能为空") @RequestParam String code,
 														 @ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
 		Client client = getAndValidatedClient(authorization);

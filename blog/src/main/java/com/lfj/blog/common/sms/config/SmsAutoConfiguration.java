@@ -1,7 +1,8 @@
 package com.lfj.blog.common.sms.config;
 
-import com.lfj.blog.common.sms.SmsCodeService;
-import com.lfj.blog.common.sms.impl.tencent.TencentSmsCodeService;
+import com.lfj.blog.common.sms.service.SmsCodeService;
+import com.lfj.blog.common.sms.service.impl.ali.AliSmsCodeServiceImpl;
+import com.lfj.blog.common.sms.service.impl.tencent.TencentSmsCodeServiceImpl;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -10,9 +11,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * 短信验证码服务自动配置，默认阿里云短信服务
- *
- * @author: yaohw
- * @create: 2019-11-05 10:36
  **/
 @Log4j2
 @Configuration
@@ -24,8 +22,8 @@ public class SmsAutoConfiguration {
 	public SmsCodeService smsService(SmsServiceProperties properties) {
 		int type = properties.getType();
 		if (type == 1) {
-			return new com.lfj.blog.common.sms.ali.AliSmsCodeService(properties);
+			return new AliSmsCodeServiceImpl(properties);
 		}
-		return new TencentSmsCodeService(properties);
+		return new TencentSmsCodeServiceImpl(properties);
 	}
 }

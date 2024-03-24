@@ -3,10 +3,6 @@ package com.lfj.blog.common.sms.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-/**
- * @author: yaohw
- * @create: 2019-11-05 15:40
- **/
 @Data
 @ConfigurationProperties(prefix = "sms", ignoreInvalidFields = true)
 public class SmsServiceProperties {

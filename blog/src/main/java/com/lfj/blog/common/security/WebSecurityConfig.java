@@ -3,7 +3,7 @@ package com.lfj.blog.common.security;
 import com.alibaba.fastjson2.JSON;
 import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.common.security.filter.AuthorizationTokenFilter;
-import com.lfj.blog.common.sms.SmsCodeService;
+import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.service.IUserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

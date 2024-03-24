@@ -1,8 +1,8 @@
-package com.lfj.blog.common.sms.impl;
+package com.lfj.blog.common.sms.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.lfj.blog.common.constant.RedisPrefixConstant;
-import com.lfj.blog.common.sms.SmsCodeService;
+import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.common.sms.vo.SendResult;
 import lombok.Data;
 import org.springframework.beans.BeansException;
@@ -14,25 +14,24 @@ import org.springframework.util.Assert;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author: yaohw
- * @create: 2019/11/4 11:20 下午
- */
 @Data
-public abstract class BaseSmsCodeService implements SmsCodeService, InitializingBean, ApplicationContextAware {
+public abstract class BaseSmsCodeServiceImpl implements SmsCodeService,
+		InitializingBean, ApplicationContextAware {
 
+	private ApplicationContext applicationContext; //Spring的ApplicationContext的持有者,可以获取spring容器中的bean
 	private StringRedisTemplate redisTemplate;
-
-	private ApplicationContext applicationContext;
-
 	/**
 	 * 短信验证码有效时间
 	 */
 	private long expire = 300L;
 
+
+	//从应用程序上下文中获取 StringRedisTemplate 类型的 Bean，并进行必要的校验，确保该 Bean 的正确性和可用性
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
+		if (this.applicationContext == null) {
+			this.applicationContext = applicationContext;
+		}
 	}
 
 	@Override
@@ -51,10 +50,12 @@ public abstract class BaseSmsCodeService implements SmsCodeService, Initializing
 	 * @return
 	 */
 	@Override
-	public boolean sendSmsCode(long mobile) {
+	public boolean sendSmsCode(String mobile) {
 		SendResult sendResult = handleSendSmsCode(mobile);
 		String code = sendResult.getCode();
 		boolean smsSuccess = sendResult.isSuccess();
+//		System.out.println(code);
+//		System.out.println(smsSuccess);
 		if (!StringUtils.isBlank(code) && smsSuccess) {
 			cacheSmsCode(mobile, code);
 			return true;
@@ -68,7 +69,7 @@ public abstract class BaseSmsCodeService implements SmsCodeService, Initializing
 	 * @param mobile 手机号
 	 * @return
 	 */
-	protected abstract SendResult handleSendSmsCode(long mobile);
+	protected abstract SendResult handleSendSmsCode(String mobile);
 
 	/**
 	 * 缓存短信验证码
@@ -77,7 +78,7 @@ public abstract class BaseSmsCodeService implements SmsCodeService, Initializing
 	 * @param code
 	 */
 	@Override
-	public void cacheSmsCode(long mobile, String code) {
+	public void cacheSmsCode(String mobile, String code) {
 		redisTemplate.opsForValue().set(RedisPrefixConstant.SMS_CODE + mobile, code,
 				expire, TimeUnit.SECONDS);
 	}
@@ -90,7 +91,7 @@ public abstract class BaseSmsCodeService implements SmsCodeService, Initializing
 	 * @return
 	 */
 	@Override
-	public boolean checkSmsCode(long mobile, String code) {
+	public boolean checkSmsCode(String mobile, String code) {
 		String cacheCode = redisTemplate.opsForValue().get(RedisPrefixConstant.SMS_CODE + mobile);
 		return !StringUtils.isBlank(cacheCode) && cacheCode.equals(code);
 	}
@@ -102,7 +103,7 @@ public abstract class BaseSmsCodeService implements SmsCodeService, Initializing
 	 * @return
 	 */
 	@Override
-	public boolean deleteSmsCode(long mobile) {
+	public boolean deleteSmsCode(String mobile) {
 		redisTemplate.delete(RedisPrefixConstant.SMS_CODE + mobile);
 		return true;
 	}
