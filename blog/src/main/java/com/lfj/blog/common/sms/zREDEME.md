@@ -43,10 +43,10 @@ sms:
   # 阿里短信配置(阿里云平台里看)
   ali:
     regionId: cn-hangzhou         # 地区编号
-    accessKeyId: LTAI5tRn3SLwXcQWqcTNHr4r            # 子用户的访问键
-    accessKeySecret: uUMJ1zrWhZ6QlMqCyPC6LcL  # 子用户的访问密钥
+    accessKeyId: xxxx            # 子用户的访问键
+    accessKeySecret: xxx  # 子用户的访问密钥
     signName: 悦读博客              # 签名名称
-    templateCode: SMS_465388108    # 登录短信模板的code
+    templateCode: xxxx    # 登录短信模板的code
   # 腾讯短信配置
   tencent:
     appId: 14001859
