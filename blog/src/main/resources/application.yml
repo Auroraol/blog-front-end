@@ -24,6 +24,7 @@ spring:
         max-idle: 10
         # 连接池中的最小空闲连接
         min-idle: 0
+    database: 10
   # 配置使用的缓存：redis
   cache:
     type: redis
@@ -101,6 +102,7 @@ ignore:
     - /leave/message/page
     - /leave/message/latest
     - /oauth
+#    - /client/**
 
 # 生产环境禁用swagger
 swagger:

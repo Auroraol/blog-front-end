@@ -3,7 +3,7 @@ package com.lfj.blog.common.security;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
-import com.lfj.blog.common.security.details.vo.CustomUserDetails;
+import com.lfj.blog.common.security.details.CustomUserDetails;
 import com.lfj.blog.common.security.details.vo.UserVo;
 import com.lfj.blog.entity.Client;
 import com.lfj.blog.exception.ApiException;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * accessToken 生成、存储
+ * accessToken 生成、存储(同Redis)
  *
  * @author: yaohw
  * @create: 2019-10-28 17:48
@@ -147,10 +147,11 @@ public class RedisTokenStore {
 	 * @return void
 	 */
 	public AuthenticationToken storeToken(Authentication authentication, Client client) {
-		// 同一客户端，同一用户是否已登录
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();  // 获取用户名
 		Integer userId = userDetails.getId();
-		String clientId = client.getClientId();
+		String clientId = client.getClientId();   // 获取客户端id
+		// 同一客户端，同一用户是否已登录
 		byte[] uname2accessKey = serializedKey(UNAME_TO_ACCESS + extractKey(userId, clientId));
 		String access = readAccessByUnameKey(uname2accessKey);
 		long accessExpire = client.getAccessTokenExpire() == null ? ACCESS_EXPIRE : client.getAccessTokenExpire();
@@ -162,7 +163,6 @@ public class RedisTokenStore {
 			return storeTokenOfAll(uname2accessKey, userId, accessExpire, refreshExpire, userDetails);
 		}
 		return storeTokenOfOnlyAccess(uname2accessKey, userId, accessExpire, userDetails);
-
 	}
 
 	/**

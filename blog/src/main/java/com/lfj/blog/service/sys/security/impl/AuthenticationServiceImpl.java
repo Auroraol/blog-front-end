@@ -24,7 +24,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private RedisTokenStore tokenStore;
+	private RedisTokenStore redisTokenStore;
 
 	@Autowired
 	private SmsCodeService smsCodeService;
@@ -39,9 +39,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	 */
 	@Override
 	public AuthenticationToken usernameOrMobilePasswordAuthenticate(String s, String password, Client client) {
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(s, password);
+
+		// 构造用户名密码认证信息
+		// 将用户名和密码放入，然后此方法会调用我们之前写的UserDetailsService的实现类中UserDetailsServiceImpl中的方法进行校验
+		// （PS： 在后面JwtAuthenticationTokenFilter类中使用此UsernamePasswordAuthenticationToken的时候，构造的入参也可以放（用户LoginUser）类型
+		UsernamePasswordAuthenticationToken authenticationToken =
+				new UsernamePasswordAuthenticationToken(s, password);
+
+		// 对认证信息进行认证, AuthenticationManager的authenticate()方法来进行用户认证
 		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-		return tokenStore.storeToken(authenticate, client);
+
+		// 将认证信息存储在 redisTokenStore
+		return redisTokenStore.storeToken(authenticate, client);
 	}
 
 	/**
@@ -56,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public AuthenticationToken mobileCodeAuthenticate(String mobile, String code, Client client) {
 		MobileCodeAuthenticationToken authenticationToken = new MobileCodeAuthenticationToken(mobile, code);
 		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-		AuthenticationToken storeAccessToken = tokenStore.storeToken(authenticate, client);
+		AuthenticationToken storeAccessToken = redisTokenStore.storeToken(authenticate, client);
 		smsCodeService.deleteSmsCode(mobile);
 		return storeAccessToken;
 	}
@@ -69,7 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	 */
 	@Override
 	public void remove(String accessToken, Client client) {
-		tokenStore.remove(accessToken, client);
+		redisTokenStore.remove(accessToken, client);
 	}
 
 	/**
@@ -81,7 +90,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	 */
 	@Override
 	public AuthenticationToken refreshAccessToken(String refreshToken, Client client) {
-		return tokenStore.refreshAuthToken(refreshToken, client);
+		return redisTokenStore.refreshAuthToken(refreshToken, client);
 	}
 
 

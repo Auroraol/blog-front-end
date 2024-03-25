@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
  * 用户表 前端控制器
  * </p>
  *
- * @author yaohw
- * @since 2019-10-23
+ * @Author: LFJ
+ * @Date: 2024-01-25 14:02
  */
 @RestController
 @RequestMapping("/user")

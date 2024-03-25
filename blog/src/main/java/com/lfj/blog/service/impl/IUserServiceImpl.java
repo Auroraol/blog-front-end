@@ -119,21 +119,22 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 		if (userDao != null && username.equals(userDao.getUsername())) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "用户名已存在");
 		}
-		if (userDao != null && Long.valueOf(mobile) == userDao.getMobile()) {
+		if (userDao != null && Long.valueOf(mobile).equals(userDao.getMobile())) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "手机号已被使用");
 		}
+		// 保存数据库
 		User user = new User();
 		user.setUsername(username);
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  // 使用spring security 加密密码
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
 		user.setMobile(Long.valueOf(mobile));
-		String suffix = String.valueOf(mobile).substring(5);
+		String suffix = mobile.substring(5);
 		user.setNickname("用户" + suffix);
 		user.setGender(UserConstant.GENDER_MALE);
 		user.setBirthday(LocalDate.now());
 		user.setStatus(UserConstant.STATUS_NORMAL);
 		user.setCreateTime(LocalDateTime.now());
-		user.setAdmin(UserConstant.ORDINARY);
+		user.setAdmin(UserConstant.ORDINARY);  //默认普通用户
 		save(user);
 		smsCodeService.deleteSmsCode(mobile);
 	}

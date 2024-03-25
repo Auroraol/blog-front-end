@@ -52,7 +52,7 @@ public class IClientServiceImpl extends ServiceImpl<ClientMapper, Client>
 
 
 	/**
-	 * 校验是否已存在
+	 * id为空时, 检测是否clientId已存在, 不存在则新增, 存在返回客户端已存在
 	 *
 	 * @param client
 	 */
@@ -64,7 +64,7 @@ public class IClientServiceImpl extends ServiceImpl<ClientMapper, Client>
 			log.info(count);
 			if (count != 0) {
 				// 抛出自定义异常 无效请求
-				throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "需要accessToken");
+				throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "客户端已存在");
 			}
 		}
 	}

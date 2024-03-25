@@ -38,7 +38,6 @@ public class GlobalExceptionHandler {
 		return ApiResponseResult.fail(INVALID_REQUEST.getCode(), e.getMessage());
 	}
 
-
 	/**
 	 * RequestParam 参数格式校验不通过 异常(Validator校验框架臃肿所以单独拦截参数校验的异常)
 	 *

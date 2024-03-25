@@ -18,9 +18,7 @@ import java.io.IOException;
 
 /**
  * AuthenticationToken 校验过滤器
- *
- * @author: yaohw
- * @create: 2019-10-29 19:47
+ * 认证结果过滤器
  **/
 @Component
 public class AuthorizationTokenFilter extends OncePerRequestFilter {

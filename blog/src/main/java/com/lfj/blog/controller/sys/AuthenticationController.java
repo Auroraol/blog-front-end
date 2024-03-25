@@ -13,6 +13,7 @@ import com.lfj.blog.exception.ApiException;
 import com.lfj.blog.service.IClientService;
 import com.lfj.blog.service.sys.security.AuthenticationService;
 import com.lfj.blog.service.sys.security.biz.OauthService;
+import com.lfj.blog.utils.BeanCopyUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -66,9 +67,9 @@ public class AuthenticationController {
 														  @ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
 		Client client = getAndValidatedClient(authorization);
 		AuthenticationToken authenticationToken = authenticationService.usernameOrMobilePasswordAuthenticate(username, password, client);
-		AccessTokenDTO response = new AccessTokenDTO();
-		BeanUtils.copyProperties(authenticationToken, response);
-		return ApiResponseResult.success(response);
+		//生成响应的token
+		AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
+		return ApiResponseResult.success(accessTokenDTO);
 	}
 
 	@PostMapping("/mobile/login")
@@ -124,9 +125,10 @@ public class AuthenticationController {
 	 * @return
 	 */
 	private Client getAndValidatedClient(String authorization) {
-		String[] clientIdAndClientSecret = extractClientIdAndClientSecret(authorization);
+		String[] clientIdAndClientSecret = extractClientIdAndClientSecret(authorization); // 符合基本格式
 		String clientId = clientIdAndClientSecret[0];
 		String clientSecret = clientIdAndClientSecret[1];
+		//通过clientService 去数据库查找
 		Client client = clientService.getClientByClientId(clientId);
 		if (client == null || !clientSecret.equals(client.getClientSecret())) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "无效客户端");
@@ -135,7 +137,9 @@ public class AuthenticationController {
 	}
 
 	/**
-	 * 提取客户端id和客户端密码
+	 * 提取客户端id和客户端密码, 是否符号格式 Basic cGM6MTIzNDU2
+	 * 其中cGM6MTIzNDU2为pc:123456 经过base64加密后的密文。
+	 * pc为clientId，123456为clientSecret。
 	 *
 	 * @param authorization
 	 * @return
@@ -144,9 +148,10 @@ public class AuthenticationController {
 		if (!authorization.startsWith(AUTHORIZATION_TYPE)) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "无效客户端");
 		}
-		String base64Data = authorization.substring(6);
+		String base64Data = authorization.substring(6); // 以索引6开始, 如Basic cGM6MTIzNDU2 -> cGM6MTIzNDU2
 		try {
-			String data = new String(Base64.decodeBase64(base64Data));
+			String data = new String(Base64.decodeBase64(base64Data)); //解密
+			log.info(data);
 			String separator = ":";
 			String[] split = data.split(separator);
 			int length = split.length;

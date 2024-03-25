@@ -24,7 +24,7 @@ public interface IClientService extends IService<Client> {
 	void clearCache();
 
 	/**
-	 * 校验是否已存在
+	 * id为空时, 检测是否clientId已存在, 不存在则新增, 存在返回客户端已存在
 	 *
 	 * @param client
 	 */

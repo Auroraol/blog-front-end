@@ -1,7 +1,7 @@
 package com.lfj.blog.common.security;
 
 
-import com.lfj.blog.common.security.details.vo.CustomUserDetails;
+import com.lfj.blog.common.security.details.CustomUserDetails;
 import com.lfj.blog.common.security.details.vo.UserVo;
 import com.lfj.blog.service.IUserService;
 import org.springframework.beans.BeanUtils;

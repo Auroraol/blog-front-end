@@ -12,8 +12,7 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
- * @author: yaohw
- * @create: 2019-10-24 16:50
+ * 对User二次封装, 用于Security授权功能
  **/
 @Data
 @Accessors(chain = true)
@@ -26,6 +25,6 @@ public class UserVo extends User {
 	 * 角色列表
 	 */
 	@ApiModelProperty(value = "角色列表")
-	protected List<String> roles;
+	protected List<String> roles;            // 存储权限信息
 
 }

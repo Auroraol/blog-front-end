@@ -19,7 +19,7 @@ import java.io.Serializable;
  */
 @TableName(value = "client")
 @Data
-//@Accessors(chain = true)  链式, enity没必要, vo可以用
+//@Accessors(chain = true)  //链式, enity没必要, vo可以用
 @JsonInclude(JsonInclude.Include.NON_NULL) // 为空字段不进行序列化
 @ApiModel(value = "Client对象", description = "客户端表")
 public class Client implements Serializable {

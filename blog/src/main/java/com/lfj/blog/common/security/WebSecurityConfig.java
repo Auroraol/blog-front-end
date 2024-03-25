@@ -40,7 +40,7 @@ import java.util.List;
 @Log4j2
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true) // 开启授权
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -87,7 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(provider())//自定义手机验证码认证提供者
 				.authenticationProvider(provider2())//自定义主键查询用户认证提供者
-				.userDetailsService(userDetailsService)
+				.userDetailsService(userDetailsService) // 确认用户数据的来源
 				.passwordEncoder(passwordEncoder());
 	}
 
@@ -120,6 +120,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
 		//添加认证过滤器(自定义)
+		// 第一个参数是要添加的过滤器对象，第二个参数是指定在哪一个现有过滤器之前添加这个自定义过滤器。
+		//实现在进行用户名密码认证之前对请求进行自定义的认证逻辑处理。
 		http.addFilterBefore(authorizationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 		//自定义权限拒绝处理类// 权限拦截器，提示用户没有当前权限
 		http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());

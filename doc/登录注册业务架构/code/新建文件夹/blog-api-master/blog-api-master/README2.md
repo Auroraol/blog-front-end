@@ -146,7 +146,6 @@ CREATE TABLE `client` (
 ```json
 {
     "code": 200000,
-    "data": null,
     "message": "响应成功"
 }
 ```
@@ -157,13 +156,17 @@ CREATE TABLE `client` (
 POST http://localhost:9000/client/save
 ```
 
-**新增或更新客户端**
+**id为不null时更新**
 
-![image-20240321223129070](README2.assets/image-20240321223129070.png)
+![image-20240324163405346](README2.assets/image-20240324163405346.png)
 
-**id为null时新增需要管理员权限**
+保存到数据库中
 
-![image-20240321223153561](README2.assets/image-20240321223153561.png)
+<img src="README2.assets/image-20240324163414872.png" style="zoom:90%;" />
+
+**id为null时新增**
+
+![image-20240324163441829](README2.assets/image-20240324163441829.png)
 
 
 
@@ -211,7 +214,6 @@ export function saveClient(data) {
 ```json
 {
     "code": 200000,
-    "data": null,
     "message": "响应成功"
 }
 ```
@@ -224,11 +226,11 @@ DELETE http://localhost:9000/client/delete/1
 
 **删除成功**
 
-![image-20240321223838837](README2.assets/image-20240321223838837.png)
+![image-20240324162535047](README2.assets/image-20240324162535047.png)
 
 **删除失败**
 
-![image-20240321224807253](README2.assets/image-20240321224807253.png)
+![image-20240324162547096](README2.assets/image-20240324162547096.png)
 
 后端
 
@@ -444,13 +446,19 @@ POST http://localhost:9000/sms/send
 
 ## 认证
 
-认证区分客户端，因此，登录、退出、刷新access_token接口都需要在请求头带上客户端信息。
+### 认证区分客户端
+
+登录、退出、刷新access_token接口都需要在请求头带上客户端信息。
 
 例子： `Authorization: Basic cGM6MTIzNDU2`
 
 这里的`cGM6MTIzNDU2`为pc:123456经过base64加密后的密文。pc为clientId，123456为clientSecret。
 
+![image-20240324163826181](README2.assets/image-20240324163826181.png)
+
 ### 账号密码登录
+
+#### API 接口
 
 请求方法：POST
 
@@ -481,6 +489,12 @@ password：密码，必传
   }
 }
 ```
+
+#### Postman
+
+![image-20240324163829926](README2.assets/image-20240324163829926.png)
+
+![image-20240324163603022](README2.assets/image-20240324163603022.png)
 
 ### 手机号验证码登录
 
@@ -801,6 +815,8 @@ public class AuthenticationController extends BaseController {
 
 ### 用户注册
 
+#### API 接口
+
 请求方法：POST
 
 请求地址：/user/register
@@ -826,6 +842,7 @@ public class AuthenticationController extends BaseController {
 
 + 验证码调发送验证码接口获取；
 + 用户名只能字母开头，允许2-16字节，允许字母数字下划线；密码不能少于6位数。
++ 默认创建普通用户
 
 注册成功：
 
@@ -836,7 +853,23 @@ public class AuthenticationController extends BaseController {
 }
 ```
 
+#### Postman
 
+```
+POST http://localhost:9000/user/register
+```
 
+1、发起短信
 
+![image-20240324151030647](README2.assets/image-20240324151030647.png)
+
+<img src="README2.assets/image-20240324151112439.png" alt="image-20240324151112439" style="zoom: 33%;" />
+
+2、用户注册
+
+![image-20240324151023627](README2.assets/image-20240324151023627.png)
+
+3、查看数据库
+
+![image-20240324151014768](README2.assets/image-20240324151014768.png)
 
