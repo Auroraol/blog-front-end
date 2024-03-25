@@ -44,7 +44,7 @@ sms:
   ali:
     regionId: cn-hangzhou         # 地区编号
     accessKeyId: LTAI5tRn3SLwXcQWqcTNHr4r            # 子用户的访问键
-    accessKeySecret: KXPxn37uUMJ1zrWhZ6QlMqCyPC6LcL  # 子用户的访问密钥
+    accessKeySecret: uUMJ1zrWhZ6QlMqCyPC6LcL  # 子用户的访问密钥
     signName: 悦读博客              # 签名名称
     templateCode: SMS_465388108    # 登录短信模板的code
   # 腾讯短信配置

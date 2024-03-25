@@ -173,8 +173,20 @@ public class ApiResponseResult<T> {
 		return fail(ResponseCodeEnum.CREDENTIALS_EXPIRED);
 	}
 
+
 	/**
-	 * 无权限访问
+	 * 授权失败, 不允许访问
+	 *
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> ApiResponseResult<T> access_denied() {
+
+		return fail(ResponseCodeEnum.ACCESS_DENIED);
+	}
+
+	/**
+	 * 认证失败，无权限访问，请重新登录")
 	 *
 	 * @param <T>
 	 * @return

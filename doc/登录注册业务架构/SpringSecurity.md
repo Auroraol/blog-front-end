@@ -3439,13 +3439,29 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
  在SpringSecurity中，如果我们在认证或者授权的过程中出现了异常会被ExceptionTranslationFilter捕获到。在ExceptionTranslationFilter中会去判断是认证失败还是授权失败出现的异常。
 
- - 如果是认证过程中出现的异常会被封装成AuthenticationException然后调用**AuthenticationEntryPoint**对象的方法去进行异常处理。
++ 如果是认证过程中出现的异常会被封装成AuthenticationException然后调用**AuthenticationEntryPoint**对象的方法去进行异常处理。
 
- - 如果是授权过程中出现的异常会被封装成AccessDeniedException然后调用**AccessDeniedHandler**对象的方法去进行异常处理。
++ 如果是授权过程中出现的异常会被封装成AccessDeniedException然后调用**AccessDeniedHandler**对象的方法去进行异常处理。(当全局异常处理和 @PreAuthorize 注解结合使用时，抛出 AccessDeniedException 异常，不会被 accessDeniedHandler 捕获，而是会被全局异常捕获。)
 
- 所以如果我们需要自定义异常处理，我们只需要自定义AuthenticationEntryPoint和AccessDeniedHandler然后**配置给SpringSecurity**即可。
+需要自定义异常处理，只需要自定义AuthenticationEntryPoint和AccessDeniedHandler然后**配置给SpringSecurity**即可。
 
 ①自定义实现类
+
+认证过程中出现的异常
+
+```java
+@Component
+public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        ResponseResult result = new ResponseResult(HttpStatus.UNAUTHORIZED.value(), "认证失败请重新登录");
+        String json = JSON.toJSONString(result);
+        WebUtils.renderString(response,json);
+    }
+}
+```
+
+授权过程中出现的异常
 
 ```java
 @Component
@@ -3458,25 +3474,9 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
 
     }
 }
-/**
- * 
- */
-@Component
-public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
-    @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ResponseResult result = new ResponseResult(HttpStatus.UNAUTHORIZED.value(), "认证失败请重新登录");
-        String json = JSON.toJSONString(result);
-        WebUtils.renderString(response,json);
-    }
-}
 ```
 
-> 别往了加@Component注解配置为bean放入容器
-
 ②配置给SpringSecurity
-
-
 
  在SpringSecurity配置类中先注入对应的处理器
 
@@ -3787,3 +3787,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 ```
 
 ### 其他认证方案畅想
+
+
+
+
+
+
+
+
+
+![image-20240325175446056](SpringSecurity.assets/image-20240325175446056.png)
+
+
+
