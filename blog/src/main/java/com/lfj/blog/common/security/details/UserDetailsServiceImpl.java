@@ -33,8 +33,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		if (userVo == null) {
 			throw new UsernameNotFoundException("user not found:" + username);
 		}
-//		UserDetails userDetails = new CustomUserDetails();
-//		BeanUtils.copyProperties(userVo, userDetails);
 		return BeanCopyUtil.copyObject(userVo, CustomUserDetails.class);
 	}
 }

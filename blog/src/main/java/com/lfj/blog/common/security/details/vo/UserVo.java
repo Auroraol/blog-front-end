@@ -25,6 +25,6 @@ public class UserVo extends User {
 	 * 角色列表
 	 */
 	@ApiModelProperty(value = "角色列表")
-	protected List<String> roles;            // 存储权限信息
+	protected List<String> roles;            // 存储当前权限信息
 
 }

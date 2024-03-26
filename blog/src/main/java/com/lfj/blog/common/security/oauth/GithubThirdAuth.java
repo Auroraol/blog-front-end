@@ -17,9 +17,6 @@ import java.util.Map;
 
 /**
  * github 第三方登录
- *
- * @author: yaohw
- * @create: 2020-05-20 11:49
  **/
 @Log4j2
 @Service

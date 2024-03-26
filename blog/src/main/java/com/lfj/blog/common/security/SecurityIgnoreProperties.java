@@ -10,9 +10,8 @@ import java.util.List;
 
 /**
  * 忽略security校验配置
- *
- * @author: yaohw
- * @create: 2019-11-08 15:04
+ * <p>
+ * 2019-11-08 15:04
  **/
 @Data
 @Configuration

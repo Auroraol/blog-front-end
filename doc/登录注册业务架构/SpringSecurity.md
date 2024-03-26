@@ -2984,13 +2984,13 @@ class SecurityConfig extends WebSecurityConfigurerAdapter
 
  SpringSecurity为我们提供了基于注解的权限控制方案，这也是我们项目中主要采用的方式。我们可以使用注解去指定访问对应的资源所需的权限。（还有一种方式就是我们在SecurityConfig类中的configure()方法中配置的.somthing()等，这种方式不怎么常用，主要就是用来配置放行一些静态资源，比如css、js、html文件等）
 
- 但是要使用@PreAuthorize等权限注解 需要我们在Security配置类上开启相关配置。
+在Security配置类上开启相关配置。
 
 ```java
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 ```
 
- 然后就可以使用对应的注解。**@PreAuthorize （经常使用）**
+ 然后就可以使用对应的注解。**@PreAuthorize **
 
 ```java
 @RestController
@@ -3495,6 +3495,22 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
                 accessDeniedHandler(accessDeniedHandler);
 ```
 
+③ 全局异常配置
+
+```java
+	/**
+	 * 处理AccessDeineHandler无权限异常
+	 *
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(AccessDeniedException.class)
+	public void accessDeniedException(AccessDeniedException e) throws AccessDeniedException {
+		// 将 Spring Security 异常继续抛出，以便交给自定义处理器处理
+		throw e;
+	}
+```
+
 ## 5. 跨域
 
  浏览器出于安全的考虑，使用 XMLHttpRequest这个异步请求对象发起 HTTP请求时必须遵守同源策略，否则就是跨域的HTTP请求，默认情况下是被禁止的。 同源策略要求源相同才能正常进行通信，即协议、域名、端口号都完全一致。
@@ -3568,8 +3584,6 @@ public class CorsConfig implements WebMvcConfigurer {
 ### 其它权限校验方法
 
  我们前面都是使用@PreAuthorize注解，然后在在其中使用的是hasAuthority方法进行校验。SpringSecurity还为我们提供了其它方法例如：hasAnyAuthority，hasRole，hasAnyRole等。
-
-
 
  这里我们先不急着去介绍这些方法，我们先去理解hasAuthority的原理，然后再去学习其他方法你就更容易理解，而不是死记硬背区别。并且我们也可以选择定义校验方法，实现我们自己的校验逻辑。
 
@@ -3800,3 +3814,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
+
+
+# 认证
+
+![image-20240325225256375](SpringSecurity.assets/image-20240325225256375.png)
+
+# 授权
+
+![image-20240325223843507](SpringSecurity.assets/image-20240325223843507.png)

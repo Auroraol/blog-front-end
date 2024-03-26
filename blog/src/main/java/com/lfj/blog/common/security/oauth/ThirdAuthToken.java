@@ -3,10 +3,7 @@ package com.lfj.blog.common.security.oauth;
 import lombok.Data;
 
 /**
- * 第三次token
- *
- * @author: yaohw
- * @create: 2020-05-20 11:37
+ * 封装应用授权请求的类 第三方token
  **/
 @Data
 public class ThirdAuthToken {

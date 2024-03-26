@@ -4,9 +4,8 @@ import java.io.InputStream;
 
 /**
  * 存储
- *
- * @author: yaohw
- * @create: 2019-10-30 17:39
+ * <p>
+ * 2019-10-30 17:39
  **/
 public interface Storage {
 

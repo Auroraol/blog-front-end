@@ -8,8 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 /**
- * @author: yaohw
- * @create: 2019-11-28 09:24
+ * 2019-11-28 09:24
  **/
 public class YearMonthFormatValidator implements ConstraintValidator<YearMonthFormat, String> {
 

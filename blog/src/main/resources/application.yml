@@ -47,6 +47,8 @@ mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
   configuration: # sql日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #    cache-enabled: true   # mybatis-plus二级缓存
+    map-underscore-to-camel-case: true  #开启MyBatis的下划线命名到驼峰命名的自动映射功能
 
 
 # 加密配置
@@ -116,9 +118,9 @@ oauth:
     clientId: bded74b0f0213
     clientSecret: 904294b14bb
   gitee:
-    clientId: 18348ed893d47d047a79fb0a395fe1c8c4
-    clientSecret: ac72d64d7e1f365fb526bcaa8057c
-    redirect_uri: https://www.poile.cn/oauth
+    clientId: 62d3af1f2058b5facec5316ab9d18b8d3602406fcb704adde7f5b38de381996b
+    clientSecret: a2e8ec6ee4acb3427581c13fbedfc4ba087cc2dd4d8e3b8cd8b4ea45b9cf9ef7
+    redirect_uri: https://www.poile.cn/oauth  #TODO 修改
   qq:
     appId: appid
     clientId: clientId

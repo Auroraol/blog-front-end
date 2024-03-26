@@ -9,8 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author: yaohw
- * @create: 2019-11-13 11:03
+ * 2019-11-13 11:03
  **/
 //  ConstraintValidator<自定义注解类, 校验的数据类型>
 public class IsImageValidator implements ConstraintValidator<IsImage, MultipartFile> {

@@ -15,9 +15,6 @@ import java.util.Map;
 
 /**
  * gitee 第三方登录
- *
- * @author: yaohw
- * @create: 2020-05-21 16:18
  **/
 @Log4j2
 @Service
@@ -72,6 +69,7 @@ public class GiteeThirdAuth {
 	 * @return
 	 */
 	public ThirdAuthToken getAuthToken(String code) {
+		//1. 创建http请求，构建请求体和请求url等, 并向gitee发起请求
 		Map<String, String> params = new HashMap<>(8);
 		params.put("code", code);
 		params.put("client_id", clientId);
@@ -79,6 +77,7 @@ public class GiteeThirdAuth {
 		params.put("grant_type", "authorization_code");
 		params.put("redirect_uri", redirect);
 		String result = HttpClientUtil.doPost(OauthConstant.GITEE_ACCESS_TOKE_URL, params);
+		//2. 获取gitee对应的响应消息，根据消息解析出用户的 access token
 		if (StringUtils.isBlank(result)) {
 			throw new ApiException(ResponseCodeEnum.SYSTEM_ERROR.getCode(), "获取第三方token出错");
 		}

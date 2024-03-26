@@ -7,9 +7,8 @@ import java.util.List;
 
 /**
  * 附加接口限流接口
- *
- * @author: yaohw
- * @create: 2019-11-22 17:30
+ * <p>
+ * 2019-11-22 17:30
  **/
 public interface ExtraLimiter {
 

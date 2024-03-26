@@ -15,9 +15,6 @@ import java.util.Map;
 
 /**
  * QQ 第三方登录
- *
- * @author: yaohw
- * @create: 2020-05-21 18:36
  **/
 @Service
 @Log4j2

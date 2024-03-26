@@ -7,7 +7,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 /**
- * @author: yaohw
+ *
  */
 public class IsPhoneValidator implements ConstraintValidator<IsPhone, Object> {
 

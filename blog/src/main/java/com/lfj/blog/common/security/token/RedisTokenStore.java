@@ -1,4 +1,4 @@
-package com.lfj.blog.common.security;
+package com.lfj.blog.common.security.token;
 
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -31,10 +31,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * accessToken 生成、存储(同Redis)
- *
- * @author: yaohw
- * @create: 2019-10-28 17:48
+ * accessToken 生成、存储(通过Redis)
+ * <p>
+ * 2019-10-28 17:48
  **/
 @Log4j2
 @Component
@@ -87,6 +86,8 @@ public class RedisTokenStore {
 
 	@Autowired
 	private RedisConnectionFactory connectionFactory;
+//	@Autowired
+//	LettuceConnectionFactory connectionFactory;
 
 	@Autowired
 	private IClientService clientService;
@@ -507,12 +508,14 @@ public class RedisTokenStore {
 		}
 	}
 
+
 	/**
 	 * 生成 Token
 	 *
 	 * @return String
 	 */
 	private String createToken() {
+		// todo 这里通过UUID, 也可以改成jwt
 		return UUID.randomUUID().toString();
 	}
 

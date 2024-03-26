@@ -71,7 +71,7 @@ export function sendCode(params) {
 
 
 
-## 客户端
+## 客户端 
 
 系统用户认证区分客户端
 
@@ -128,8 +128,8 @@ CREATE TABLE `client` (
     "id": "id",
     "clientId": "客户端id, 唯一",
     "clientSecret": "客户端秘钥",
-    "accessTokenExpire": "access_Token有效时间",
-    "refreshTokenExpire": "refresh_token有效时间",
+    "accessTokenExpire": "access_Token有效时间(s)",
+    "refreshTokenExpire": "refresh_token有效时间(s)",
     "enableRefreshToken": "是否启用refresh_token,1:是，0:否"
 }
 ```
@@ -138,7 +138,7 @@ CREATE TABLE `client` (
 
 + id为null则新增，id不为null则更新
 
-+ 超时时间单位为秒
++ 超时时间单位为秒(小时: 60L * 60 * n,   天: 24 * 60L * 60 * n )
 + 客户端id和客户端秘钥不能为空
 
 **保存成功：**
@@ -156,6 +156,10 @@ CREATE TABLE `client` (
 POST http://localhost:9000/client/save
 ```
 
+**携带access_token**
+
+![image-20240326190546780](README2.assets/image-20240326190546780.png)
+
 **id为不null时更新**
 
 ![image-20240324163405346](README2.assets/image-20240324163405346.png)
@@ -167,33 +171,6 @@ POST http://localhost:9000/client/save
 **id为null时新增**
 
 ![image-20240324163441829](README2.assets/image-20240324163441829.png)
-
-
-
-后端
-
-```java
-	@PostMapping("/save")
-	@ApiOperation(value = "新增或更新客户端,id为null时新增", notes = "需要accessToken，需要管理员权限")
-	public ApiResponseResult<Object> save(@Validated @RequestBody Client client) {
-		clientService.validateExist(client);
-		if (clientService.saveOrUpdate(client))
-			return ApiResponseResult.success();
-		return ApiResponseResult.operationError();
-	}
-```
-
-前端
-
-```js
-/**
- * 保存客户端
- * @param {Object} data
- */
-export function saveClient(data) {
-  return request.post('/client/save', data)
-}
-```
 
 ### 删除客户端
 
@@ -224,6 +201,10 @@ export function saveClient(data) {
 DELETE http://localhost:9000/client/delete/1
 ```
 
+**携带access_token**
+
+![image-20240326190553522](README2.assets/image-20240326190553522.png)
+
 **删除成功**
 
 ![image-20240324162535047](README2.assets/image-20240324162535047.png)
@@ -231,30 +212,6 @@ DELETE http://localhost:9000/client/delete/1
 **删除失败**
 
 ![image-20240324162547096](README2.assets/image-20240324162547096.png)
-
-后端
-
-```java
-	@DeleteMapping("/delete/{id}")
-	@ApiOperation(value = "删除客户端", notes = "需要accessToken，需要管理员权限")
-	public ApiResponseResult<Object> delete(@ApiParam("id") @PathVariable(value = "id") int id) {
-		if (clientService.removeById(id))
-			return ApiResponseResult.success();
-		return ApiResponseResult.operationError();
-	}
-```
-
-前端
-
-```js
-/**
- * 删除客户端
- * @param {Object} id
- */
-export function deleteClient(id) {
-  return request.delete('/client/delete/' + id)
-}
-```
 
 ### 分页获取客户端
 
@@ -308,127 +265,17 @@ size：每页数量，非必传，默认5
 GET http://localhost:9000/client/page?current=1&size=1
 ```
 
+**携带access_token**
+
+![image-20240326190610638](README2.assets/image-20240326190610638.png)
+
+**需要管理员权限： 是**
+
 ![image-20240321232131572](README2.assets/image-20240321232131572.png)
 
-后端
+**需要管理员权限： 否**
 
-```java
-	@GetMapping("/page")
-	@PreAuthorize("hasAuthority('admin')")
-	@ApiOperation(value = "分页获取客户端列表", notes = "需要accessToken，需要管理员权限")
-	public ApiResponseResult<Page<Client>> page(@ApiParam("页码") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
-												@ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size) {
-		return ApiResponseResult.success(clientService.getUserListWithPagination(current, size));
-	}
-
-```
-
-前端
-
-```js
-/**
- * 分页获取客户端列表
- * @data {Object} data
- */
-export function pageClient(params) {
-  return request.get('/client/page', { params })
-}
-```
-
-### 综合
-
-后端
-
-```java
-package com.lfj.blog.controller;
-
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.lfj.blog.common.response.ApiResponseResult;
-import com.lfj.blog.entity.Client;
-import com.lfj.blog.service.ClientService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-/**
- * <p>
- * 客户端表 前端控制器
- * </p>
- *
- * @author yaohw
- * @since 2019-12-06
- */
-@RestController
-@RequestMapping("/client")
-@Api(tags = "客户端服务", value = "/client")
-public class ClientController {
-
-	@Autowired
-	private ClientService clientService;
-
-	@GetMapping("/page")
-	@PreAuthorize("hasAuthority('admin')")
-	@ApiOperation(value = "分页获取客户端列表", notes = "需要accessToken，需要管理员权限")
-	public ApiResponseResult<Page<Client>> page(@ApiParam("页码") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
-												@ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size) {
-		return ApiResponseResult.success(clientService.getUserListWithPagination(current, size));
-	}
-
-
-	@DeleteMapping("/delete/{id}")
-	@ApiOperation(value = "删除客户端", notes = "需要accessToken，需要管理员权限")
-	public ApiResponseResult<Object> delete(@ApiParam("id") @PathVariable(value = "id") int id) {
-		if (clientService.removeById(id))
-			return ApiResponseResult.success();
-		return ApiResponseResult.operationError();
-	}
-
-	@PostMapping("/save")
-	@ApiOperation(value = "新增或更新客户端,id为null时新增", notes = "需要accessToken，需要管理员权限")
-	public ApiResponseResult<Object> save(@Validated @RequestBody Client client) {
-		clientService.validateExist(client);
-		if (clientService.saveOrUpdate(client))
-			return ApiResponseResult.success();
-		return ApiResponseResult.operationError();
-	}
-
-}
-```
-
-前端
-
-```js
-import request from '@/utils/request'
-
-/**
- * 
- * @data {Object} data
- */
-export function pageClient(params) {
-  return request.get('/client/page', { params })
-}
-
-/**
- * 保存客户端
- * @param {Object} data
- */
-export function saveClient(data) {
-  return request.post('/client/save', data)
-}
-
-/**
- * 删除客户端
- * @param {Object} id
- */
-export function deleteClient(id) {
-  return request.delete('/client/delete/' + id)
-}
-```
+![image-20240326184401110](README2.assets/image-20240326184401110.png)
 
 ## 短信发送
 
@@ -480,13 +327,13 @@ password：密码，必传
 
 ```json
 {
-  "code": 0,
-  "message": "成功",
-  "data": {
-    "access_token": "6a2dc65f-74f6-4eb6-b4d2-2eba2af4f587",
-    "token_type": "Bearer",
-    "refresh_token": "17456dd5-5dbd-41ec-ad4f-7cf101c9ab3e"
-  }
+    "code": 200000,
+    "data": {
+        "access_token": "fdbb3720-1a1d-4b90-935b-4c6d46029d80",
+        "token_type": "Bearer",
+        "refresh_token": "62385ed4-b184-4bf5-be18-f8762fafd5a4"
+    },
+    "message": "响应成功"
 }
 ```
 
@@ -496,7 +343,13 @@ password：密码，必传
 
 ![image-20240324163603022](README2.assets/image-20240324163603022.png)
 
+**登录成Redis储存**
+
+<img src="README2.assets/image-20240326200510361.png" alt="image-20240326200510361" style="zoom: 67%;" />
+
 ### 手机号验证码登录
+
+#### API 接口
 
 请求方法：POST
 
@@ -510,7 +363,7 @@ code：验证码，必传
 
 需要管理员权限： 否
 
-需要[客户端认证](https://copoile.github.io/api/auth/)： 是
+需要客户端认证： 是
 
 接口说明：验证码调发送验证码接口获取。
 
@@ -518,17 +371,23 @@ code：验证码，必传
 
 ```json
 {
-  "code": 0,
-  "message": "成功",
-  "data": {
-    "access_token": "6a2dc65f-74f6-4eb6-b4d2-2eba2af4f587",
-    "token_type": "Bearer",
-    "refresh_token": "17456dd5-5dbd-41ec-ad4f-7cf101c9ab3e"
-  }
+    "code": 200000,
+    "data": {
+        "access_token": "fdbb3720-1a1d-4b90-935b-4c6d46029d80",
+        "token_type": "Bearer",
+        "refresh_token": "62385ed4-b184-4bf5-be18-f8762fafd5a4"
+    },
+    "message": "响应成功"
 }
 ```
 
+#### Postman
+
+![image-20240326210832847](README2.assets/image-20240326210832847.png)
+
 ### 第三方登录
+
+#### API 接口
 
 请求方法：POST
 
@@ -544,7 +403,7 @@ code：认证code，必传
 
 需要[客户端认证](https://copoile.github.io/api/auth/)： 是
 
-接口说明：这里的code是第三方登录回调获取到的code。
+**接口说明：这里的code是第三方登录回调获取到的code。**
 
 **登录成功：**
 
@@ -559,6 +418,20 @@ code：认证code，必传
   }
 }
 ```
+
+#### Postman
+
+gitee
+
+第三方回调
+
+![image-20240326231433150](README2.assets/image-20240326231433150.png)
+
+第三方登录接口
+
+![image-20240326224817375](README2.assets/image-20240326224817375.png)
+
+
 
 ### 刷新access_token
 

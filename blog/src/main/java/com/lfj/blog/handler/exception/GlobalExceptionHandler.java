@@ -4,6 +4,7 @@ import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.exception.ApiException;
 import com.lfj.blog.exception.MobileCodeException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -77,13 +78,25 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
+	 * 处理AccessDeineHandler无权限异常
+	 *
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(AccessDeniedException.class)
+	public void accessDeniedException(AccessDeniedException e) throws AccessDeniedException {
+		// 将 Spring Security 异常继续抛出，以便交给自定义处理器处理
+		throw e;
+	}
+
+	/**
 	 * 其他未知异常, 如果抛出Exception的话及其他未知异常, 调用
 	 *
 	 * @param e
 	 * @return
 	 */
 	@ExceptionHandler(Exception.class)
-	public ApiResponseResult exceptionHandler(Exception e) {
+	public ApiResponseResult exceptionHandler(Exception e) throws Exception {
 		log.error("系统异常：{}", e.getMessage());
 		return ApiResponseResult.systemError();
 	}

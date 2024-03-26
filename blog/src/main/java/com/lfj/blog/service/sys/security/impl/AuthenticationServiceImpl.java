@@ -1,9 +1,9 @@
 package com.lfj.blog.service.sys.security.impl;
 
 
-import com.lfj.blog.common.security.AuthenticationToken;
 import com.lfj.blog.common.security.MobileCodeAuthenticationToken;
-import com.lfj.blog.common.security.RedisTokenStore;
+import com.lfj.blog.common.security.token.AuthenticationToken;
+import com.lfj.blog.common.security.token.RedisTokenStore;
 import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.entity.Client;
 import com.lfj.blog.service.sys.security.AuthenticationService;
@@ -14,8 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 /**
- * @author: yaohw
- * @create: 2019-10-28 18:27
+ * 2019-10-28 18:27
  **/
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -49,24 +48,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		// 对认证信息进行认证, AuthenticationManager的authenticate()方法来进行用户认证
 		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 
-		// 将认证信息存储在 redisTokenStore
+		// 将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
 		return redisTokenStore.storeToken(authenticate, client);
 	}
 
 	/**
 	 * 手机号验证码认证
 	 *
-	 * @param mobile
-	 * @param code
+	 * @param mobile 手机号
+	 * @param code   短信验证码
 	 * @param client 客户端
 	 * @return
 	 */
 	@Override
 	public AuthenticationToken mobileCodeAuthenticate(String mobile, String code, Client client) {
+		// 自定义认证器此方法会调用我们之前写的UserDetailsService的实现类中UserDetailsServiceImpl中的方法进行校验
 		MobileCodeAuthenticationToken authenticationToken = new MobileCodeAuthenticationToken(mobile, code);
+		// 对认证信息进行认证, AuthenticationManager的authenticate()方法来进行用户认证
 		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+
+		// 将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
 		AuthenticationToken storeAccessToken = redisTokenStore.storeToken(authenticate, client);
-		smsCodeService.deleteSmsCode(mobile);
+		smsCodeService.deleteSmsCode(mobile); // 删除验证码
 		return storeAccessToken;
 	}
 

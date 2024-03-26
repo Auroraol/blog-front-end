@@ -4,9 +4,8 @@ import org.springframework.security.core.AuthenticationException;
 
 /**
  * 手机号验证码认证 验证码不正确异常
- *
- * @author: yaohw
- * @create: 2019-11-07 16:58
+ * <p>
+ * 2019-11-07 16:58
  **/
 public class MobileCodeException extends AuthenticationException {
 

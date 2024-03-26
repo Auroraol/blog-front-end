@@ -28,9 +28,8 @@ import java.util.List;
 
 /**
  * 安全配置
- *
- * @author: yaohw
- * @create: 2019-10-24 16:17
+ * <p>
+ * 2019-10-24 16:17
  **/
 @Log4j2
 @Configuration

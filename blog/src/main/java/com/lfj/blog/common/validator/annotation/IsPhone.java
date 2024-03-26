@@ -8,9 +8,8 @@ import java.lang.annotation.*;
 
 /**
  * 是否手机号注解
- *
- * @author: yaohw
- * @create: 2019-10-04 09:57
+ * <p>
+ * 2019-10-04 09:57
  */
 @Documented
 @Target({ElementType.FIELD, ElementType.PARAMETER})

@@ -2,7 +2,7 @@
 
 # 整合
 
-具体代码见: 
+具体代码见:
 
 D:\PCTMoveData\Documents\GitHub\my_blog\blog\src\main\java\com\lfj\blog\common\sms
 
@@ -16,17 +16,17 @@ D:\PCTMoveData\Documents\GitHub\my_blog\blog\src\main\java\com\lfj\blog\common\s
 
 ```xml
  <!--阿里云 sms sdk 依赖-->
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>alibabacloud-dysmsapi20170525</artifactId>
-            <version>2.0.23</version>
-        </dependency>
+<dependency>
+    <groupId>com.aliyun</groupId>
+    <artifactId>alibabacloud-dysmsapi20170525</artifactId>
+    <version>2.0.23</version>
+</dependency>
         <!--redis依赖-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-            <version>2.6.3</version>
-        </dependency>
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-data-redis</artifactId>
+<version>2.6.3</version>
+</dependency>
 ```
 
 ## 配置文件
@@ -60,6 +60,7 @@ sms:
 注意:   对发送短信接口进行redis限流处理 例如
 
 ```java
+
 @Log4j2
 @RestController
 @RequestMapping("/sms")
@@ -189,7 +190,7 @@ public class SmsAutoConfiguration {
 }
 ```
 
-注意:  这里使用@bean注入,  也可以使用@server 在使用的时候通过@Resource("xxxxx")指定调用的子类
+注意:  这里使用@bean注入, 也可以使用@server 在使用的时候通过@Resource("xxxxx")指定调用的子类
 
 ## server
 
@@ -364,8 +365,6 @@ public abstract class BaseSmsCodeServiceImpl implements SmsCodeService,
 
 ```
 
-
-
 ### 两个相应实现
 
 #### 阿里
@@ -527,8 +526,8 @@ import java.util.ArrayList;
 /**
  * 腾讯短信服务
  *
- * @author: yaohw
- * @create: 2020-05-18 10:38
+ *
+ *  2020-05-18 10:38
  **/
 @Log4j2
 public class TencentSmsCodeServiceImpl extends BaseSmsCodeServiceImpl {

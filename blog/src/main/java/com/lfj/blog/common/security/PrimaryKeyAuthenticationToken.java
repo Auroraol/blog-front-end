@@ -6,8 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 /**
- * @author: yaohw
- * @create: 2020-05-20 15:45
+ *
  **/
 public class PrimaryKeyAuthenticationToken extends AbstractAuthenticationToken {
 

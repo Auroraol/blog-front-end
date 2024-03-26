@@ -8,9 +8,8 @@ import java.util.function.Function;
 
 /**
  * 通用异步服务
- *
- * @author: yaohw
- * @create: 2019-12-03 15:39
+ * <p>
+ * 2019-12-03 15:39
  **/
 @Log4j2
 @Component

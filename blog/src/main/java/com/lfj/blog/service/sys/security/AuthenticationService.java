@@ -1,12 +1,11 @@
 package com.lfj.blog.service.sys.security;
 
 
-import com.lfj.blog.common.security.AuthenticationToken;
+import com.lfj.blog.common.security.token.AuthenticationToken;
 import com.lfj.blog.entity.Client;
 
 /**
- * @author: yaohw
- * @create: 2019-10-28 17:51
+ * 2019-10-28 17:51
  **/
 public interface AuthenticationService {
 	/**

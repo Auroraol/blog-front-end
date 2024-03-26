@@ -1,8 +1,7 @@
 package com.lfj.blog.common.security.oauth;
 
 /**
- * @author: yaohw
- * @create: 2020-05-20 11:57
+ *
  **/
 public class OauthConstant {
 

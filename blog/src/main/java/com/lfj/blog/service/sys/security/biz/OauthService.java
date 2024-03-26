@@ -3,10 +3,10 @@ package com.lfj.blog.service.sys.security.biz;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lfj.blog.common.constant.UserConstant;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
-import com.lfj.blog.common.security.AuthenticationToken;
 import com.lfj.blog.common.security.PrimaryKeyAuthenticationToken;
-import com.lfj.blog.common.security.RedisTokenStore;
 import com.lfj.blog.common.security.oauth.*;
+import com.lfj.blog.common.security.token.AuthenticationToken;
+import com.lfj.blog.common.security.token.RedisTokenStore;
 import com.lfj.blog.entity.Client;
 import com.lfj.blog.entity.OauthUser;
 import com.lfj.blog.entity.User;
@@ -24,9 +24,8 @@ import java.time.LocalDateTime;
 
 /**
  * 第三方认证
- *
- * @author: yaohw
- * @create: 2020-05-20 15:33
+ * <p>
+ * 2020-05-20 15:33
  **/
 @Service
 @Log4j2
@@ -57,7 +56,7 @@ public class OauthService {
 	 * 第三方登录
 	 *
 	 * @param type
-	 * @param code
+	 * @param code   授权码
 	 * @param client
 	 * @return
 	 */
@@ -76,7 +75,7 @@ public class OauthService {
 	 * github第三方登录
 	 *
 	 * @param type
-	 * @param code
+	 * @param code   授权码
 	 * @param client
 	 * @return
 	 */
@@ -98,7 +97,7 @@ public class OauthService {
 	 * gitee 第三方登录
 	 *
 	 * @param type
-	 * @param code
+	 * @param code   授权码
 	 * @param client
 	 * @return
 	 */
@@ -120,7 +119,7 @@ public class OauthService {
 	 * qq 第三方登录
 	 *
 	 * @param type
-	 * @param code
+	 * @param code   授权码
 	 * @param client
 	 * @return
 	 */
@@ -129,8 +128,11 @@ public class OauthService {
 		String openid = qqThirdAuth.getOpenid(authToken.getAccessToken());
 		OauthUser oauthUser = checkBind(type, openid);
 		if (oauthUser != null) {
+			// 自定义认证器此方法会调用我们之前写的UserDetailsService的实现类中UserDetailsServiceImpl中的方法进行校验
 			PrimaryKeyAuthenticationToken authenticationToken = new PrimaryKeyAuthenticationToken(oauthUser.getUserId());
+			// 对认证信息进行认证, AuthenticationManager的authenticate()方法来进行用户认证
 			Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+			//将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
 			return tokenStore.storeToken(authenticate, client);
 		}
 		ThirdAuthUser thirdAuthUser = qqThirdAuth.getUserInfo(authToken.getAccessToken(), openid);

@@ -7,8 +7,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
 /**
- * @author: yaohw
- * @create: 2019-11-15 15:25
+ * 2019-11-15 15:25
  **/
 public class ListSizeValidator implements ConstraintValidator<ListSize, List> {
 

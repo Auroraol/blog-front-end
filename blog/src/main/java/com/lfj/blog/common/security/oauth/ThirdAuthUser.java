@@ -4,9 +4,6 @@ import lombok.Data;
 
 /**
  * 第三方用户信息
- *
- * @author: yaohw
- * @create: 2020-05-20 11:12
  **/
 @Data
 public class ThirdAuthUser {

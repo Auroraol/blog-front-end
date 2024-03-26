@@ -1,8 +1,7 @@
 package com.lfj.blog.common.validator.annotation;
 
 /**
- * @author: yaohw
- * @create: 2019-11-15 15:23
+ * 2019-11-15 15:23
  **/
 
 import com.lfj.blog.common.validator.ListSizeValidator;
@@ -14,8 +13,8 @@ import java.lang.annotation.*;
 /**
  * 集合长度
  *
- * @author: yaohw
- * @create: 2019-11-13 11:02
+ *
+ *  2019-11-13 11:02
  **/
 @Documented
 @Target({ElementType.FIELD, ElementType.PARAMETER})

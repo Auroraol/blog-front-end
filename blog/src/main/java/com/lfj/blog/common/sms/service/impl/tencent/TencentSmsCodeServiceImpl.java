@@ -13,9 +13,8 @@ import java.util.ArrayList;
 
 /**
  * 腾讯短信服务
- *
- * @author: yaohw
- * @create: 2020-05-18 10:38
+ * <p>
+ * 2020-05-18 10:38
  **/
 @Log4j2
 public class TencentSmsCodeServiceImpl extends BaseSmsCodeServiceImpl {

@@ -43,9 +43,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 限流切面
- *
- * @author: yaohw
- * @create: 2019/11/5 10:49 下午
+ * <p>
+ * 2019/11/5 10:49 下午
  */
 @Log4j2
 @Aspect
@@ -77,6 +76,7 @@ public class RateLimiterAspect implements ApplicationContextAware {
 	public void init() {
 		getRedisScript = new DefaultRedisScript<>();
 		getRedisScript.setResultType(Long.class);
+		// 限流脚本
 		getRedisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("scripts/redis/limit.lua")));
 		log.info("RateLimterAspect[分布式限流处理器]脚本加载完成");
 	}

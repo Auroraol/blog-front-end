@@ -26,6 +26,7 @@ public abstract class BaseSmsCodeServiceImpl implements SmsCodeService,
 	private long expire = 300L;
 
 
+	// 和@Autowired作用一样
 	//从应用程序上下文中获取 StringRedisTemplate 类型的 Bean，并进行必要的校验，确保该 Bean 的正确性和可用性
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

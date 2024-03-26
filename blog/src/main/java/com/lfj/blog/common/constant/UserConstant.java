@@ -2,9 +2,8 @@ package com.lfj.blog.common.constant;
 
 /**
  * 用户相关常量
- *
- * @author: yaohw
- * @create: 2019-11-05 17:43
+ * <p>
+ * 2019-11-05 17:43
  **/
 public class UserConstant {
 

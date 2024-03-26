@@ -3,8 +3,8 @@ package com.lfj.blog.controller.sys;
 
 import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
-import com.lfj.blog.common.security.AuthenticationToken;
-import com.lfj.blog.common.security.RedisTokenStore;
+import com.lfj.blog.common.security.token.AuthenticationToken;
+import com.lfj.blog.common.security.token.RedisTokenStore;
 import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.common.validator.annotation.IsPhone;
 import com.lfj.blog.controller.model.dto.AccessTokenDTO;
@@ -29,8 +29,7 @@ import javax.validation.constraints.NotNull;
 
 
 /**
- * @author: yaohw
- * @create: 2019-10-25 10:55
+ * 2019-10-25 10:55
  **/
 @RestController
 @Log4j2
@@ -65,9 +64,10 @@ public class AuthenticationController {
 	public ApiResponseResult<AccessTokenDTO> accountLogin(@ApiParam("用户名或手机号") @NotBlank(message = "账号不能为空") @RequestParam String username,
 														  @ApiParam("密码") @NotBlank(message = "密码不能为空") @RequestParam String password,
 														  @ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
+		// 通过客户端认证请求头查询Client
 		Client client = getAndValidatedClient(authorization);
-		AuthenticationToken authenticationToken = authenticationService.usernameOrMobilePasswordAuthenticate(username, password, client);
 		//生成响应的token
+		AuthenticationToken authenticationToken = authenticationService.usernameOrMobilePasswordAuthenticate(username, password, client);
 		AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
 		return ApiResponseResult.success(accessTokenDTO);
 	}
@@ -78,10 +78,10 @@ public class AuthenticationController {
 														 @ApiParam("手机号验证码") @NotBlank(message = "验证码不能为空") @RequestParam String code,
 														 @ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
 		Client client = getAndValidatedClient(authorization);
+		//生成响应的token
 		AuthenticationToken authenticationToken = authenticationService.mobileCodeAuthenticate(mobile, code, client);
-		AccessTokenDTO response = new AccessTokenDTO();
-		BeanUtils.copyProperties(authenticationToken, response);
-		return ApiResponseResult.success(response);
+		AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
+		return ApiResponseResult.success(accessTokenDTO);
 	}
 
 	@PostMapping("/oauth")
@@ -91,10 +91,10 @@ public class AuthenticationController {
 			@ApiParam("第三方授权码") @NotBlank(message = "授权码不能为空") @RequestParam String code,
 			@ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
 		Client client = getAndValidatedClient(authorization);
+		// 第三方 //生成响应的token
 		AuthenticationToken authenticationToken = oauthService.oauth(type, code, client);
-		AccessTokenDTO response = new AccessTokenDTO();
-		BeanUtils.copyProperties(authenticationToken, response);
-		return ApiResponseResult.success(response);
+		AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
+		return ApiResponseResult.success(accessTokenDTO);
 	}
 
 	@DeleteMapping("/logout")

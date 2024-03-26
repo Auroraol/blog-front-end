@@ -14,8 +14,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
- * @author: yaohw
- * @create: 2019-10-04 22:13
+ * 2019-10-04 22:13
  */
 @Data
 @NoArgsConstructor

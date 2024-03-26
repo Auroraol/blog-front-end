@@ -5,8 +5,7 @@ import lombok.Data;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author: yaohw
- * @create: 2019-11-23 10:20
+ * 2019-11-23 10:20
  **/
 @Data
 public class Limit {

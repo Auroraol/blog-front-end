@@ -18,9 +18,8 @@ import java.util.Map;
 
 /**
  * 邮件服务
- *
- * @author: yaohw
- * @create: 2019-11-07 19:21
+ * <p>
+ * 2019-11-07 19:21
  **/
 @Service
 @Log4j2

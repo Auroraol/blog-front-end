@@ -2,8 +2,8 @@ package com.lfj.blog.common.security.filter;
 
 import com.alibaba.fastjson2.JSON;
 import com.lfj.blog.common.response.ApiResponseResult;
-import com.lfj.blog.common.security.AuthenticationToken;
-import com.lfj.blog.common.security.RedisTokenStore;
+import com.lfj.blog.common.security.token.AuthenticationToken;
+import com.lfj.blog.common.security.token.RedisTokenStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * AuthenticationToken 校验过滤器
+ * AuthenticationToken 校验
  * 认证结果过滤器
  **/
 @Component
@@ -35,6 +35,7 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
 			String accessToken = authorization.substring(7);
 			if (!accessToken.isEmpty()) {
 				AuthenticationToken cacheAuthenticationToken = tokenStore.readByAccessToken(accessToken);
+//				System.out.println(cacheAuthenticationToken);
 				if (cacheAuthenticationToken == null) {
 					httpServletResponse.setCharacterEncoding("UTF-8");
 					httpServletResponse.setContentType("application/json; charset=utf-8");

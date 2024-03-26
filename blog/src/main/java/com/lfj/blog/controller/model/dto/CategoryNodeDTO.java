@@ -10,9 +10,8 @@ import java.util.List;
 
 /**
  * 分类节点
- *
- * @author: yaohw
- * @create: 2019-11-14 17:38
+ * <p>
+ * 2019-11-14 17:38
  **/
 @Data
 @NoArgsConstructor

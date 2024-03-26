@@ -24,6 +24,7 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
 		// 认证失败，无权限访问，请重新登录
 		ResponseUtil.output(response, ApiResponseResult.noPermission());
 	}
+
 }
 
 
