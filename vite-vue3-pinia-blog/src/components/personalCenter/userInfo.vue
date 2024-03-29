@@ -141,7 +141,7 @@ import { useStore } from "/@/store";
 import { ElMessage } from 'element-plus'
 import { ref, reactive, defineAsyncComponent, watchEffect } from 'vue'
 import { useRouter } from 'vue-router';
-import { getAccessToken, getRefreshToken, getUserAccountInfo, removeUserAccountInfo  } from '/@/utils/network/auth.js'
+// import { getAccessToken, getRefreshToken, getUserAccountInfo, removeUserAccountInfo  } from '/@/utils/network/auth.js'
 
 const uploadHeadImg = defineAsyncComponent(() => import('/@/components/personalCenter/uploadHead.vue'))
 

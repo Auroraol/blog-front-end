@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 //Suspense要异步引入组件
-const Login = defineAsyncComponent(() => import('/@/components/Login/Login.vue'))
+const Login = defineAsyncComponent(() => import('../components/Login/Login.vue'))
 
 </script>
 

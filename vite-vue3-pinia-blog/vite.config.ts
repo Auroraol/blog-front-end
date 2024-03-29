@@ -6,7 +6,7 @@ import vue from "@vitejs/plugin-vue";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import * as path from "path";
 
-
+import {createSvgIconsPlugin} from 'vite-plugin-svg-icons'
 
 
 export default ({ mode }) => {
@@ -40,6 +40,15 @@ export default ({ mode }) => {
         dts: "src/components.d.ts", //自动引入生成的组件的地址
       }),
       // TODO
+      createSvgIconsPlugin({
+        // 指定目录(svg存放目录）
+        iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+        // 使用 svg 图标的格式（name为图片名称）
+        symbolId: "icon-[name]",
+        //生成组件插入位置 只有两个值 boby-last(默认) | body-first
+        // inject: 'body-last'
+      })
+
     ],
 
     build: {

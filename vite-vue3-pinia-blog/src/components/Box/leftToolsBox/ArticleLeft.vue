@@ -4,7 +4,12 @@
     <!-- 名片卡片 -->
     <el-card style="max-width: 25rem; margin-left: 20px" shadow="always">
       <template #header>
-        <div style="font-size: 1.8rem">名片</div>
+        <div class="card_head">
+          <div class="left-element">
+            <svg-icon name="mingpian" width="30px" height="30px"></svg-icon>
+          </div>
+          <div class="right-element"><span>名片</span></div>
+        </div>
       </template>
       <!-- <el-row>
         <el-col :span="24">
@@ -29,10 +34,8 @@
           </div>
           <div class="personal-card-show-words">
             <small style="font-size: 13px; color: #808080ad"
-              >昨日之深渊，今日之浅谈     
-              </small
-            >
-            
+              >昨日之深渊，今日之浅谈
+            </small>
           </div>
         </el-col>
       </el-row>
@@ -153,7 +156,12 @@
       body-style="background-color: #f2dede;"
     >
       <template #header>
-        <div style="font-size: 1.8rem">公告</div>
+        <div class="Announcement_card">
+          <div class="left-element">
+            <svg-icon name="gonggao" width="30px" height="30px"></svg-icon>
+          </div>
+          <div class="right-element"><span>公告</span></div>
+        </div>
       </template>
       <div>
         <svg
@@ -205,18 +213,18 @@
       </div>
     </el-card>
     <!--日历-->
-    <!-- <el-card shadow="hover" class="type-card">
+    <el-card shadow="hover" class="calendar_card" style="margin-left: 20px">
    <cus-calendar />
-    </el-card> -->
-    <div class="calendar" style="margin-left: 20px">
-      <el-calendar v-model="value">
+    </el-card>
+    <!-- <div class="calendar_card "  style="margin-left: 20px">
+      <el-calendar  v-model="value"   >
         <template #date-cell="{ data }">
           <div class="calendar-day">
             {{ data.day.split("-").slice(2).join("-") }}
           </div>
         </template>
       </el-calendar>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -248,15 +256,30 @@ const state = reactive({
 });
 </script>
 <style lang="less" scoped>
-.calendar {
+.card_head, .Announcement_card {
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  .left-element {
+    // margin-right: 10px; /* 可以调整间距 */
+  }
+
+  .right-element {
+    // margin-left: auto; /* 推到容器的右侧 */
+    margin-left: 0.5rem;
+  }
+}
+.calendar_card {
+  // width: 500px;
   width: 324px;
+
+  height: 630px;
   display: block;
   float: left;
   margin: 0px;
   margin-top: 30px;
-}
 
-// 圆圈
+  // 圆圈
 .calendar-day {
   text-align: center;
   line-height: 30px;
@@ -265,6 +288,13 @@ const state = reactive({
   border: 1px solid rgb(172, 165, 165);
   border-radius: 50%;
 }
+}
+
+  // .el-calendar-table .el-calendar-day{
+  //   width: 100%;
+  //   height: 30px;
+  //   text-align: center;
+  // }
 
 :v-deep .el-calendar-table tr td:first-child {
   border-left: none !important;

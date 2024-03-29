@@ -6,14 +6,29 @@ import {
 
 // 导入路由404分模块
 import NoFond from "./no-fond";
-// 导出多个要导出一个数组形式，在router.js中使用,必须使用扩展运算全部导入
-
-import {  getUserAccountInfo  } from '/@/utils/network/auth.js'
-
 
 //引入main.ts
 import app from "../main";
-import { useStore } from "../store";
+import { useStore } from "../store2";
+
+
+/**
+ *
+ *
+ * hidden: true                   如果设置了true，则不在左边导航栏显示,即不是后台管理的页面
+ * alwaysShow: true               如果设置了true，则总在根菜单显示
+ *
+ * redirect: noRedirect           设置noRedirect，则面包屑路径不可点
+ * name:'router-name'             名称在 <keep-alive> 用到，后台管理必须设置！！！
+ * meta : {
+    roles: ['admin','test']      页面角色控制，可多角色
+    title: 'title'               标题
+    icon: 'svg-name'             导航栏图标
+    breadcrumb: false            false，将不显示面包屑
+    activeMenu: '/example/list'  如果设置，则导航栏将高亮显示
+  }
+ */
+
 
 const routes = [
   // 重定向
@@ -59,10 +74,18 @@ const routes = [
       title: '登录'
   }
 },
+{
+  path: '/register',
+  name: 'register',
+  component: () => import('/@/view/register.vue'),
+  meta: {
+      title: '注册'
+  }
+},
  {
   path: '/about',
   name: 'about',
-  component: () => import('/@/view/About.vue'),
+  component: () => import('/@/view/about.vue'),
   meta: {
       title: '更多'
   }
@@ -258,46 +281,86 @@ const router = createRouter({
   history: createWebHistory(), //开启history模式
   // history: createWebHashHistory(), //开启hash模式
   routes,
+  // 路由滚动位置
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { x: 0, y: 0 };
+    }
+  },
 });
 
 // 在路由元信息配置守卫 requiredPath为true, 适合守卫多个页面 vue3next() 变成return true
-router.beforeEach((to, from, next) => {
-  //判断是否是登录状态
-  // const sessionAccount = localStorage.getItem('userAccount')
-  const sessionAccount = getUserAccountInfo();
-  if (sessionAccount) {
-      const pinia = useStore()
-      pinia.userInfo = sessionAccount
-  }
+// router.beforeEach((to, from, next) => {
+//   // //判断是否是登录状态
+//   // // const sessionAccount = localStorage.getItem('userAccount')
+//   // const sessionAccount = getUserAccountInfo();
+//   // if (sessionAccount) {
+//   //     const pinia = useStore()
+//   //     pinia.userInfo = sessionAccount
+//   // }
 
-  // 进入写文页面，判断是否有权限
-  if (to.path === '/write') {
-      if (!sessionAccount) {
-          alert('还没有登录，去登录吧')
-          router.push('/login')
-      }
-  }
+//   // // 进入写文页面，判断是否有权限
+//   // if (to.path === '/write') {
+//   //     if (!sessionAccount) {
+//   //         alert('还没有登录，去登录吧')
+//   //         router.push('/login')
+//   //     }
+//   // }
 
-  window.document.title = to.meta.title as string
-  //到新页面要把页面滚动到最顶
-  window.scrollTo({
-      top: 0,
-  })
-  next()
+//   // window.document.title = to.meta.title as string
+//   // //到新页面要把页面滚动到最顶
+//   // window.scrollTo({
+//   //     top: 0,
+//   // })
+//   next()
 
 
-  // if (to.meta.loading) {
-  //   app.config.globalProperties.$loading.showLoading();
-  //   next();
-  // } else {
-  //   next();
-  // }
+//   // if (to.meta.loading) {
+//   //   app.config.globalProperties.$loading.showLoading();
+//   //   next();
+//   // } else {
+//   //   next();
+//   // }
 
-});
+// });
 
-router.afterEach((to, from) => {
-  // if (to.meta.loading) {
-  //   app.config.globalProperties.$loading.hideLoading();
-  // }
-});
+// router.afterEach((to, from) => {
+//   // if (to.meta.loading) {
+//   //   app.config.globalProperties.$loading.hideLoading();
+//   // }
+// });
+
+
+// const createRouter = () => new Router({
+//   // mode: 'history', // require service support
+//   // 路由滚动位置
+//   scrollBehavior(to, from, savedPosition) {
+//     if (savedPosition) {
+//       return savedPosition
+//     } else {
+//       return { x: 0, y: 0 }
+//     }
+//   },
+//   mode: 'history',
+//   routes: routes
+// })
+
+
+/**
+ * 重置路由
+ */
+export function resetRouter() {
+  // 清空现有路由
+  router.getRoutes().forEach((route) => {
+    router.removeRoute(route.name);
+  });
+
+  // 添加新的路由
+  routes.forEach((route) => {
+    router.addRoute(route);
+  });
+}
+
 export default router;

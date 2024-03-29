@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 // 导入写好的Loading.vue文件
-import Loading from "./Loading.vue";
+import Loading from "./loading.vue";
 
 // 导出一个对象，包含一个名为 install 的方法
 export default {

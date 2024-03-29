@@ -104,7 +104,7 @@ public class OauthService {
 	private AuthenticationToken giteeOauth(int type, String code, Client client) {
 		ThirdAuthUser thirdAuthUser = giteeThirdAuth.getUserInfoByCode(code);
 		String uuid = thirdAuthUser.getUuid();
-		OauthUser oauthUser = checkBind(type, uuid);
+		OauthUser oauthUser = checkBind(type, uuid);   // 查询是否已绑定
 		// 已绑定
 		if (oauthUser != null) {
 			PrimaryKeyAuthenticationToken authenticationToken = new PrimaryKeyAuthenticationToken(oauthUser.getUserId());

@@ -1,465 +1,227 @@
 <template>
-  <div class="container">
-    <div class="loginImgBox">
-      <div class="loginImg">
-        <!-- <img src="public/image/imgs/loginBg.jpg" alt="loginImg" /> -->
-      </div>
-    </div>
+  <el-row class="content">
+    <!--el-col 列： -->
+    <el-col :span="16" :xs="0" class="content-left"> </el-col>
+    <el-col :span="8" :xs="24" class="content-right">
+      <div class="loginContent">
+        <div class="loginContentTop">
+          <div>
+            <span>登录可享更多权益</span>
+          </div>
+          <span class="fontSize">与专业的创作者进行 </span>
+          <span class="introduce">深度的互动交流 </span>
+          <span> </span>
+        </div>
 
-    <div class="logBox" v-if="ifLog">
-      <div class="top">
-        <div class="title">
-          <h5>登录</h5>
-          <p>Login to Impero's Blog</p>
-        </div>
-        <form class="box">
-          <div class="iptUser">
-            <label for="username">用户名</label>
-            <el-input
-              v-model.trim="logInfo.username"
-              maxlength="16"
-              placeholder="输入用户名"
-              show-word-limit
-              type="text"
-              name="username"
-            />
+        <div class="loginContentForm">
+          <div class="loginMethods">
+            <el-tabs :stretch="true">
+              <el-tab-pane label="账号密码登录" class="toLogin">
+                <!-- loginForm: 表单数据对象-->
+                <el-form :model="loginForm" :rules="loginFormRules">
+                  <el-form-item label="" prop="username">
+                    <el-input
+                      size="large"
+                      :prefix-icon="User"
+                      placeholder="用户名"
+                      v-model="loginForm.username"
+                      inline-message
+                    ></el-input>
+                  </el-form-item>
+                  <el-form-item label="" prop="password">
+                    <el-input
+                      size="large"
+                      :prefix-icon="Lock"
+                      placeholder="密码"
+                      show-password
+                      v-model="loginForm.password"
+                      inline-message
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+              </el-tab-pane>
+              <el-tab-pane label="手机号码登录" class="toLogin">
+                <!-- loginForm: 表单数据对象-->
+                <el-form
+                  :model="loginFormPhone"
+                  :rules="loginFormPhoneRules"
+                  prop="phone"
+                >
+                  <el-form-item label="">
+                    <el-input
+                      placeholder="请输入手机号"
+                      v-model="loginFormPhone.phone"
+                      inline-message
+                      size="large"
+                    >
+                      <template #prepend>
+                        <span style="width: 0px; margin: 0 0 0 -25px">+86</span>
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                  <el-form-item label="" prop="code">
+                    <el-input
+                      placeholder="请输入验证码"
+                      v-model="loginFormPhone.code"
+                      inline-message
+                      size="large"
+                    >
+                      <template #suffix>
+                        <i style="font-style: normal; margin-right: 10px"
+                          >获取验证码</i
+                        >
+                      </template>
+                    </el-input>
+                  </el-form-item>
+                </el-form>
+              </el-tab-pane>
+            </el-tabs>
           </div>
-          <div class="iptUser">
-            <label for="password">密码</label>
-            <el-input
-              v-model.trim="logInfo.password"
-              maxlength="16"
-              placeholder="输入密码"
-              show-word-limit
-              type="text"
-              name="password"
-              :show-password="true"
-            />
-          </div>
-        </form>
-        <div class="logBtn">
-          <div @click="login">登录</div>
-          <span @click="goRegister">没有账号？点击注册</span>
         </div>
-      </div>
-      <div class="message">
-        <div>登录后可在留言板块发布留言</div>
-        <div>可以发布文章</div>
-        <div>可加入在线聊天室</div>
-      </div>
-    </div>
-    <div class="registerBox logBox" v-else>
-      <div class="top">
-        <div class="title">
-          <h5>注册</h5>
-          <p>Register to Impero's Blog</p>
-        </div>
-        <div v-if="name">
-          <form class="box">
-            <div class="iptUser">
-              <label for="registerUsername">用户名</label>
-              <el-input
-                v-model.trim="registerInfo.username"
-                maxlength="16"
-                placeholder="输入注册账号(这不是昵称)"
-                show-word-limit
-                type="text"
-                name="registerUsername"
-                onkeyup="this.value=this.value.replace(/[^a-z0-9]/g,'');"
-              />
+
+        <div class="loginContentButton">
+          <div class="buttonTop">
+            <div class="left-element">
+              <el-checkbox v-model="checked" label="记住密码" />
             </div>
-            <div class="iptUser">
-              <label for="registerPassword">密码</label>
-              <el-input
-                v-model.trim="registerInfo.password"
-                maxlength="16"
-                placeholder="输入注册密码"
-                show-word-limit
-                type="text"
-                name="registerPassword"
-                :show-password="true"
-              />
+            <div class="right-element">
+              <el-text class="mx-1" type="primary">忘记密码</el-text>
             </div>
-            <div class="iptUser">
-              <label for="registerPasswordAgain">确认密码</label>
-              <el-input
-                v-model.trim="registerInfo.againPassword"
-                maxlength="16"
-                placeholder="再次输入注册密码"
-                show-word-limit
-                type="text"
-                name="registerPasswordAgain"
-                :show-password="true"
-              />
-            </div>
-          </form>
-          <div class="logBtn">
-            <div @click="register">注册</div>
-            <span @click="goLogin">已有账号，点击登录</span>
           </div>
-        </div>
-        <div v-else>
-          <div class="nickName">
-            <label for="nickname">昵称:</label>
-            <el-input
-              v-model.trim="nickname"
-              :maxlength="pinia.nickNameLength"
-              placeholder="起个昵称吧！"
-              show-word-limit
-              type="text"
-              name="nickname"
-            />
-          </div>
-          <div class="logBtn nickNameBtn">
-            <div @click="updateNickName">完成</div>
-            <div @click="skipNickName">跳过</div>
+
+          <el-button
+            size="large"
+            type="primary"
+            class="button"
+            @click="tologin"
+          >
+            登录
+          </el-button>
+          <!-- 下划线 -->
+          <el-divider> 其他登录方式 </el-divider>
+          <!-- <my-divider content-position="center" label="其他登录方式" /> -->
+          <div class="login-third-items">
+            <a href="">
+              <svg-icon
+                name="qq-login"
+                color="green"
+                width="24"
+                height="24"
+              ></svg-icon>
+            </a>
+            <a href="">
+              <svg-icon name="github-login" width="24" height="24" />
+            </a>
+            <a
+              href="https://gitee.com/oauth/authorize?client_id=62d3af1f2058b5facec5316ab9d18b8d3602406fcb704adde7f5b38de381996b&redirect_uri=http%3A%2F%2Flocalhost%3A9000%2Foauth&response_type=code&state=3"
+            >
+              <svg-icon name="gitee-login" width="24" height="24" />
+            </a>
+            <!-- 其他图标同理 -->
+            <!-- <svg-icon name="qq-login" width="24" height="24"></svg-icon>
+          <svg-icon name="gitee-login"  /> -->
           </div>
         </div>
       </div>
-      <div class="message">
-        <div>登录后可在留言板块发布留言</div>
-        <div>用户名只能输入小写字母和数字</div>
-        <div>密码只能输入大小写字母、数字、下划线</div>
-        <div>用户名和密码都要至少6位</div>
-      </div>
-    </div>
-  </div>
+    </el-col>
+  </el-row>
+  <!-- <login-dialog></login-dialog> -->
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, toRaw } from "vue";
-import { useStore } from "/@/store";
-import { useRouter } from "vue-router";
-import qs from "qs";
-import { ElNotification } from "element-plus";
-import { useRequest } from "vue-hooks-plus";
-import {
-  getSysLogin,
-  getUserInfo,
-  getSysRegister,
-  getUpdateNickName,
-} from "./services";
-import { setAccessToken, setRefreshToken, setUserAccountInfo  } from '/@/utils/network/auth.js'
+import { ref } from "vue";
 
-const pinia = useStore();
-const router = useRouter();
-const ifLog = ref(true);
-const name = ref(true); // 昵称
-
-//登录信息
-const logInfo = reactive({
+const loginForm = ref({
   username: "",
   password: "",
 });
 
-//注册信息
-const registerInfo = reactive({
-  username: "",
-  password: "",
-  againPassword: "", // 重复密码
+const loginFormRules = ref({
+  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
 });
 
-//昵称信息
-const nickname = ref();
+const loginFormPhone = ref({
+  phone: "",
+  code: "",
+});
 
-//点击登录
-const login = async () => {
-  const userLogInfo = toRaw(logInfo); // 将一个由生成的响应式转化为对象普通对象
-  // 发起请求
-  const { data, error, loading, run } = useRequest(getSysLogin, {
-    manual: true, // 手动触发请求
-    onSuccess: (data) => {
-      //注意: 在手动触发的情况下, ts中使用data,error,....中的属性
-      if (data.code === 400002) {
-        alert("账号不存在");
-      } else if (data.code === 400004) {
-        alert("账户密码不匹配");
-      } else if (data.code === 200000) {
-        //前端接收到JWT后，将其存储在本地
-        setAccessToken(data.data.accessToken)
-        setRefreshToken(data.data.refreshToken)
-        // 得到用户信息
-        getInformation();
-        ElMessage({
-          message: "登录成功",
-          type: "success",
-          duration: 1000,
-        });
-        router.replace("/index");
-      }
-    },
-    onError: (error) => {
-      alert(error);
-    },
-  });
+const loginFormPhoneRules = ref({
+  phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+  code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+});
 
-  run(userLogInfo);
-};
+const checked = ref(false);
 
-const getInformation = () => {
-  const { data: responseData, run: infoRun } = useRequest(getUserInfo, {
-    onSuccess: (responseData) => {
-      if (responseData && responseData.data) {
-        // // console.table(responseData.data);
-        const userAccount = window.encodeURIComponent(
-          // 加密保存
-          JSON.stringify(responseData.data) //即使后端发送的数据已经是 JSON 格式，使用 JSON.stringify() 仍然是一个常见的做法，因为它可以确保数据被正确地序列化为 JSON 字符串。
-        );
-        // // 
-        // // 保存到浏览器和pinia中
-        // localStorage.setItem("userAccount", userAccount);
-        // console.log(userAccount);
-        setUserAccountInfo(userAccount);
-        pinia.setUserInfo(userAccount);
-      } else {
-        
-      }
-    },
-  });
-
-  infoRun();
-};
-
-//点击注册
-const register = async () => {
-  const registerform = toRaw(registerInfo); // 将一个由生成的响应式转化为对象普通对象
-  if (registerform.password.length < 6 || registerform.username.length < 6) {
-    alert("用户名和密码都不能小于6位");
-  } else {
-    if (registerform.password === registerform.againPassword) {
-      // 发起请求
-      const { data, run } = useRequest(getSysRegister, {
-        manual: true, // 手动触发请求
-        onSuccess: (data) => {
-          if (data.code === 200000) {
-            alert("注册成功!");
-            name.value = false;
-          } else if (data.code === 400005) {
-            alert("用户名已被注册");
-          } else {
-            alert("失败了..");
-          }
-        },
-        onError: (error) => {
-          alert(error);
-        },
-      });
-
-      run(registerform);
-    } else {
-      alert("两次输入的密码不一致 ");
-    }
-  }
-};
-
-const goRegister = () => {
-  ifLog.value = false;
-};
-
-const goLogin = () => {
-  ifLog.value = true;
-};
-
-const skipNickName = () => {
-  registerInfo.password = "";
-  registerInfo.username = "";
-  nickname.value = "";
-  name.value = true;
-  ifLog.value = true;
-};
-
-//更新昵称
-const updateNickName = async () => {
-  if (nickname.value === "") {
-    alert("昵称不能为空");
-  } else {
-    const uploadNick = toRaw(nickname.value);
-
-    const { data, run } = useRequest(getUpdateNickName, {
-      manual: true, // 手动触发请求
-      onSuccess: (data) => {
-        if (data.code === 200000) {
-          alert("昵称更新成功");
-          registerInfo.password = "";
-          registerInfo.username = "";
-          nickname.value = "";
-          name.value = true;
-          ifLog.value = true;
-          // router.replace("/index");
-        } else if (data.code === 400006) {
-          alert("昵称更新失败");
-          nickname.value = "";
-        } else {
-          alert("失败了..");
-          nickname.value = "";
-        }
-      },
-      onError: (error) => {
-        alert(error);
-      },
-    });
-
-    run(registerInfo.username, uploadNick);
-  }
+const toOption = (index) => {
+  // Your logic for switching between login options
 };
 </script>
 
-<style scoped lang="less">
-.container {
-  width: 100vw;
-  height: 100vh;
+<style lang="less" scoped>
+.loginContent {
+  text-align: center;
+  width: 410px;
+  height: 420px;
+  // height: 534px;
 
-  .loginImgBox {
-    transform-style: preserve-3d;
-    perspective: 1000px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background: white;
+  margin-top: 50px;
+  /* border: .1rem solid white; */
+  box-sizing: border-box;
 
-    .loginImg {
-      margin-top: 2rem;
-      width: 80vw;
-      height: 80vh;
+  .loginContentTop {
+    padding-top: 15px;
+    height: 22px;
+    font-size: 16px;
+    font-family: PingFangSC-Semibold, PingFang SC;
+    font-weight: 600;
+    color: #222226;
+    line-height: 1.5;
 
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 2rem;
-      }
-    }
-  }
-
-  .logBox {
-    position: absolute;
-    top: 50%;
-    right: 20rem;
-    transform: translateY(-50%);
-    width: 40rem;
-    height: 45rem;
-    border-radius: 1rem;
-    background-color: #fff;
-    border: 0.1rem solid black;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0.1rem 0.1rem 0.5rem var(--gray-sahdow);
-
-    .top {
-      display: flex;
-      flex-direction: column;
-
-      .title {
-        padding: 2rem;
-
-        h5 {
-          font-size: 3.5rem;
-        }
-      }
-
-      .box {
-        margin-top: 1rem;
-        display: flex;
-        flex-direction: column;
-
-        .iptUser {
-          display: flex;
-          align-items: center;
-          padding: 0.5rem 1.5rem;
-
-          label {
-            width: 20%;
-            font-size: 1.4rem;
-          }
-        }
-      }
-
-      .logBtn {
-        margin-top: 2rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        padding: 0 1rem;
-
-        div {
-          width: 100%;
-          border: 0.1rem solid black;
-          border-radius: 0.4rem;
-          box-shadow: 0.1rem 0.1rem 0.3rem var(--gray-sahdow);
-          padding: 0.5rem 0;
-          font-size: 1.5rem;
-          transition: all 0.1s;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-
-          &:hover {
-            background-color: var(--box-shadow);
-            color: #fff;
-            cursor: pointer;
-          }
-        }
-
-        span {
-          margin-top: 0.5rem;
-          color: var(--special-font-color);
-          cursor: pointer;
-        }
-      }
-
-      .nickName {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        box-sizing: border-box;
-        padding: 0 1rem;
-
-        label {
-          width: 4rem;
-          font-size: 1.4rem;
-        }
-      }
-
-      .nickNameBtn {
-        div {
-          margin: 0.5rem 0;
-        }
-      }
-    }
-
-    .message {
-      justify-content: flex-end;
-      font-size: 1.2rem;
-      padding: 1rem;
-      color: var(--font-gray-color);
-
-      img {
-        width: 70%;
-        margin-top: 2rem;
-      }
+    .introduce {
+      color: #fc5531;
     }
   }
 }
 
-@media screen and (max-width: 800px) {
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.loginContentForm {
+  padding: 50px 24px 0;
+}
+.content {
+  height: 644px;
+  /* background-image: "/image/imgs/1.png" */
+  background-image: url("/image/imgs/1.png");
+  margin-bottom: -13px;
+}
 
-    .loginImgBox {
-      display: none;
-    }
+.loginContentButton {
+  padding: 0px 24px 0;
+}
+.button {
+  width: 362px;
+  border-radius: 20px;
+  font-size: 16px;
+}
 
-    .logBox {
-      position: absolute;
-      top: 50%;
-      right: 50%;
-      transform: translateX(50%) translateY(-50%);
-      width: 80%;
-    }
+.buttonTop {
+  display: flex;
+  align-items: center; /* 垂直居中 */
+
+  .left-element {
+    margin-right: 10px; /* 可以调整间距 */
+  }
+
+  .right-element {
+    margin-left: auto; /* 推到容器的右侧 */
+  }
+}
+
+.login-third-items {
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  a {
+    margin-left: 73px;
   }
 }
 </style>

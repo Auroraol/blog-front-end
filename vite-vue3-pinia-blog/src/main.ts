@@ -5,7 +5,10 @@ import App from "./App.vue";
 import "./assets/style/reset.css";
 import "./assets/style/common.css";
 //加载阿里巴巴矢量图标库
-import './assets/iconfont/iconfont.js'
+// import './assets/icons'  // 图标
+import 'virtual:svg-icons-register'; // 使用svg 需要引入svg-icons-register 配置
+
+
 
 //引入 Pinia (必须)
 import { createPinia } from 'pinia';
@@ -28,6 +31,7 @@ const app = createApp(App);
 
 // 打印环境变量
 // console.log(process.env.NODE_ENV);
+// register globally 注册全局使用
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);

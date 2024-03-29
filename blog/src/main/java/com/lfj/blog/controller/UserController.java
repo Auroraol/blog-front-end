@@ -42,7 +42,8 @@ public class UserController {
 		userService.register(request);
 		return ApiResponseResult.success();
 	}
-//
+
+	//
 //	@PostMapping("/update")
 //	@ApiOperation(value = "更新用户基本信息", notes = "需要传accessToken，请求的json中id字段必传，更新不为null的项")
 //	public ApiResponseResult update(@Validated @RequestBody UpdateUserRequest request) {
@@ -112,7 +113,7 @@ public class UserController {
 //	@ApiOperation(value = "发送验证链接到邮箱", notes = "需要accessToken")
 //	public ApiResponseResult validateEmail(@ApiParam("邮箱") @NotBlank(message = "邮箱不能为空") @Email(message = "邮箱格式不正确") @RequestParam("email") String email) {
 //		userService.validateEmail(email);
-//		return  ApiResponseResult.success();
+//		return ApiResponseResult.success();
 //	}
 //
 //	@PostMapping("/email/bind")

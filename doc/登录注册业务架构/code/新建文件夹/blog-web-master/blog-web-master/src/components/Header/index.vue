@@ -4,6 +4,7 @@
     <header class="main-header">
       <div class="container">
         <div class="logo">
+          <!-- 手机端 -->
           <div v-if="device !== 'desktop'" class="menu-wrapper">
             <el-dropdown trigger="click" placement="bottom">
               <span style="color: #007fff;font-weight: 700;">
@@ -62,7 +63,8 @@
 
             <!-- 登录·注册 -->
             <div v-if="!userInfo" class="nologin">
-              <div class="login-btn" @click="loClick">登录</div><div class="reg-btn" @click="reClick">注册</div>
+              <div class="login-btn" @click="loClick">登录</div>
+              <div class="reg-btn" @click="reClick">注册</div>
             </div>
             <div v-else class="logined">
               <router-link to="/user" class="console">个人中心</router-link>
@@ -83,7 +85,7 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-          </div>
+          </div>  
 
         </nav>
       </div>

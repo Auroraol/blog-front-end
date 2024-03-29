@@ -3,7 +3,7 @@ package com.lfj.blog.common.security.oauth;
 import lombok.Data;
 
 /**
- * 封装应用授权请求的类 第三方token
+ * 封装应用授权请求的类 第三方授权token
  **/
 @Data
 public class ThirdAuthToken {

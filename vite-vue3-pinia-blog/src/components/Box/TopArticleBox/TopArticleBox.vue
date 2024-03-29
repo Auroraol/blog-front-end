@@ -50,12 +50,12 @@
 
 <script setup lang="ts">
 // import useAxios from "@/hooks/axios/axios";
-import { useStore } from "/@/store";
+// import { useStore } from "/@/store";
 // import { useRouter } from "vue-router";
 // import { extractMarkdownText } from '/@/hooks/extractMarkdownText/extractMarkdownText'
 
 const router = useRouter()
-const pinia = useStore()
+// const pinia = useStore()
 
 
 type Props = {

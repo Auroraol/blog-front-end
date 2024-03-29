@@ -39,15 +39,15 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useStore } from "/@/store";
+// import { useStore } from "/@/store";
 import { useRouter } from "vue-router";
 import { UserType } from "/@/typings";
 import { getUpdateNickName,getUserInfo,  } from "/@/components/Login/services";
-import { removeUserAccountInfo  } from '/@/utils/network/auth.js'
+// import { removeUserAccountInfo  } from '/@/utils/network/auth.js'
 
 
 const router = useRouter();
-const pinia = useStore();
+// const pinia = useStore();
 
 // 更改昵称对话框
 const dialogFormVisible = ref(false);
@@ -103,7 +103,7 @@ const handleCommand = (command: string | number | object) => {
     // 退出登录
     case "c":
       // localStorage.removeItem("userAccount");
-      removeUserAccountInfo()
+      // removeUserAccountInfo()
       pinia.userInfo = "";
       // alert('注销成功')
       router.go(0);

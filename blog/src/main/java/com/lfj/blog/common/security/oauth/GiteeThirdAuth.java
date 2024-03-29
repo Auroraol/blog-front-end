@@ -58,7 +58,7 @@ public class GiteeThirdAuth {
 	 * @return
 	 */
 	public ThirdAuthUser getUserInfoByCode(String code) {
-		ThirdAuthToken authToken = getAuthToken(code);
+		ThirdAuthToken authToken = getAuthToken(code); //获取第三方token信息
 		return getUserInfoByToken(authToken.getAccessToken());
 	}
 

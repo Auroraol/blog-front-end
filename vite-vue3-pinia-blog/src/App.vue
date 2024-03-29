@@ -14,10 +14,10 @@ import { defineComponent } from "vue";
 import { ElConfigProvider } from "element-plus";
 // import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
-import { useStore } from '/@/store';
+// import { useStore } from '/@/store';
+// import { useStore } from '/@/store'
 
-
-const pinia = useStore()
+// const pinia = useStore()
 
 // // 初始化
 // onMounted(() => {
