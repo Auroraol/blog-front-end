@@ -1,8 +1,9 @@
 <template>
     <Suspense>
         <template #default>
-            <register></register>
+            <login></login>
         </template>
+
         <!-- 加载完成前的载入动画 -->
         <template #fallback>
             <div class="window">
@@ -15,7 +16,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 //Suspense要异步引入组件
-const register = defineAsyncComponent(() => import('../components/Login/register.vue'))
+const Login = defineAsyncComponent(() => import('./login-register/components/Login.vue'))
 
 </script>
 

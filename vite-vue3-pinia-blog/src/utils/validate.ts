@@ -1,4 +1,9 @@
 /**
+ * 正则相关
+ * 
+ * /
+
+/**
  * @param {string} path
  * @returns {Boolean}
  */
@@ -14,7 +19,8 @@ export function validUsername(str) {
   const valid_map = ['admin', 'editor']
   return valid_map.indexOf(str.trim()) >= 0
 }
-/**
+
+/**验证电话号码
  * @param {string | Number} param
  * @returns {Boolean}
  */

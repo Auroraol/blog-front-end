@@ -91,7 +91,7 @@
 <script setup lang="ts">
 // import { SortUp } from "@element-plus/icons-vue/dist/types";
 import { useRouter } from "vue-router";
-import { useStore } from "/@/store";
+import { useStore } from "../../store";
 // import { getAccessToken, getRefreshToken, getUserAccountInfo, removeUserAccountInfo  } from '/@/utils/network/auth.js'
 
 const router = useRouter();

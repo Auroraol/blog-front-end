@@ -142,7 +142,7 @@ import {
   getSysRegister,
   getUpdateNickName,
 } from "./services";
-import { setAccessToken  } from '/@/utils/auth.js'
+import { setAccessToken  } from '../../utils/auth.js'
 
 
 

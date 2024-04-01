@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 // import useAxios from '@/hooks/axios/axios';
-import { useStore } from "/@/store";
+import { useStore } from "../../store";
 import { ref, watchEffect, reactive, defineAsyncComponent } from 'vue'
 const ArticleBox = defineAsyncComponent(() => import('/@/components/box/articleBox.vue'))
 

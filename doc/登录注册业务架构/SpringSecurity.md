@@ -2754,7 +2754,7 @@ public class LoginServiceImpl implements LoginServcie {
             throw new RuntimeException("用户名或密码错误");
         }
         //使用userid生成token
-        LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
+        LoginUser loginUser = (LoginUser) authenticate.getPrincipal();  // 获取查询到的数据
         String userId = loginUser.getUser().getId().toString();
         String jwt = JwtUtil.createJWT(userId);
         //authenticate存入redis

@@ -149,7 +149,7 @@ public class RedisTokenStore {
 	 */
 	public AuthenticationToken storeToken(Authentication authentication, Client client) {
 
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();  // 获取用户名
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();  // 获取查询到的数据
 		Integer userId = userDetails.getId();
 		String clientId = client.getClientId();   // 获取客户端id
 		// 同一客户端，同一用户是否已登录

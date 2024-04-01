@@ -177,6 +177,55 @@ export default {
       })
     },
 
+    /* 可以使用
+    async passwordLogin() {
+  const username = this.username
+  const password = this.password
+
+  if (username === '') {
+    this.$message('请输入用户名')
+    return
+  }
+
+  if (password === '') {
+    this.$message('请输入密码')
+    return
+  }
+
+  const params = {
+    username: username,
+    password: password
+  }
+
+  this.loading = true
+
+  try {
+    await this.$store.dispatch('user/accountLogin', params)
+    const { roles } = await this.$store.dispatch('user/getUserInfo')
+    const accessRoutes = await this.$store.dispatch('permission/generateRoutes', roles)
+    this.$router.addRoutes(accessRoutes)
+
+    const checked = this.checked
+    setRemember(checked ? '1' : '0')
+
+    if (checked) {
+      this.$store.dispatch('login/setUsernameAndPassword', params)
+    } else {
+      this.$store.dispatch('login/clearUsernameAndPassword')
+    }
+
+    this.loading = false
+    this.bClose()
+  } catch (error) {
+    console.error(error)
+    this.$message.error('登录失败，请检查用户名和密码')
+  } finally {
+    this.loading = false
+  }
+}
+    
+    */
+
     // 验证码登录
     codeLogin() {
       const mobile = this.mobile

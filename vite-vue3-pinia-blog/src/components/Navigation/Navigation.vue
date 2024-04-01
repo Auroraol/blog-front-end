@@ -99,12 +99,10 @@
               <!-- <div class="nologin" style="margin-bottom: 22px">
                
               </div> -->
-                <el-button-group v-if="ifLog">
-                   <el-button @click="toLogin">登录</el-button>
-                  <el-button color="#79BBDC" @click="toRegister"
-                    >注册</el-button
-                  >
-                </el-button-group>
+              <el-button-group v-if="ifLog">
+                <el-button @click="toLogin">登录</el-button>
+                <el-button @click="toRegister" color="#79BBDC">注册</el-button>
+              </el-button-group>
               <!-- <div v-else class="logined">
           </div> -->
               <!-- 组件nav-user-info -->
@@ -137,12 +135,12 @@ const handleSelect = (index: string) => {
 
 //跳转到登录
 const toLogin = () => {
-  router.push("/login");
+  router.push("/login-register/login");
 };
 
 //跳转到注册
 const toRegister = () => {
-  router.push("/register");
+  router.push("/login-register/register");
 };
 
 const ifLog = ref(true); //当它是false时是已登录

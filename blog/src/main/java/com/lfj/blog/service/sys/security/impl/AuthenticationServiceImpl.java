@@ -13,6 +13,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 /**
  * 2019-10-28 18:27
  **/
@@ -47,7 +49,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		// 对认证信息进行认证, AuthenticationManager的authenticate()方法来进行用户认证
 		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-
+		if (Objects.isNull(authenticate)) {
+			throw new RuntimeException("用户名或密码错误");
+		}
 		// 将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
 		return redisTokenStore.storeToken(authenticate, client);
 	}

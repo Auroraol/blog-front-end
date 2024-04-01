@@ -1,5 +1,5 @@
-// import { defineStore } from 'pinia';
-// import { asyncRoutes, constantRoutes } from '/@/router';
+import { defineStore } from 'pinia';
+// import { asyncRoutes, constantRoutes } from '/@/route/router';
 
 // /**
 //  * 判断是否拥有权限

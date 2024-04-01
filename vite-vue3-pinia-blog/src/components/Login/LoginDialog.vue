@@ -97,9 +97,9 @@
 <script setup>
 import { validMobile } from "/@/utils/validate.js";
 import { setRemember, getRemember } from "/@/utils/auth.js";
-import { sendCode } from "/@/api/sms.js";
+import { sendCode } from "../../api/sms.js";
 // import { mapGetters } from 'vuex'
-import { useAuthStore } from "/@/store";
+import { useAuthStore } from "../../store";
 const dialogFormVisible = ref(true)
 const username = ref("");
 const password = ref("");

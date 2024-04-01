@@ -11,12 +11,7 @@ import NoFond from "./no-fond";
 import app from "../main";
 import { useStore } from "../store2";
 
-
 /**
- *
- *
- * hidden: true                   如果设置了true，则不在左边导航栏显示,即不是后台管理的页面
- * alwaysShow: true               如果设置了true，则总在根菜单显示
  *
  * redirect: noRedirect           设置noRedirect，则面包屑路径不可点
  * name:'router-name'             名称在 <keep-alive> 用到，后台管理必须设置！！！
@@ -27,146 +22,182 @@ import { useStore } from "../store2";
     breadcrumb: false            false，将不显示面包屑
     activeMenu: '/example/list'  如果设置，则导航栏将高亮显示
   }
+ *
+ *自定义的路由元信息:
+ *   hidden: true                   如果设置了true，则不在左边导航栏显示,即不是后台管理的页面
+ *   alwaysShow: true               如果设置了true，则总在根菜单显示
+ *
  */
-
 
 const routes = [
   // 重定向
   {
-    path: '/',
-    redirect: '/index',
-},  {
-  path: '/index',
-  name: 'index',
-  component: () => import('/@/view/index.vue'),
-  meta: {
-      title: '首页'
-  }
-}, {
-  path: '/article',
-  name: 'article',
-  component: () => import('/@/view/Article.vue'),
-  meta: {
-      title: '文章列表'
-  }
-}, 
-{
-  path: '/write',
-  name: 'write',
-  component: () => import('/@/view/Write.vue'),
-  meta: {
-      title: '写作'
-  }
-},
-//{
-//   path: '/leavemsg',
-//   name: 'leavemsg',
-//   component: () => import('/@/view/LeaveMsg.vue'),
-//   meta: {
-//       title: '留言板'
-//   }
-// }, 
-{
-  path: '/login',
-  name: 'login',
-  component: () => import('/@/view/login.vue'),
-  meta: {
-      title: '登录'
-  }
-},
-{
-  path: '/register',
-  name: 'register',
-  component: () => import('/@/view/register.vue'),
-  meta: {
-      title: '注册'
-  }
-},
- {
-  path: '/about',
-  name: 'about',
-  component: () => import('/@/view/about.vue'),
-  meta: {
-      title: '更多'
-  }
-}
-// , {
-//   path: '/articleeditor',
-//   name: 'articleeditor',
-//   component: () => import('/@/view/Editor.vue'),
-//   meta: {
-//       title: '编辑文章'
-//   }
-// }
-,{
-  path: '/personalcenter',
-  name: 'personalcenter',
-  component: () => import('/@/view/personalcenter.vue'),
-  meta: {
-      title: '个人中心'
+    path: "/",
+    redirect: "/index",
   },
-  children: [
-    //TODO
-    // {
-    //   path: 'a',
-    //   component: () => import('@/components/me/a.vue'),
-    // },
-    // {
-    //   path: 'b',
-    //   component: () => import('@/components/me/b.vue'),
-    // },
-    // {
-    //   path: 'c',
-    //   component: () => import('@/components/me/c.vue'),
-    // },
-  ]  
-},
-// {
-//   path: '/archives',
-//   component: () => import('/@/view/archives/index'),
-//   hidden: true
-// },
-//  {
-//   path: '/otherspersonalcenter',
-//   name: 'otherspersonalcenter',
-//   component: () => import('/@/view/OthersPersonalCenter.vue'),
-//   meta: {
-//       title: '个人中心'
-//   }
-// }, {
-//   path: '/userfocus',
-//   name: 'userfocus',
-//   component: () => import('@/view/UserFocus.vue'),
-//   meta: {
-//       title: '关注列表'
-//   },
-//   children: [
-//       {
-//           path: "allfocus",
-//           name: 'allfocus',
-//           component: () => import('@/components/personalCenter/userfocus/userfocusShow.vue')
-//       },
-//       {
-//           path: "fans",
-//           name: 'fans',
-//           component: () => import('@/components/personalCenter/userfocus/userfocusShow.vue')
-//       }
-//   ]
-// }, {
-//   path: '/search',
-//   name: 'search',
-//   component: () => import('@/view/Search.vue'),
-//   meta: {
-//       title: '搜索'
-//   }
-// }, {
-//   path: '/chat',
-//   name: 'chat',
-//   component: () => import('@/view/Chat.vue'),
-//   meta: {
-//       title: '聊天室'
-//   },
-// }
+  {
+    path: "/index",
+    name: "index",
+    component: () => import("/@/views/index.vue"),
+    meta: {
+      title: "首页",
+    },
+  },
+  {
+    path: "/article",
+    name: "article",
+    component: () => import("/@/views/Article.vue"),
+    meta: {
+      title: "文章列表",
+    },
+  },
+  {
+    path: "/write",
+    name: "write",
+    component: () => import("/@/views/Write.vue"),
+    meta: {
+      title: "写作",
+    },
+  },
+  //{
+  //   path: '/leavemsg',
+  //   name: 'leavemsg',
+  //   component: () => import('/@/view/LeaveMsg.vue'),
+  //   meta: {
+  //       title: '留言板'
+  //   }
+  // },
+  {
+    path: "/login-register",
+    name: "login-register",
+    component: () => import("/@/views/login-register/index.vue"),
+    meta: {
+      title: "登录注册",
+    },
+    children: [
+      //通过children配置子级路由
+      {
+        path: "login",
+        name: "login",
+        component: () => import("/@/views/login-register/components/Login.vue"),
+        meta: {
+          title: "登录",
+        },
+      },
+      {
+        path: "register",
+        name: "register",
+        component: () =>
+          import("/@/views/login-register/components/Register.vue"),
+        meta: {
+          title: "注册",
+        },
+      },
+    ],
+  },
+  {
+    path: "/reset-password",
+    name: "reset-password",
+    component: () => import("/@/views/reset-password/index.vue"),
+    hidden: true,
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: () => import("/@/views/about.vue"),
+    meta: {
+      title: "更多",
+    },
+  },
+  // , {
+  //   path: '/articleeditor',
+  //   name: 'articleeditor',
+  //   component: () => import('/@/view/Editor.vue'),
+  //   meta: {
+  //       title: '编辑文章'
+  //   }
+  // }
+  {
+    path: "/personalcenter",
+    name: "personalcenter",
+    component: () => import("/@/views/personalcenter.vue"),
+    meta: {
+      title: "个人中心",
+    },
+    children: [
+      //TODO
+      // {
+      //   path: 'a',
+      //   component: () => import('@/components/me/a.vue'),
+      // },
+      // {
+      //   path: 'b',
+      //   component: () => import('@/components/me/b.vue'),
+      // },
+      // {
+      //   path: 'c',
+      //   component: () => import('@/components/me/c.vue'),
+      // },
+    ],
+  },
+  {
+    path: "/terms",
+    name: "用户协议",
+    component: () => import("/@/views/terms/index.vue"),
+    hidden: true,
+  },
+  {
+    path: "/privacy",
+    name: "隐私政策",
+    component: () => import("/@/views/privacy/index.vue"),
+    hidden: true,
+  },
+  // {
+  //   path: '/archives',
+  //   component: () => import('/@/view/archives/index'),
+  //   hidden: true
+  // },
+  //  {
+  //   path: '/otherspersonalcenter',
+  //   name: 'otherspersonalcenter',
+  //   component: () => import('/@/view/OthersPersonalCenter.vue'),
+  //   meta: {
+  //       title: '个人中心'
+  //   }
+  // }, {
+  //   path: '/userfocus',
+  //   name: 'userfocus',
+  //   component: () => import('@/view/UserFocus.vue'),
+  //   meta: {
+  //       title: '关注列表'
+  //   },
+  //   children: [
+  //       {
+  //           path: "allfocus",
+  //           name: 'allfocus',
+  //           component: () => import('@/components/personalCenter/userfocus/userfocusShow.vue')
+  //       },
+  //       {
+  //           path: "fans",
+  //           name: 'fans',
+  //           component: () => import('@/components/personalCenter/userfocus/userfocusShow.vue')
+  //       }
+  //   ]
+  // }, {
+  //   path: '/search',
+  //   name: 'search',
+  //   component: () => import('@/view/Search.vue'),
+  //   meta: {
+  //       title: '搜索'
+  //   }
+  // }, {
+  //   path: '/chat',
+  //   name: 'chat',
+  //   component: () => import('@/view/Chat.vue'),
+  //   meta: {
+  //       title: '聊天室'
+  //   },
+  // }
 
   // {
   //   path: "/home",
@@ -316,7 +347,6 @@ const router = createRouter({
 //   // })
 //   next()
 
-
 //   // if (to.meta.loading) {
 //   //   app.config.globalProperties.$loading.showLoading();
 //   //   next();
@@ -332,7 +362,6 @@ const router = createRouter({
 //   // }
 // });
 
-
 // const createRouter = () => new Router({
 //   // mode: 'history', // require service support
 //   // 路由滚动位置
@@ -346,7 +375,6 @@ const router = createRouter({
 //   mode: 'history',
 //   routes: routes
 // })
-
 
 /**
  * 重置路由

@@ -548,7 +548,7 @@ gitee
 
 ```json
 {  
-    "code": 0,  
+    "code": 200000,  
     "message": "成功"
 }
 ```
@@ -572,6 +572,52 @@ POST http://localhost:9000/user/register
 3、查看数据库
 
 ![image-20240324151014768](README2.assets/image-20240324151014768.png)
+
+### 获取用户信息
+
+#### API 接口
+
+请求方法：GET
+
+请求地址：/user/info
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：前端权限菜单可根据roles生成；用户头像可能不存在，默认头像前端指定即可。
+
+**获取成功：**
+
+```json
+{
+    "code": 200000,
+    "data": {
+        "id": 61,
+        "username": "lfj",
+        "password": "$2a$10$XiG5f2YXrVlIWsPBY7yrOe85RPqN1oY2lDw/6ObiHpVI8/XBvV.Qu",
+        "mobile": 15775984866,
+        "nickname": "用户984866",
+        "gender": 1,
+        "birthday": "2024-04-01",
+        "status": 0,
+        "admin": 0,
+        "createTime": "2024-04-01 19:13:46",
+        "roles": [
+            "ordinary"
+        ]
+    },
+    "message": "响应成功"
+}
+```
+
+#### Postman
+
+```
+GET http://localhost:9000/user/info
+```
+
+![image-20240401215243550](README2.assets/image-20240401215243550.png)
 
 
 

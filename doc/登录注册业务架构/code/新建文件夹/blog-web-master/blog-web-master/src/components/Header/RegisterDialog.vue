@@ -17,7 +17,7 @@
         v-show="codeCount"
         slot="suffix"
         type="primary"
-        size="mini"
+        size="mini"                                                             
         disabled
         style="margin-top: 6px;"
       >{{ codeCount }}s</el-button>

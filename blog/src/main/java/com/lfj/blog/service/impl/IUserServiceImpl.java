@@ -113,7 +113,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 	public void register(UserRegisterRequest request) {
 		String mobile = request.getMobile();
 		String code = request.getCode();
-		checkSmsCode(mobile, code); // 检测手机号和验证码是否对
+//		checkSmsCode(mobile, code); // 检测手机号和验证码是否对
 		String username = request.getUsername();
 		User userDao = selectUserByUsernameOrMobile(username, Long.valueOf(mobile));
 		if (userDao != null && username.equals(userDao.getUsername())) {

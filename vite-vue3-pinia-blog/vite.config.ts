@@ -82,7 +82,7 @@ export default ({ mode }) => {
         // 可以为项目根目录的上一级提供服务
         allow: [".."],
       },
-      //配置自定义代理规则，跨域
+      //配置自定义代理规则，跨域  //这里通过封装axios.ts实现跨域
       proxy: {
         [env.VITE_APP_BASE_API]: {
           target: env.VITE_API_URL,
@@ -94,11 +94,11 @@ export default ({ mode }) => {
           },
         },
       },
-      // '/api': {
-      //   target: 'http://localhost:9000',
-      //   changeOrigin: true,
-      //   rewrite: (path) => path.replace(/^\/api/, '')
-      // }
+    //   '/api': {
+    //     target: 'http://localhost:9000',
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api/, '')
+    //   }
     // }
     },
 

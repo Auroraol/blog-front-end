@@ -8,7 +8,7 @@ import {
   removePassword,
 } from "/@/utils/auth";
 
-export const useAuthStore = defineStore("auth", {
+export const useLoginStore = defineStore("login", {
   state: () => ({
     visible: false,
     username: getUsername(),

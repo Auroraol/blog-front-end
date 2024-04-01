@@ -33,7 +33,7 @@ public class UserController {
 	@GetMapping("/info")
 	@ApiOperation(value = "获取用户信息", notes = "需要传accessToken")
 	public ApiResponseResult<Object> info(Authentication authentication) {
-		return ApiResponseResult.success(authentication.getPrincipal());
+		return ApiResponseResult.success(authentication.getPrincipal());  //authenticate.getPrincipal(); // 获取通过DetailsService查询到的数据
 	}
 
 	@PostMapping("/register")
