@@ -2,8 +2,8 @@ import { createApp } from "vue";
 import App from "./App.vue";
 
 // 引入重置与全局样式
-import "./assets/style/reset.css";
-import "./assets/style/common.css";
+import "./assets/styles/reset.css";
+import "./assets/styles/common.css";
 //加载阿里巴巴矢量图标库
 // import './assets/icons'  // 图标
 import 'virtual:svg-icons-register'; // 使用svg 需要引入svg-icons-register 配置

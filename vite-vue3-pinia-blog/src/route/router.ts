@@ -29,6 +29,9 @@ import { useStore } from "../store2";
  *
  */
 
+/**
+ * 常量路由，所有用户可见
+ */
 const routes = [
   // 重定向
   {
@@ -38,7 +41,7 @@ const routes = [
   {
     path: "/index",
     name: "index",
-    component: () => import("/@/views/index.vue"),
+    component: () => import("/@/views/index/index.vue"),
     meta: {
       title: "首页",
     },
@@ -49,14 +52,6 @@ const routes = [
     component: () => import("/@/views/Article.vue"),
     meta: {
       title: "文章列表",
-    },
-  },
-  {
-    path: "/write",
-    name: "write",
-    component: () => import("/@/views/Write.vue"),
-    meta: {
-      title: "写作",
     },
   },
   //{
@@ -102,6 +97,32 @@ const routes = [
     hidden: true,
   },
   {
+    path: "/email-validate",
+    name: "email-validate",
+    component: () => import("/@/views/email-validate/index.vue"),
+    hidden: true,
+    meta: {
+      title: "邮箱绑定",
+    },
+  },
+  {
+    path: "/bind-mobile",
+    name: "bind-mobile",
+    component: () => import("/@/views/bind-mobile/index.vue"),
+    hidden: true,
+    meta: {
+      title: "手机号绑定",
+    },
+  },
+  // {
+  //   path: '/rebind-mobile',
+  //   component: () => import('@/views/rebind-mobile/index'),
+  //   hidden: true,
+  // meta: {
+  //   title: "手机号换绑",
+  // },
+  // },
+  {
     path: "/about",
     name: "about",
     component: () => import("/@/views/about.vue"),
@@ -120,11 +141,19 @@ const routes = [
   {
     path: "/personalcenter",
     name: "personalcenter",
-    component: () => import("/@/views/personalcenter.vue"),
+    component: () => import("/@/views/personal-center/index.vue"),
     meta: {
       title: "个人中心",
     },
     children: [
+      {
+        path: "write",
+        name: "write",
+        component: () => import("/@/views/Write.vue"),
+        meta: {
+          title: "写作",
+        },
+      },
       //TODO
       // {
       //   path: 'a',
@@ -142,15 +171,44 @@ const routes = [
   },
   {
     path: "/terms",
-    name: "用户协议",
+    name: "terms",
     component: () => import("/@/views/terms/index.vue"),
     hidden: true,
+    meta: {
+      title: "用户协议",
+    },
   },
   {
     path: "/privacy",
-    name: "隐私政策",
+    name: "privacy",
     component: () => import("/@/views/privacy/index.vue"),
     hidden: true,
+    meta: {
+      title: "隐私政策",
+    },
+  },
+  {
+    path: "/friend-link",
+    name: "friend-link",
+    component: () => import("/@/views/friend-link/index.vue"),
+    hidden: true,
+    meta: {
+      title: "友链",
+    },
+  },
+  {
+    path: "/tag",
+    name: "tag",
+    component: () => import("/@/views/tag/index.vue"),
+    hidden: true,
+    meta: {
+      title: "标签",
+    },
+    props($route) {
+      return {
+        id: $route.query.id,
+      };
+    },
   },
   // {
   //   path: '/archives',

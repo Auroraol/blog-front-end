@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStringCommands;
@@ -92,6 +93,7 @@ public class RedisTokenStore {
 	@Autowired
 	private IClientService clientService;
 
+	@Lazy
 	@Autowired
 	private IUserService userService;
 
@@ -152,9 +154,11 @@ public class RedisTokenStore {
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();  // 获取查询到的数据
 		Integer userId = userDetails.getId();
 		String clientId = client.getClientId();   // 获取客户端id
+		//System.out.println("");
 		// 同一客户端，同一用户是否已登录
 		byte[] uname2accessKey = serializedKey(UNAME_TO_ACCESS + extractKey(userId, clientId));
 		String access = readAccessByUnameKey(uname2accessKey);
+		//从客户端判断access_token有效时长
 		long accessExpire = client.getAccessTokenExpire() == null ? ACCESS_EXPIRE : client.getAccessTokenExpire();
 		long refreshExpire = client.getRefreshTokenExpire() == null ? REFRESH_EXPIRE : client.getRefreshTokenExpire();
 		if (StringUtils.isNotBlank(access)) {
@@ -184,7 +188,6 @@ public class RedisTokenStore {
 		authToken.setAccessToken(access2);
 		authToken.setRefreshToken(refresh2);
 		authToken.setPrincipal(userDetails);
-
 		// redis缓存
 		byte[] accessKey = serializedKey(AUTH_ACCESS + access2);
 		byte[] refresh2accessKey = serializedKey(AUTH_REFRESH_TO_ACCESS + refresh2);
@@ -229,7 +232,6 @@ public class RedisTokenStore {
 		authToken.setTokenType(TOKEN_TYPE);
 		authToken.setAccessToken(access);
 		authToken.setPrincipal(userDetails);
-
 		// redis缓存
 		byte[] accessKey = serializedKey(AUTH_ACCESS + access);
 		// 用户id

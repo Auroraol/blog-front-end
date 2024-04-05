@@ -44,11 +44,11 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
 					return;
 				}
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(cacheAuthenticationToken.getPrincipal(), null, cacheAuthenticationToken.getPrincipal().getAuthorities());
+				// 放入任务上下文
 				authentication.setDetails(cacheAuthenticationToken);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		}
 		filterChain.doFilter(httpServletRequest, httpServletResponse);
 	}
-
 }

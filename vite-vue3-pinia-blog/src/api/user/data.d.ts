@@ -18,6 +18,9 @@ export type userInfoResponseType = {
     nickname: string;
     gender: number;
     birthday: string;
+    email?:string;
+    brief?:string;
+    avatar?:string;
     status: number;
     admin: number;
     createTime: string;

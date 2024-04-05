@@ -24,7 +24,7 @@
 
 <style lang="less" scoped>
 .container {
- @import '/@/assets/style/variables.css';
+ @import '/@/assets/styles/variables.css';
   width: 100%;
   height: 100vh;
   overflow-x: hidden;

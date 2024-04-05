@@ -6,16 +6,22 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lfj.blog.common.constant.RoleConstant;
 import com.lfj.blog.common.constant.UserConstant;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
+import com.lfj.blog.common.security.ServerSecurityContext;
+import com.lfj.blog.common.security.details.CustomUserDetails;
 import com.lfj.blog.common.security.details.vo.UserVo;
+import com.lfj.blog.common.security.token.AuthenticationToken;
+import com.lfj.blog.common.security.token.RedisTokenStore;
 import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.controller.model.request.UserRegisterRequest;
 import com.lfj.blog.entity.User;
 import com.lfj.blog.exception.ApiException;
 import com.lfj.blog.mapper.UserMapper;
 import com.lfj.blog.service.IUserService;
-import com.lfj.blog.service.sys.security.biz.EmailService;
+import com.lfj.blog.service.security.biz.EmailService;
+import com.lfj.blog.utils.RandomValueStringGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,7 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 16658
@@ -45,12 +54,16 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 	 */
 	private final static String REDIS_MOBILE_VALIDATED_PREFIX = "mobile:validated:";
 
+	@Value("${mail.check}")
+	private String prefix;
+
 	@Autowired
 	private UserMapper userMapper;
 	@Autowired
 	private SmsCodeService smsCodeService;
-	//	@Autowired
-//	private RedisTokenStore tokenStore;
+
+	@Autowired
+	private RedisTokenStore tokenStore;  // 处理token
 	//	@Autowired
 //	private Storage storage;
 //	@Value("${mail.check}")
@@ -62,6 +75,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 
 	/**
 	 * 根据用户名查询
+	 * username 不为空时使用username查询，否则使用mobile查询
 	 *
 	 * @param username
 	 * @return cn.poile.blog.entity.User
@@ -75,6 +89,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 		UserVo userVo = new UserVo();
 		BeanUtils.copyProperties(user, userVo);
 		Integer admin = user.getAdmin();
+//		System.out.println("");
 		List<String> roleList = new ArrayList<>();
 		roleList.add(admin.equals(UserConstant.ADMIN) ? RoleConstant.ADMIN : RoleConstant.ORDINARY);
 		userVo.setRoles(roleList);
@@ -113,7 +128,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 	public void register(UserRegisterRequest request) {
 		String mobile = request.getMobile();
 		String code = request.getCode();
-//		checkSmsCode(mobile, code); // 检测手机号和验证码是否对
+		checkSmsCode(mobile, code); // 检测手机号和验证码是否对
 		String username = request.getUsername();
 		User userDao = selectUserByUsernameOrMobile(username, Long.valueOf(mobile));
 		if (userDao != null && username.equals(userDao.getUsername())) {
@@ -136,9 +151,75 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 		user.setCreateTime(LocalDateTime.now());
 		user.setAdmin(UserConstant.ORDINARY);  //默认普通用户
 		save(user);
-		smsCodeService.deleteSmsCode(mobile);
+		smsCodeService.deleteSmsCode(mobile); //删除验证码缓存
 	}
 
+	/**
+	 * 发送邮箱验证链接
+	 *
+	 * @param email
+	 * @return void
+	 */
+	@Override
+	public void validateEmail(String email) {
+		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().eq(User::getEmail, email);
+		long count = count(queryWrapper);
+		if (count != 0) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "邮箱已被使用,请换个绑定");
+		}
+		// 请求携带token, 可以用任务上下文获得authenticationToken
+		AuthenticationToken authenticationToken = ServerSecurityContext.getAuthenticationToken(true);
+		Map<String, Object> params = new HashMap<>(1);
+		// 生成模板参数
+		RandomValueStringGenerator generator = new RandomValueStringGenerator();
+		String code = generator.generate();
+		String accessToken = authenticationToken.getAccessToken();
+		String checkUrl = prefix + "?code=" + code;
+		params.put("checkUrl", checkUrl);
+		// 服务端生成Redis缓存
+		String key = REDIS_MAIL_CODE_PREFIX + code;
+		Map<String, String> map = new HashMap<>(2);
+		map.put("access_token", accessToken);
+		map.put("email", email);
+		stringRedisTemplate.opsForHash().putAll(key, map);
+		stringRedisTemplate.expire(key, 2L, TimeUnit.HOURS);
+		// 发送邮箱
+		emailService.asyncSendHtmlMail(email, "邮箱验证", "email", params);
+	}
+
+	/**
+	 * 绑定邮箱
+	 *
+	 * @param code
+	 * @return void
+	 */
+	@Override
+	public void bindEmail(String code) {
+		Map<Object, Object> resultMap = stringRedisTemplate.opsForHash().
+				entries(REDIS_MAIL_CODE_PREFIX + code);
+		if (resultMap.isEmpty()) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "code无效或code已过期");
+		}
+		String accessToken = (String) resultMap.get("access_token");
+		String email = (String) resultMap.get("email");
+		stringRedisTemplate.delete(REDIS_MAIL_CODE_PREFIX + code);
+		// 请求没有直接携带token, 不能用任务上下文
+		AuthenticationToken authToken = tokenStore.readByAccessToken(accessToken);
+		if (authToken == null) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "code无效或code已过期");
+		}
+		// 从Redis中得到保存的用户信息数据
+		CustomUserDetails principal = authToken.getPrincipal(); // 得到用户数据, 自定义AuthenticationToken中Principal属性保存着对应的用户数据
+		User user = new User();
+		Integer userId = principal.getId();
+		user.setId(userId);
+		user.setEmail(email);  // 更新邮箱
+		// 数据库数据更新
+		updateById(user);
+		// 清空用户缓存
+		tokenStore.clearUserCacheById(userId);
+	}
 //	/**
 //	 * 更新用户信息
 //	 *
@@ -148,7 +229,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //	public void update(UpdateUserRequest request) {
 //		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
 //		if (!request.getUserId().equals(userDetail.getId())) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "用户id跟当前用户id不匹配");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "用户id跟当前用户id不匹配");
 //		}
 //		User user = new User();
 //		BeanUtils.copyProperties(request, user);
@@ -160,69 +241,6 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //	}
 
 
-//	/**
-//	 * 发送邮箱验证链接
-//	 *
-//	 * @param email
-//	 * @return void
-//	 */
-//	@Override
-//	public void validateEmail(String email) {
-//		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-//		queryWrapper.lambda().eq(User::getEmail, email);
-//		int count = count(queryWrapper);
-//		if (count != 0) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "邮箱已被使用");
-//		}
-//		AuthenticationToken authenticationToken = ServerSecurityContext.getAuthenticationToken(true);
-//		Map<String, Object> params = new HashMap<>(1);
-//		RandomValueStringGenerator generator = new RandomValueStringGenerator();
-//		String code = generator.generate();
-//		String accessToken = authenticationToken.getAccessToken();
-//		String checkUrl = prefix + "?code=" + code;
-//		params.put("checkUrl", checkUrl);
-//
-//		String key = REDIS_MAIL_CODE_PREFIX + code;
-//		Map<String, String> map = new HashMap<>(2);
-//		map.put("access_token", accessToken);
-//		map.put("email", email);
-//		stringRedisTemplate.opsForHash().putAll(key, map);
-//		stringRedisTemplate.expire(key, 2L, TimeUnit.HOURS);
-//		emailService.asyncSendHtmlMail(email, "邮箱验证", "email", params);
-//	}
-//
-//	/**
-//	 * 绑定邮箱
-//	 *
-//	 * @param code
-//	 * @return void
-//	 */
-//	@Override
-//	public void bindEmail(String code) {
-//		Map<Object, Object> resultMap = stringRedisTemplate.opsForHash().entries(REDIS_MAIL_CODE_PREFIX + code);
-//		if (resultMap.isEmpty()) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "code无效或code已过期");
-//		}
-//		String accessToken = (String) resultMap.get("access_token");
-//		String email = (String) resultMap.get("email");
-//		stringRedisTemplate.delete(REDIS_MAIL_CODE_PREFIX + code);
-//		// 读取认证信息
-//		AuthenticationToken authToken = tokenStore.readByAccessToken(accessToken);
-//		if (authToken == null) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "code无效或code已过期");
-//		}
-//		CustomUserDetails principal = authToken.getPrincipal();
-//		User user = new User();
-//		Integer userId = principal.getId();
-//		user.setId(userId);
-//		user.setEmail(email);
-//		// 数据库数据更新
-//		updateById(user);
-//		// 清空用户缓存
-//		tokenStore.clearUserCacheById(userId);
-//	}
-//
-//
 //	/**
 //	 * 更新头像
 //	 *
@@ -251,7 +269,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //			tokenStore.clearUserCacheById(userId);
 //		} catch (IOException e) {
 //			log.error("上传文件失败:{0}", e);
-//			throw new ApiException(ErrorEnum.SYSTEM_ERROR.getErrorCode(), ErrorEnum.SYSTEM_ERROR.getErrorMsg());
+//			throw new ApiException(ResponseCodeEnum.SYSTEM_ERROR.getErrorCode(), ResponseCodeEnum.SYSTEM_ERROR.getErrorMsg());
 //		}
 //	}
 //
@@ -268,7 +286,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 //		boolean matches = passwordEncoder.matches(oldPassword, userDetail.getPassword());
 //		if (!matches) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "原密码不正确");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "原密码不正确");
 //		}
 //		User user = new User();
 //		Integer userId = userDetail.getId();
@@ -280,36 +298,37 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //		tokenStore.clearUserCacheById(userId);
 //	}
 //
-//	/**
-//	 * 重置密码
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 * @param password
-//	 * @return void
-//	 */
-//	@Override
-//	public void resetPassword(long mobile, String code, String password) {
-//		// 判断用户是否存在
-//		UserVo userVo = selectUserVoByUsernameOtherwiseMobile(null, mobile);
-//		if (userVo == null) {
-//			throw new ApiException(ErrorEnum.USER_NOT_FOUND.getErrorCode(), ErrorEnum.USER_NOT_FOUND.getErrorMsg());
-//		}
-//		// 验证码校验
-//		checkSmsCode(mobile, code);
-//		CustomUserDetails userDetails = new CustomUserDetails();
-//		BeanUtils.copyProperties(userVo, userDetails);
-//		User newUser = new User();
-//		Integer userId = userDetails.getId();
-//		newUser.setId(userId);
-//		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//		String encodePassword = passwordEncoder.encode(password);
-//		newUser.setPassword(encodePassword);
-//		updateById(newUser);
-//
-//		// 清空用户缓存
-//		tokenStore.clearUserCacheById(userId);
-//	}
+
+	/**
+	 * 重置密码
+	 *
+	 * @param mobile
+	 * @param code
+	 * @param password
+	 * @return void
+	 */
+	@Override
+	public void resetPassword(String mobile, String code, String password) {
+		// 判断用户是否存在
+		UserVo userVo = selectUserVoByUsernameOtherwiseMobile(null, Long.valueOf(mobile));
+		if (userVo == null) {
+			throw new ApiException(ResponseCodeEnum.ACCOUNT_NOT_FOUND.getCode(), ResponseCodeEnum.ACCOUNT_NOT_FOUND.getMessage());
+		}
+		// 验证码校验
+		checkSmsCode(mobile, code);
+		CustomUserDetails userDetails = new CustomUserDetails();
+		BeanUtils.copyProperties(userVo, userDetails);
+		User newUser = new User();
+		Integer userId = userDetails.getId();
+		newUser.setId(userId);
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String encodePassword = passwordEncoder.encode(password);
+		newUser.setPassword(encodePassword);
+		updateById(newUser);
+
+		// 清空用户缓存
+		tokenStore.clearUserCacheById(userId);
+	}
 //
 //	/**
 //	 * 更换手机号  验证手机号
@@ -323,7 +342,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //		checkSmsCode(mobile, code);
 //		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
 //		if (!userDetail.getMobile().equals(mobile)) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "手机号与当前用户手机号不匹配");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "手机号与当前用户手机号不匹配");
 //		}
 //		// 经过原手机号验证标识
 //		stringRedisTemplate.opsForValue().set(REDIS_MOBILE_VALIDATED_PREFIX + mobile, Long.toString(mobile), 5L, TimeUnit.MINUTES);
@@ -344,14 +363,14 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //		// 判断是否经过步骤一
 //		String validated = stringRedisTemplate.opsForValue().get(REDIS_MOBILE_VALIDATED_PREFIX + cacheKey);
 //		if (StringUtils.isBlank(validated)) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "未经原手机号验证或验证已超时，请验证原手机号通过后再试");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "未经原手机号验证或验证已超时，请验证原手机号通过后再试");
 //		}
 //		// 验证码校验
 //		checkSmsCode(mobile, code);
 //		// 判断手机号是否已被注册
 //		User user = selectUserByUsernameOrMobile(null, mobile);
 //		if (user != null) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), ErrorEnum.INVALID_REQUEST.getErrorMsg());
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), ResponseCodeEnum.INVALID_REQUEST.getErrorMsg());
 //		}
 //		User newUser = new User();
 //		Integer userId = userDetail.getId();
@@ -375,13 +394,13 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
 //		boolean hasMobile = userDetail.getMobile() != null;
 //		if (hasMobile) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "已存在手机号，请验证原手机后重新绑定");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "已存在手机号，请验证原手机后重新绑定");
 //		}
 //		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 //		queryWrapper.lambda().eq(User::getMobile, mobile);
 //		int count = count(queryWrapper);
 //		if (count != 0) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "手机号已被使用");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "手机号已被使用");
 //		}
 //		// 验证码校验
 //		checkSmsCode(mobile, code);
@@ -407,7 +426,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //		queryWrapper.lambda().eq(User::getUsername, username);
 //		int count = count(queryWrapper);
 //		if (count != 0) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "用户名已存在");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "用户名已存在");
 //		}
 //		User updateUser = new User();
 //		updateUser.setId(userDetail.getId());
@@ -450,11 +469,11 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //		int min = 0;
 //		int max = 3;
 //		if (status < min || status > max) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "无效状态值");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "无效状态值");
 //		}
 //		User daoUser = getById(userId);
 //		if (daoUser == null) {
-//			throw new ApiException(ErrorEnum.USER_NOT_FOUND.getErrorCode(), "用户不存在");
+//			throw new ApiException(ResponseCodeEnum.USER_NOT_FOUND.getErrorCode(), "用户不存在");
 //		}
 //		// 数据库数据更新
 //		User user = new User();
@@ -474,7 +493,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 //	 */
 //	private void checkSmsCode(long mobile, String code) {
 //		if (!smsCodeService.checkSmsCode(mobile, code)) {
-//			throw new ApiException(ErrorEnum.INVALID_REQUEST.getErrorCode(), "验证码不正确");
+//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "验证码不正确");
 //		}
 //	}
 //

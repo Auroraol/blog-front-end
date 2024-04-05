@@ -20,7 +20,7 @@
         :auto-upload="false"
         :name="'file'"
         :on-exceed="onExceed"
-        :before-upload="beforeUpload"
+        :before-upload="beforeUpload" 
         :on-success="uploadSuccess"
         :on-error="uploadError"
       >

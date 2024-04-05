@@ -52,38 +52,40 @@
             <el-text class="logo-title" type="primary">悦读博客</el-text>
 
             <el-menu-item index="/index" style="margin-left: 130px">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-shouye1"></use>
-              </svg>
-              首页
+              <el-icon><House /></el-icon> 首页
+            </el-menu-item>
+            <el-menu-item index="/category">
+              <el-icon><document /></el-icon>
+              分类
+            </el-menu-item>
+            <el-menu-item index="/article">
+              <el-icon><Reading /></el-icon>
+              文章
+            </el-menu-item>
+            <el-menu-item index="/guidang">
+            <el-icon><Files /></el-icon>
+              归档
             </el-menu-item>
 
-            <el-menu-item index="/article">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-wenzhang1"></use></svg
-              >文章
-            </el-menu-item>
             <el-menu-item index="/leavemsg">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-rili"></use></svg
-              >留言
+              <el-icon><ChatLineRound /></el-icon>
+              留言
             </el-menu-item>
-            <el-menu-item index="/write">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-24"></use></svg
-              >写文
-            </el-menu-item>
-            <el-menu-item>
+
+            <!-- <el-menu-item>
               <router-link :to="{ path: '/chat', query: { name: '默认房间' } }">
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="#icon-liaotian"></use></svg
-                >聊天室</router-link
+               
+                聊天室</router-link
               >
+            </el-menu-item> -->
+            <el-menu-item index="/friend-link">
+              <el-icon><Link /></el-icon>
+              友链
             </el-menu-item>
+
             <el-menu-item index="/about">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-gengduo4"></use></svg
-              >关于
+              <el-icon><Warning /></el-icon>
+              关于
             </el-menu-item>
             <!-- 搜索框 -->
             <el-autocomplete
@@ -96,17 +98,12 @@
               suffix-icon="el-icon-search"
             ></el-autocomplete>
             <el-menu-item index="info">
-              <!-- <div class="nologin" style="margin-bottom: 22px">
-               
-              </div> -->
-              <el-button-group v-if="ifLog">
+              <el-button-group v-if="!userInfo">
                 <el-button @click="toLogin">登录</el-button>
                 <el-button @click="toRegister" color="#79BBDC">注册</el-button>
               </el-button-group>
-              <!-- <div v-else class="logined">
-          </div> -->
               <!-- 组件nav-user-info -->
-              <nav-user-info v-else></nav-user-info>
+              <nav-user-info :userInfo="userInfo" v-else></nav-user-info>
             </el-menu-item>
           </el-menu>
         </div>
@@ -120,6 +117,8 @@
 import { useRouter } from "vue-router";
 // import { useStore } from "/@/store";
 // import { getAccessToken, getRefreshToken, getUserAccountInfo, removeUserAccountInfo  } from '/@/utils/network/auth.js'
+import { mapState } from "pinia";
+import { useGetters } from "/@/store/getters";
 
 const router = useRouter();
 const activeIndex = ref("1");
@@ -143,10 +142,8 @@ const toRegister = () => {
   router.push("/login-register/register");
 };
 
-const ifLog = ref(true); //当它是false时是已登录
-// const pinia = useStore();
-const isMobile = ref(false); //根据页面响应使用哪个样式的标题栏
-
+//根据页面响应使用哪个样式的标题栏
+const isMobile = ref(false);
 const getScreen = () => {
   let screenWidth = document.body.clientWidth;
   let screenHeight = document.body.clientHeight;
@@ -185,6 +182,13 @@ watchEffect(async () => {
 onMounted(() => {
   // 页面加载时初始化用户信息
   initializeUserInfo();
+});
+
+// 创建计算属性
+const userInfo = computed<string>(() => {
+  // 通过mapState获取userInfo
+  return useGetters().userInfo;
+  //  ...mapState(useGetters, ['userInfo', 'loginUsername']);
 });
 </script>
 <style scoped lang="less">

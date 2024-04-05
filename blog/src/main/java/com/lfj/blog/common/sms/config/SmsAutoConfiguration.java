@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class SmsAutoConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean
+	@ConditionalOnMissingBean  // 确保在容器中只会有一个名为 "smsService" 的 Bean，
 	public SmsCodeService smsService(SmsServiceProperties properties) {
 		int type = properties.getType();
 		if (type == 1) {

@@ -45,21 +45,22 @@ public interface IUserService extends IService<User> {
 	 */
 //	void update(UpdateUserRequest request);
 
-//	/**
-//	 * 发送邮箱验证链接
-//	 *
-//	 * @param email
-//	 * @return void
-//	 */
-//	void validateEmail(String email);
-//
-//	/**
-//	 * 绑定邮箱
-//	 *
-//	 * @param code
-//	 * @return void
-//	 */
-//	void bindEmail(String code);
+	/**
+	 * 发送邮箱验证链接
+	 *
+	 * @param email
+	 * @return void
+	 */
+	void validateEmail(String email);
+
+
+	/**
+	 * 绑定邮箱
+	 *
+	 * @param code
+	 * @return void
+	 */
+	void bindEmail(String code);
 //
 //	/**
 //	 * 更新头像
@@ -78,16 +79,17 @@ public interface IUserService extends IService<User> {
 //	 */
 //	void updatePassword(String oldPassword, String newPassword);
 //
-//	/**
-//	 * 重置密码
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 * @param password
-//	 * @return void
-//	 */
-//	void resetPassword(long mobile, String code, String password);
-//
+
+	/**
+	 * 重置密码
+	 *
+	 * @param mobile
+	 * @param code
+	 * @param password
+	 * @return void
+	 */
+	void resetPassword(String mobile, String code, String password);
+
 //	/**
 //	 * 更换手机号  验证手机号
 //	 *

@@ -1,5 +1,4 @@
 import {request, post} from '/@/utils/network/axios'
-import { ResponseResult} from "/@/typings";
 import { LoginResponseType, userInfoResponseType} from './data'
 /**
  * 账号登录
@@ -30,19 +29,19 @@ export function accountLogin(params) {
 //   })
 // }
 
-// /**
-//  * 手机号验证码登录
-//  * @param {Object} params
-//  */
-// export function codeLogin(params) {
-//   return request(import.meta.env.VITE_APP_BASE_API + '/mobile/login',{
-//     headers: {
-//       'Authorization': 'Basic cGM6MTIzNDU2'
-//     },
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 手机号验证码登录
+ * @param {Object} params
+ */
+export function codeLogin(params) {
+  return request<LoginResponseType>(import.meta.env.VITE_APP_BASE_API + '/mobile/login',{
+    headers: {
+      'Authorization': 'Basic cGM6MTIzNDU2'
+    },
+    method: 'post',
+    params: params
+  })
+}
 
 /**
  * 获取用户信息
@@ -53,20 +52,19 @@ export function getUserInfo() {
   }, true)
 }
 
-// /**
-//  * @description 退出
-//  * @param {Object} params
-//  */
-// export function logout(params) {
-//   return request({
-//     url: '/logout',
-//     headers: {
-//       'Authorization': 'Basic cGM6MTIzNDU2'
-//     },
-//     method: 'delete',
-//     params: params
-//   })
-// }
+/**
+ * @description 退出
+ * @param {Object} params
+ */
+export function logout(params) {
+  return request(import.meta.env.VITE_APP_BASE_API + '/logout', {
+    headers: {
+      'Authorization': 'Basic cGM6MTIzNDU2'
+    },
+    method: 'delete',
+    params: params
+  })
+}
 
 /**
  * 用户注册
@@ -99,29 +97,29 @@ export function register(data) {
 //   })
 // }
 
-// /**
-//  * 重置密码
-//  * @param {Object} params
-//  */
-// export function resetPassword(params) {
-//   return request({
-//     url: '/user/password/reset',
-//     method: 'post',
-//     params: params
-//   })
-// }
 
-// /**
-//  * 验证邮箱（发送验证链接）
-//  * @param {Object} params
-//  */
-// export function validateEmail(params) {
-//   return request({
-//     url: '/user/email/validate',
-//     method: 'post',
-//     params: params
-//   })
-// }
+// 需要手机验证码所以不用携带token, 也安全
+/**
+ * 重置密码
+ * @param {Object} params
+ */
+export function resetPassword(params) {
+  return request(import.meta.env.VITE_APP_BASE_API + '/user/password/reset',{
+    method: 'post',
+    params: params
+  })
+}
+
+/**
+ * 验证邮箱（发送验证链接）
+ * @param {Object} params
+ */
+export function validateEmail(params) {
+  return request(import.meta.env.VITE_APP_BASE_API +'/user/email/validate',{
+    method: 'post',
+    params: params
+  }, true)
+}
 
 // /**
 //  * code绑定邮箱

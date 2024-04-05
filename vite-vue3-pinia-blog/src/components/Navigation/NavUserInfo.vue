@@ -1,19 +1,25 @@
 <template>
-  <el-avatar @click="goPersonalCenter" :size="45" :src="userInfo.avatarimgurl" />
-  <el-dropdown class="infoBox" @command="handleCommand"  size="large">
-    <span class="el-dropdown-link">
-      {{ userInfo.nickname }}
-      <el-icon class="el-icon--right">
-        <arrow-down />
-      </el-icon>
-    </span>
+  <div class="console">
+    <router-link to="/personalcenter">个人中心</router-link>
+  </div>
+  <el-dropdown class="infoBox" size="large">
+    <el-avatar :size="45" :src="props.userInfo.avatar" @error="errorHandler"/>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item @click="dialogFormVisible = true" command="a"
+        <el-dropdown-item @click="dialogFormVisible = true"
           >更换昵称
         </el-dropdown-item>
-        <el-dropdown-item command="b"><el-icon><Avatar /></el-icon>个人中心</el-dropdown-item>
-        <el-dropdown-item command="c"><el-icon><CircleCloseFilled /></el-icon>退出登录</el-dropdown-item>
+        <router-link v-if="!props.userInfo.mobile" to="/bind-mobile">
+          <el-dropdown-item>绑定手机号</el-dropdown-item>
+        </router-link>
+        <router-link v-if="!props.userInfo.email" to="/email-validate">
+          <el-dropdown-item>绑定邮箱</el-dropdown-item>
+        </router-link>
+        <el-dropdown-item>
+          <span style="display: block" @click="logout"
+            >退 出</span
+          ></el-dropdown-item
+        >
       </el-dropdown-menu>
     </template>
   </el-dropdown>
@@ -41,13 +47,14 @@
 import { ref, onMounted } from "vue";
 // import { useStore } from "/@/store";
 import { useRouter } from "vue-router";
-import { UserType } from "/@/typings";
-import { getUpdateNickName,getUserInfo,  } from "/@/components/Login/services";
+import { getUpdateNickName, getUserInfo } from "/@/components/Login/services";
 // import { removeUserAccountInfo  } from '/@/utils/network/auth.js'
-
+import { useUserStore } from "/@/store/index";
 
 const router = useRouter();
-// const pinia = useStore();
+
+// pinia
+const useUserPinia = useUserStore();
 
 // 更改昵称对话框
 const dialogFormVisible = ref(false);
@@ -55,111 +62,84 @@ const form = reactive({
   newNickName: "",
 });
 
-const userInfo = ref<UserType>({
-  id: -1,
-  phone: "",
-  username: "account",
-  password: "password",
-  gender: "",
-  nickname: "",
-  birthday: "",
-  email: "",
-  personalbrief: "",
-  avatarimgurl: "",
-  recentlylanded: "",
-}); //给一个初始值作为key，当请求到数据时更新这个变量，key也就随之更新，就会更新dom
+onMounted(async () => {});
 
-onMounted(async () => {
-  // 重写发起URL请求
-  getInformation()
-});
+// // 更改昵称
+// const submitForm = async () => {
+//   if (form.newNickName === "") {
+//     alert("昵称不能为空");
+//   } else {
+//     const { data, run } = useRequest(getUpdateNickName, {
+//       manual: true, // 手动触发请求
+//       onSuccess: (data) => {
+//         if (data.code === 200000) {
+//           userInfo.value.nickname = form.newNickName;
+//           router.go(0);
+//         } else if (data.code === 400006) {
+//           alert("昵称更新失败");
+//         }
+//       },
+//       onError: (error) => {
+//         alert(error);
+//       },
+//     });
 
+//     run(userInfo.value.username, form.newNickName);
+//   }
+// };
 
-const getInformation = () => {
-  const { data: responseData, run: infoRun } = useRequest(getUserInfo, {
-    onSuccess: (responseData) => {
-      if (responseData && responseData.data) {
-        userInfo.value = responseData.data;
-      } else {
-        console.error("未获取到有效的用户信息数据");
-      }
-    },
-  });
+interface userInfoType {
+  // 自定义数据类型的属性
+  id: number;
+  username: string;
+  password: string;
+  mobile: number;
+  nickname: string;
+  gender: number;
+  birthday: string;
+  email?: string;
+  brief?: string;
+  avatar?: string;
+  status: number;
+  admin: number;
+  createTime: string;
+  roles: string[];
+}
 
-  infoRun();
-};
+const props = defineProps<{
+  userInfo: userInfoType;
+}>();
 
+const errorHandler = () => true
 
-
-const handleCommand = (command: string | number | object) => {
-  switch (command) {
-    // 更改昵称
-    case "a":
-      break;
-    // 个人中心
-    case "b":
-      router.push("/personalcenter");
-      break;
-    // 退出登录
-    case "c":
-      // localStorage.removeItem("userAccount");
-      // removeUserAccountInfo()
-      pinia.userInfo = "";
-      // alert('注销成功')
-      router.go(0);
-      break;
-    default:
-      break;
+// 退出
+const logout = async () => {
+  try {
+    await useUserPinia.logout();
+    router.push("/index");
+  } catch (error) {
+    ElMessage.error("退出失败");
   }
 };
-
-// 更改昵称
-const submitForm = async () => {
-  if (form.newNickName === "") {
-    alert("昵称不能为空");
-  } else {
-    const { data, run } = useRequest(getUpdateNickName, {
-      manual: true, // 手动触发请求
-      onSuccess: (data) => {
-        if (data.code === 200000) {
-          userInfo.value.nickname = form.newNickName
-          router.go(0);
-        } else if (data.code === 400006) {
-          alert("昵称更新失败");
-        } 
-      },
-      onError: (error) => {
-        alert(error);
-      },
-    });
-
-    run(userInfo.value.username, form.newNickName);
-  }
-};
-
-// 点击头像进入个人中心
-const goPersonalCenter = () => {
-  router.push("/personalcenter");
-};
-
 </script>
 
 <style scoped lang="less">
-.infoBox{
+.infoBox {
   margin-left: 10px;
-    border: none; 
+  border: none;
 }
 
-.el-dropdown-link{
+.el-dropdown-link,
+.console {
   display: flex;
   align-items: center;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-  "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   font-weight: bold;
   font-size: 15px;
   color: #fff;
-   cursor: pointer;
-       border: none; 
+  cursor: pointer;
+  border: none;
 }
 
 .example-showcase {
@@ -167,17 +147,19 @@ const goPersonalCenter = () => {
   color: var(--el-color-primary);
   display: flex;
   align-items: center;
-     border: none; 
+  border: none;
 }
 
-.el-dropdown-link:hover  {
-    border: none; 
+.el-dropdown-link:hover {
+  border: none;
 }
 
 :deep(:focus-visible) {
-
- outline: none;
-
+  outline: none;
 }
 
+.console {
+  padding: 0 8px;
+  margin-right: 8px;
+}
 </style>

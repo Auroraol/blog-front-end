@@ -3804,6 +3804,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
+## 7. 自定义认证提供者
+
+
+
+
+
 
 
 

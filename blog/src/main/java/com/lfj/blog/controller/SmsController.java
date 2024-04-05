@@ -5,7 +5,7 @@ import com.lfj.blog.common.limiter.annotation.RateLimiter;
 import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.common.validator.annotation.IsPhone;
-import com.lfj.blog.service.sys.security.biz.EmailService;
+import com.lfj.blog.service.security.biz.EmailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 
 /**
+ * 短信服务
+ *
  * @Author: LFJ
  * @Date: 2024-01-25 14:02
  **/

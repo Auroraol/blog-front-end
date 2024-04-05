@@ -26,7 +26,7 @@
             <el-form-item label="" prop="password">
               <el-input
                 size="large"
-                :prefix-icon="Lock"
+               
                 placeholder="密码"
                 show-password
                 v-model="loginForm.password"
@@ -65,12 +65,11 @@
           <el-form
             :model="loginFormPhone"
             :rules="loginFormPhoneRules"
-            prop="phone"
           >
-            <el-form-item label="" prop="phone">
+            <el-form-item label="" prop="mobile">
               <el-input
                 placeholder="请输入手机号"
-                v-model="loginFormPhone.phone"
+                v-model="loginFormPhone.mobile"
                 inline-message
                 size="large"
               >
@@ -79,19 +78,23 @@
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item label="" prop="code">
+            <el-form-item prop="code">
               <el-input
-                placeholder="请输入验证码"
-                v-model="loginFormPhone.code"
-                inline-message
                 size="large"
+                v-model="loginFormPhone.code"
+                placeholder="请输入验证码"
+                inline-message
               >
                 <template #suffix>
                   <i
+                    v-show="!codeCount"
                     class="code"
                     style="font-style: normal; margin-right: 10px"
-                    @click="getCode"
+                    @click="sendCode"
                     >获取验证码</i
+                  >
+                  <el-text v-show="codeCount" type="primary"
+                    >{{ codeCount }}s</el-text
                   >
                 </template>
               </el-input>
@@ -156,30 +159,24 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import { useUserStore, useLoginStore } from "/@/store/index";
-
 import { setRemember, getRemember } from "/@/utils/auth";
-import { validMobile } from "/@/utils/validate";
-import { sendCode } from "/@/api/sms/sms";
+
+import { useSmsCodeMixin } from '/@/mixins/smsMixin'
+import { useRouterMixin } from '/@/mixins/routerMixin'
+
+// 在 setup 中引入 mixin
+const { getCode, codeCount } = useSmsCodeMixin();
+const { toPage } = useRouterMixin();
 
 // pinia
 const useUserPinia = useUserStore();
 const useLoginPinia = useLoginStore();
 
-// router
-const router = useRouter();
-const toPage = (url) => {
-  router.push(url); // 字符串形式跳转  //路由地址
-};
-
+//
 const loading = ref(false);
 const checked = ref(false);
-const active = ref(0);
 
-//定时
-const codeCount = ref(0);
-const timer = ref(0);
 
 // 表单数据
 const loginForm = reactive({
@@ -193,12 +190,12 @@ const loginFormRules = ref({
 });
 
 const loginFormPhone = reactive({
-  phone: "",
+  mobile: "",
   code: "",
 });
 
 const loginFormPhoneRules = ref({
-  phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+  mobile: [{ required: true, message: "请输入手机号", trigger: "blur" }],
   code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
 });
 
@@ -212,46 +209,13 @@ onMounted(() => {
 
 // 忘记密码点击
 const forgetClick = () => {
-  useLoginPinia.changeVisible(false)
+  useLoginPinia.changeVisible(false);
   toPage("/reset-password");
 };
 
 // 发送验证码
-const getCode = () => {
-  const mobile = loginFormPhone.phone;
-  if (mobile === "") {
-    ElMessage.warning("请输入手机号");
-    return;
-  }
-  if (!validMobile(mobile)) {
-    ElMessage.error("手机号格式不正确");
-    return;
-  }
-
-  // 120倒数计时
-  const TIME_COUNT = 120;
-  if (!timer.value) {
-    codeCount.value = TIME_COUNT;
-    timer.value = setInterval(() => {
-      if (codeCount.value > 0 && codeCount.value <= TIME_COUNT) {
-        codeCount.value--;
-      } else {
-        clearInterval(timer.value);
-        timer.value = 0;
-      }
-    }, 1000);
-  }
-
-  // 发送短信api
-  const params = { mobile: mobile };
-  sendCode(params)
-    .then((value) => {
-      //ElMessage.success('发送成功');
-    })
-    .catch((error) => {
-      // console.error("发送失败:", error);
-      ElMessage.error("发送失败");
-    });
+const sendCode = () => {
+  getCode(loginFormPhone.mobile)
 };
 
 // 点击密码登录按钮
@@ -261,8 +225,9 @@ const passwordLogin = async () => {
   const params = toRaw(loginForm);
   try {
     await useUserPinia.accountLogin(params);
-// 
-// router.addRoute()
+    // TODO获得用户信息, 确定roles, 实现动态路由
+    let { roles } = await useUserPinia.getUserInfo();
+
     // 是否记住密码
     let checkedValue = checked.value;
     setRemember(checkedValue ? "1" : "0"); // 浏览器
@@ -271,6 +236,8 @@ const passwordLogin = async () => {
     } else {
       useLoginPinia.clearUsernameAndPassword();
     }
+
+    loading.value = false;
     // 跳转到首页
     toPage("/index");
   } catch (error) {
@@ -280,14 +247,30 @@ const passwordLogin = async () => {
 };
 
 // 点击验证码登录按钮
-const codeLogin = () => {};
+const codeLogin = async () => {
+  useUserPinia.SET_TOKEN(null); // 用于在用户登出或者 token 失效时清除用户的身份认证信息。
+  loading.value = true;
+  const params = toRaw(loginFormPhone);
+  try {
+    await useUserPinia.codeLogin(params);
+    // TODO获得用户信息, 确定roles, 实现动态路由
+    let { roles } = await useUserPinia.getUserInfo();
+
+    loading.value = false;
+    // 跳转到首页
+    toPage("/index");
+  } catch (error) {
+    loading.value = false;
+    console.error(error);
+  }
+};
 
 // 按钮使能
 const isFormValid = computed(() => {
   return loginForm.username && loginForm.password;
 });
 const isFormValidPhone = computed(() => {
-  return loginFormPhone.phone && loginFormPhone.code;
+  return loginFormPhone.mobile && loginFormPhone.code;
 });
 
 // 路由跳转

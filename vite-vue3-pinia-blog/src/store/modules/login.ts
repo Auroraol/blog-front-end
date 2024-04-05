@@ -10,7 +10,7 @@ import {
 
 export const useLoginStore = defineStore("login", {
   state: () => ({
-    visible: false,
+    visible: false,   // 是否点击登录
     username: getUsername(),
     password: getPassword(),
   }),

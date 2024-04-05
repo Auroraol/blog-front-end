@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import {
   accountLogin,
-  // codeLogin,
-  // logout,
+  codeLogin,
+  logout,
   getUserInfo,
   // thirdLogin,
 } from "/@/api/user/user";
@@ -52,9 +52,8 @@ export const useUserStore = defineStore("user", {
         this.SET_TOKEN(access_token); //pinia中有this.
         // console.log(data);
         // console.log(data.access_token);
-        return Promise.resolve();
       } catch (error) {
-        return Promise.reject(error);
+        throw error;
       }
     },
     // /**
@@ -69,18 +68,17 @@ export const useUserStore = defineStore("user", {
     //     return Promise.reject(error);
     //   }
     // },
-    // /**
-    //  * 验证码登录
-    //  */
-    // async codeLogin(params) {
-    //   try {
-    //     const { data } = await codeLogin(params);
-    //     this.SET_TOKEN(data.access_token);
-    //     return Promise.resolve();
-    //   } catch (error) {
-    //     return Promise.reject(error);
-    //   }
-    // },
+    /**
+     * 验证码登录
+     */
+    async codeLogin(params) {
+      try {
+        const { access_token } = await codeLogin(params);
+        this.SET_TOKEN(access_token);
+      } catch (error) {
+        throw error;
+      }
+    },
     /**
      * 获取用户信息
      */
@@ -98,29 +96,25 @@ export const useUserStore = defineStore("user", {
         this.SET_USER_INFO(data);
         return Promise.resolve(data);
       } catch (error) {
-        return Promise.reject(error);
+        throw error;
       }
     },
-    // /**
-    //  * 退出
-    //  */
-    // async logout() {
-    //   try {
-    //     const access_token = this.token;
-    //     this.SET_TOKEN("");
-    //     this.SET_ROLES([]);
-    //     this.SET_USER_INFO("");
-    //     removeAccessToken();
-    //     resetRouter();
-    //     const params = {
-    //       access_token: access_token,
-    //     };
-    //     await logout(params);
-    //     return Promise.resolve();
-    //   } catch (error) {
-    //     return Promise.reject(error);
-    //   }
-    // },
+    /**
+     * 退出
+     */
+    async logout() {
+      try {
+        const access_token = this.token;
+        this.resetToken();
+        const params = {
+          access_token: access_token,
+        };
+        await logout(params);
+        return Promise.resolve();
+      } catch (error) {
+        throw error;
+      }
+    },
     /**
      * 重置
      */

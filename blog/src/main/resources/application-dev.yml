@@ -1,0 +1,146 @@
+server:
+  port: 9000
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/blog_db
+    username: root
+    password: CODE(yTDT90o8m/N9uwVvJybwjg==)
+  # redis配置
+  redis:
+    host: 192.168.200.134
+    port: 6379
+    password: CODE(yTDT90o8m/N9uwVvJybwjg==)
+    # lettuce配置(需引入 commons-pool2依赖)
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制）
+        max-active: 200
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1
+        # 连接池中的最大空闲连接
+        max-idle: 10
+        # 连接池中的最小空闲连接
+        min-idle: 0
+    database: 10
+  # 配置使用的缓存：redis
+  cache:
+    type: redis
+  # 邮箱配置
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: 1665834268@qq.com
+    password: CODE(YtC6NgxSJOqyyTlG09coS6BNyvVMlrgcyNeVn0yEJSw=)
+    protocol: smtp
+    default-encoding: UTF-8
+    jndi-name: 悦读博客
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+
+
+# 加密配置
+jasypt:
+  encryptor:
+    password: 35579B7F9C8CB15E  #加解密的密钥，自定义即可，必填项
+    algorithm: PBEWithMD5AndDES  #指定解密算法，加解密必须一致. # 加密算法,jasypt3.0后，默认支持的算法为 PBEWITHHMACSHA512ANDAES_256 ，该算法需要JDK1.9 以上支持或者添加JCE(Java Cryptography Extension 无限强度权限策略文件)支持
+    string-output-type: base64  #设置加密内容输出的编码形式，可用的编码类型有 base64(默认值)、hexadecimal（16进制）
+    poolSize: 3
+    property:
+      #自定义的前后缀标记，默认ENC()
+      prefix: CODE(
+      suffix: )
+
+
+# 生产环境禁用swagger
+swagger:
+  enabled: true
+
+
+# 第三方登录
+oauth:
+  github:
+    clientId: bded74b0f0213
+    clientSecret: 904294b14bb
+  gitee:
+    clientId: 62d3af1f2058b5facec5316ab9d18b8d3602406fcb704adde7f5b38de381996b
+    clientSecret: CODE(rw/GXQuZ29GhgiFutLZebU3gXKvU79FlUYp9guzb9McJSPAZQRYVYmLPHeOObFdb+Q25M9Cs8n1KbcIYKT4rvj0u+6UNiUweySKi94X+sjc=)
+    redirect_uri: https://www.poile.cn/oauth  #TODO 修改
+  qq:
+    appId: appid
+    clientId: clientId
+    clientSecret: clientSecret
+    redirect_uri: https://www.poile.cn/oauth
+
+
+# 邮件中的链接配置，按需求配置
+mail:
+  # 邮箱绑定时发送的验证链接前缀
+  check: http://localhost:9000/user/email/bind   #验证邮箱url请求
+  # 文章详情前缀，文章评论邮件提醒的链接前缀
+  article: http://www.poile.cn/article/#/
+  # 留言邮件提醒留言版页面链接
+  message: http://www.poile.cn/message
+
+
+# 手机短信
+sms:
+  # 短信类型，1：阿里，2：腾讯
+  type: 1
+  # 短信验证码有效时，单位为:秒
+  expire: 300
+  # 短信同一手机号最大发送条数
+  day_max: 10
+  # 阿里短信配置
+  ali:
+    regionId: cn-hangzhou         # 地区编号
+    accessKeyId: LTAI5tRn3SLwXcQWqcTNHr4r            # 子用户的访问键
+    accessKeySecret: CODE(DonDv1E1bt18WPvlxngorolpvxeJnfoUNk8X94+42sqEeBAmzAaaIg==)  # 子用户的访问密钥
+    signName: 悦读博客              # 签名名称
+    templateCode: SMS_465388108    # 登录短信模板的code
+  # 腾讯短信配置
+  tencent:
+    appId: 14001859
+    appKey: ea4d97cdc5d23f0741b
+    templateId: 608484
+    signName: 个人阅读分享网
+
+
+
+# 存储配置，配置其一即可，类型需要严格匹配
+oss:
+  ## 存储类型, 1: 本地  2：七牛  3：网易云 4: 阿里云
+  type: 1
+  local:
+    path: /var/blog/
+    proxy: http://resource.poile.cn/
+  # 网易云存储配置
+  netease:
+    accessKey: 2bec4d8797e64f99b967c88f
+    secretKey: ca8bb777179949a4b07671
+    endpoint: nos-eastchina1.126.net
+    bucket: poile-img
+  # 七牛云存储配置
+  qiniu:
+    accessKey: vBVb9KFP8grlTDqgWo-wzOj
+    secretKey: G2bU07ymUqjVCx-2t
+    region: huanan
+    bucket: softwares
+    domain: http://qiniu.poile.cn/
+  # 阿里云存储配置
+  ali:
+    accessKeyId: LTAIaEe
+    accessKeyIdSecret: bU54eGKPugUj03
+    bucket: poile
+    endpoint: oss-cn-shenzhen.aliyuncs.com
+
+# 开发环境，为调试方便，降低日志级别
+logging:
+  level:
+    cn.poile.blog.mapper: DEBUG
+    org.springframework.security: DEBUG

@@ -80,7 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(provider())//自定义手机验证码认证提供者
-				.authenticationProvider(provider2())//自定义主键查询用户认证提供者
+				.authenticationProvider(provider2())//自定义主键查询用户认证提供者(用于第三方登录)
 				.userDetailsService(userDetailsService) // 确认用户数据的来源
 				.passwordEncoder(passwordEncoder());
 	}

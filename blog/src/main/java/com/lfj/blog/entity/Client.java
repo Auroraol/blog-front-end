@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @TableName(value = "client")
 @Data
 //@Accessors(chain = true)  //链式, enity没必要, vo可以用
+@EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL) // 为空字段不进行序列化
 @ApiModel(value = "Client对象", description = "客户端表")
 public class Client implements Serializable {

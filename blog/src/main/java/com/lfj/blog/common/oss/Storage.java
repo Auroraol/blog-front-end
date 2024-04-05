@@ -4,8 +4,6 @@ import java.io.InputStream;
 
 /**
  * 存储
- * <p>
- * 2019-10-30 17:39
  **/
 public interface Storage {
 
@@ -44,5 +42,5 @@ public interface Storage {
 	 * @param size
 	 * @return
 	 */
-//	PageStorageObject page(String nextMarker, int size);
+	PageStorageObject page(String nextMarker, int size);
 }
