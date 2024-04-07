@@ -28,6 +28,6 @@
     "src/**/*.vue",
     "auto-imports.d.ts",
     "components.d.ts"
-, "src/utils/network/axios.js", "src/api/sms/sms.js", "src/store/modules/user.ts"  ],
+, "src/utils/network/axios.ts", "src/api/sms/sms.ts", "src/store/modules/user.ts"  ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

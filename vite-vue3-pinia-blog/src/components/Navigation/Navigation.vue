@@ -49,9 +49,9 @@
               style="width: 100px; height: 50px"
               src="https://poile-img.nos-eastchina1.126.net/logo.png"
             />
-            <el-text class="logo-title" type="primary">悦读博客</el-text>
+            <el-text class="logo-title" style="font-size: 1.4rem;" type="primary">悦读博客</el-text>
 
-            <el-menu-item index="/index" style="margin-left: 130px">
+            <el-menu-item index="/index" style="margin-left: 110px">
               <el-icon><House /></el-icon> 首页
             </el-menu-item>
             <el-menu-item index="/category">

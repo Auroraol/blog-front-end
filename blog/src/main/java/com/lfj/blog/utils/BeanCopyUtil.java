@@ -11,7 +11,8 @@ import java.util.List;
  */
 public class BeanCopyUtil {
 	/**
-	 * 根据现有对象的属性创建目标对象，并赋值
+	 * 对象拷贝
+	 * 例子: AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
 	 *
 	 * @param source
 	 * @param target
@@ -34,6 +35,7 @@ public class BeanCopyUtil {
 
 	/**
 	 * 拷贝集合
+	 * 例子: List<TreeVo> treeNodes = copyList(personList, TreeVo.class);
 	 *
 	 * @param source
 	 * @param target

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- *
+ * 文章页面查询包装器
  **/
 @Data
 @AllArgsConstructor

@@ -15,10 +15,8 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
+ * 文章返回前端对象
  * 文章详细对象
- *
- * @author: yaohw
- * @create: 2019-11-25 11:10
  **/
 @Data
 @Accessors(chain = true)

@@ -1,7 +1,7 @@
 package com.lfj.blog.common.constant;
 
 /**
- * 2019-11-15 16:30
+ * 文章状态常量
  **/
 public enum ArticleStatusEnum {
 	/**

@@ -54,6 +54,14 @@ const routes = [
       title: "文章列表",
     },
   },
+  {
+    path: '/category',
+    component: () => import('/@/views/category/index.vue'),
+    hidden: true,
+    meta: {
+      title: "分类",
+    },
+  },
   //{
   //   path: '/leavemsg',
   //   name: 'leavemsg',

@@ -14,7 +14,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
- * 2019-10-04 22:13
+ * 用户注册请json
+ *
+ * @Author: LFJ
+ * @Date: 2024-04-3 15:02
  */
 @Data
 @NoArgsConstructor

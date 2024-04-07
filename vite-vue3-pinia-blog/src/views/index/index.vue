@@ -2,6 +2,7 @@
     <Suspense>
         <template #default>
             <AsyncIndexHome></AsyncIndexHome>
+            
         </template>
         <!-- 加载完成前的载入动画 -->
         <template #fallback>

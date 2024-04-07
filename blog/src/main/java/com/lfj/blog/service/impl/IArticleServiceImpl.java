@@ -151,7 +151,10 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 * @return
 	 */
 	@Override
-	public IPage<ArticleVo> selectPublishedArticleVoPage(long current, long size, Integer categoryId, Integer tagId, String yearMonth, String title, String orderBy) {
+	public IPage<ArticleVo> selectPublishedArticleVoPage(long current, long size,
+														 Integer categoryId, Integer tagId,
+														 String yearMonth, String title, String orderBy) {
+		// 查询start-end时期的文章
 		String[] startAndEndOfMonth = getStartAndEndOfMonth(yearMonth);
 		String start = startAndEndOfMonth[0];
 		String end = startAndEndOfMonth[1];
@@ -159,7 +162,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 		if (count == 0) {
 			return new Page<>(current, size);
 		}
-		//
+		//自定义Wrapper
 		ArticlePageQueryWrapper queryWrapper = new ArticlePageQueryWrapper();
 		queryWrapper.setOffset((current - 1) * size);
 		queryWrapper.setLimit(size);
@@ -169,7 +172,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 		queryWrapper.setOrderBy(orderBy);
 		queryWrapper.setStart(start);
 		queryWrapper.setEnd(end);
-		queryWrapper.setStatus((ArticleStatusEnum.NORMAL.getStatus()));
+		queryWrapper.setStatus((ArticleStatusEnum.NORMAL.getStatus()));  // 文章状态正常的
 		List<ArticleVo> articleVoList = articleMapper.selectArticleVoPage(queryWrapper);
 		Page<ArticleVo> page = new Page<>(current, size, count);
 		page.setRecords(articleVoList);

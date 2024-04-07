@@ -1,7 +1,7 @@
 package com.lfj.blog.common.constant;
 
 /**
- * 2019-11-25 15:15
+ *
  **/
 public class CommonConstant {
 

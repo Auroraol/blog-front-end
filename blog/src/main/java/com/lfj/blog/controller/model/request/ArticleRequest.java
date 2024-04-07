@@ -16,8 +16,8 @@ import java.util.List;
 /**
  * 文章请求json
  *
- * @author: yaohw
- * @create: 2019-11-15 15:08
+ * @Author: LFJ
+ * @Date: 2024-04-6 15:02
  **/
 @Data
 @NoArgsConstructor

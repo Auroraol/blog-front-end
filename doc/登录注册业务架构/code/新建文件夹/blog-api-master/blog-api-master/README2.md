@@ -1399,7 +1399,7 @@ name：标签名，必传
 
 ## 分类
 
-字段parent_id用于生成树形结构的分类，分类需要树形结构，parent_id默认都传0即可。
+<span style="color:red">字段parent_id用于生成树形结构的分类，分类需要树形结构，parent_id默认都传0即可。</span>
 
 ### 数据库分类表设计
 
@@ -1410,15 +1410,396 @@ name：标签名，必传
 | parent_id |          父id          |
 |  deleted  | 是否删除，1：是，0：否 |
 
+### 新增分类
 
+请求方法：POST
 
+请求地址：/category/add
 
+请求数据格式：application/json
 
+需要access_token： 是
 
+需要管理员权限： 是
 
+请求体json：
 
+```json
+{
+  "name": "分类名",
+  "parentId": "父id"
+}
+```
 
+接口说明：一级分类parentId传0，若分类不需区分上下级parentId都传0即可。
 
+新增成功：
+
+```json
+{
+    "code": 200000,
+    "message": "响应成功"
+}
+```
+
+![image-20240406153039611](README2.assets/image-20240406153039611.png)
+
+![image-20240406153018462](README2.assets/image-20240406153018462.png)
+
+### 获取分类树
+
+#### API接口
+
+请求方法：GET
+
+请求地址：/category/tree
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：获取到的数据其数据类型为树形结构。
+
+获取成功:
+
+```json
+{
+    "code": 200000,
+    "data": [
+        {
+            "id": "1",
+            "text": "小说",
+            "checked": false,
+            "children": [
+                {
+                    "id": "12",
+                    "text": "一级分类一",
+                    "checked": false,
+                    "children": [],
+                    "parentId": "1",
+                    "hasParent": true,
+                    "hasChildren": false
+                }
+            ],
+            "parentId": "0",
+            "hasParent": false,
+            "hasChildren": true
+        },
+        {
+            "id": "13",
+            "text": "一级分类二",
+            "checked": false,
+            "children": [],
+            "parentId": "0",
+            "hasParent": false,
+            "hasChildren": false
+        }
+    ],
+    "message": "响应成功"
+}
+```
+
+**返回前端数据 treeVo**
+
+使用@JsonInclude(JsonInclude.Include.NON_NULL)只返回不为空数据
+
+```java
+package com.lfj.blog.utils.buildTreeUtil;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Author: LFJ
+ * @Date: 2024-04-06 16:19
+ */
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class TreeVo<T> {
+	/**
+	 * 节点ID
+	 */
+	private String id;
+	/**
+	 * 显示节点文本
+	 */
+	private String text;
+	/**
+	 * 节点状态，open closed
+	 */
+	private Map<String, Object> state;
+	/**
+	 * 节点是否被选中 true false
+	 */
+	private boolean checked = false;
+	/**
+	 * 节点属性
+	 */
+	private Map<String, Object> attributes;
+
+	/**
+	 * 节点的子节点 List<TreeVo<T>>
+	 */
+	private List<TreeVo<T>> children = new ArrayList<TreeVo<T>>();
+
+	/**
+	 * 父ID
+	 */
+	private String parentId;
+	/**
+	 * 是否有父节点
+	 */
+	private boolean hasParent = false;
+	/**
+	 * 是否有子节点
+	 */
+	private boolean hasChildren = false;
+
+	public TreeVo(String id, String text, Map<String, Object> state, boolean checked, Map<String, Object> attributes,
+				  List<TreeVo<T>> children, boolean isParent, boolean isChildren, String parentID) {
+		super();
+		this.id = id;
+		this.text = text;
+		this.state = state;
+		this.checked = checked;
+		this.attributes = attributes;
+		this.children = children;
+		this.hasParent = isParent;
+		this.hasChildren = isChildren;
+		this.parentId = parentID;
+	}
+
+	public TreeVo() {
+		super();
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public Map<String, Object> getState() {
+		return state;
+	}
+
+	public void setState(Map<String, Object> state) {
+		this.state = state;
+	}
+
+	public boolean isChecked() {
+		return checked;
+	}
+
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
+
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, Object> attributes) {
+		this.attributes = attributes;
+	}
+
+	public List<TreeVo<T>> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<TreeVo<T>> children) {
+		this.children = children;
+	}
+
+	public void setChildren(boolean isChildren) {
+		this.hasChildren = isChildren;
+	}
+
+	public boolean isHasParent() {
+		return hasParent;
+	}
+
+	public void setHasParent(boolean isParent) {
+		this.hasParent = isParent;
+	}
+
+	public boolean isHasChildren() {
+		return hasChildren;
+	}
+
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	@Override
+	public String toString() {
+		return "TreeVo [id=" + id + ", text=" + text + ", state=" + state + ", checked=" + checked + ", attributes="
+				+ attributes + ", children=" + children + ", parentId=" + parentId + ", hasParent=" + hasParent
+				+ ", hasChildren=" + hasChildren + "]";
+	}
+
+}
+```
+
+#### Postman
+
+![image-20240406200338878](README2.assets/image-20240406200338878.png)
+
+### 分页列表
+
+#### 获取分类列表
+
+请求方法：GET
+
+请求地址：/category/list
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：获取分类列表,  每个用户都可查看
+
+获取成功:
+
+```json
+{
+    "code": 200000,
+    "data": [
+        {
+            "id": 1,
+            "name": "小说",
+            "parentId": 0,
+            "deleted": 0
+        },
+        {
+            "id": 12,
+            "name": "一级分类一",
+            "parentId": 1,
+            "deleted": 0
+        },
+        {
+            "id": 13,
+            "name": "一级分类二",
+            "parentId": 0,
+            "deleted": 0
+        }
+    ],
+    "message": "响应成功"
+}
+```
+
+![image-20240406194302520](README2.assets/image-20240406194302520.png)
+
+#### 分页获取分类列表(管理员)
+
+请求方法：GET
+
+请求地址：/category/page
+
+请求参数：
+current：当前页，非必传，默认1
+size：每页数量，非必传，默认5
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：分页获取分类
+
+获取成功:
+
+```json
+{
+    "code": 200000,
+    "data": {
+        "records": [
+            {
+                "id": 1,
+                "name": "小说",
+                "parentId": 0,
+                "deleted": 0
+            }
+        ],
+        "total": 3,
+        "size": 1,
+        "current": 1,
+        "orders": [],
+        "optimizeCountSql": true,
+        "searchCount": true,
+        "maxLimit": null,
+        "countId": null,
+        "pages": 3
+    },
+    "message": "响应成功"
+}
+```
+
+![image-20240406194510169](README2.assets/image-20240406194510169.png)
+
+### 修改分类
+
+请求方法：POST
+
+请求地址：/category/update
+
+请求参数：
+id：分类id，必传
+name：分类名，必传
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：分类修改只可修改分类名
+
+修改成功:
+
+```json
+{
+  "code": 200000,
+  "message": "成功"
+}
+```
+
+### 删除分类
+
+请求方法：DELETE
+
+请求地址：/category/delete/{id}
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：逻辑删除,若存在子类，则不允许删除。
+
+删除成功:
+
+```json
+{
+  "code": 200000,
+  "message": "成功"
+}
+```
+
+![image-20240406195604708](README2.assets/image-20240406195604708.png)
 
 ## 文章
 
@@ -1514,7 +1895,7 @@ name：标签名，必传
 
 + **`可用于文章标题模糊搜索；`**
 + **`可用于文章归档年月、分类、标签查询对应文章列表；`**
-+ **`可用于点击排行列表；可用于最新文章列表。`**
++ **`可用于点击排行列表；可用于最新文章列表`**
 
 请求方法：GET
 
@@ -1525,8 +1906,8 @@ current：当前页，非必传，默认1
 size：每页数量，非必传，默认5
 categoryId：分类id，非必传
 tagId：标签id，非必传
-yearMonth：年月,格式yyyy-mm，非必传
-orderBy：排序字段，倒序，非必传，默认:publish_time;可选项：发布时间:publish_time、浏览数:view_count
+yearMonth：年月, 格式yyyy-mm，非必传
+orderBy：排序字段，倒序，非必传，默认:publish_time;  可选项：发布时间:publish_time、浏览数:view_count
 title：标题关键字，非必传
 
 需要access_token： 否
@@ -1536,7 +1917,46 @@ title：标题关键字，非必传
 获取成功：
 
 ```json
-
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "records": [
+      {
+        "id": 1,
+        "original": 1,
+        "categoryName": "一级分类一",
+        "categoryId": 1,
+        "title": "标题",
+        "summary": "摘要",
+        "cover": "http:www.baidu.com",
+        "status": 1,
+        "viewCount": 0,
+        "commentCount": 0,
+        "likeCount": 0,
+        "collectCount": 0,
+        "publishTime": "2019-12-31 17:53:49",
+        "updateTime": "2019-12-31 17:53:49",
+        "user": {
+          "id": 1,
+          "nickname": "小管家",
+          "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+        },
+        "tagList": [
+          {
+            "id": 1,
+            "name": "测试"
+          }
+        ]
+      }
+    ],
+    "total": 1,
+    "size": 5,
+    "current": 1,
+    "searchCount": true,
+    "pages": 1
+  }
+}
 ```
 
 

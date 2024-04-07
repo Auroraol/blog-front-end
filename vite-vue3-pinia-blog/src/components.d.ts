@@ -7,9 +7,8 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     About: typeof import('./components/About/About.vue')['default']
     Article: typeof import('./components/Box/ArticleBox/Article.vue')['default']
-    ArticleBox: typeof import('./components/Box/ArticleBox/index.vue')['default']
     ArticleEditor: typeof import('./components/Write/articleEditor.vue')['default']
-    ArticleList: typeof import('./components/ArticleList/index.vue')['default']
+    ArticleList: typeof import('./components/Box/ArticleBox/ArticleList.vue')['default']
     CusCalendar: typeof import('./components/CusCalendar/index.vue')['default']
     DynamicTags: typeof import('./components/Write/components/DynamicTags.vue')['default']
     ElAffix: typeof import('element-plus/es')['ElAffix']
@@ -40,6 +39,7 @@ declare module '@vue/runtime-core' {
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']

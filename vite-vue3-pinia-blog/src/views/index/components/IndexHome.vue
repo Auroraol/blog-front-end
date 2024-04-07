@@ -82,6 +82,8 @@
 
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
+import { pagePublishedArticle } from '/@/api/article/article'
+
 import axios from "axios";
 import gsap from "gsap";
 
