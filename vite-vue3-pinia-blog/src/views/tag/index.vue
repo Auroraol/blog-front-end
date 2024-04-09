@@ -26,14 +26,26 @@
           </div>
           <div />
           <div class="content-list">
-            <article-list :list="artList" :loading="loading" />
+            <Suspense>
+              <template #default>
+                <!-- <article></article> -->
+                <!-- <article-list :list="artList" :loading="loading" /> -->
+                <AsyncArticleList :list="artList" :loading="loading" />
+              </template>
+              <template #fallback> </template>
+            </Suspense>
+
+            <!-- 分页 -->
             <el-pagination
-              background
-              layout="prev, pager, next"
-              :page-size="size"
-              :current-page="current"
+              v-model:current-page="current"
+              v-model:page-size="size"
+              :page-sizes="[5, 10, 20, 30]"
+              :small="small"
+              :disabled="disabled"
+              :background="background"
+              layout="total, sizes, prev, pager, next, jumper"
               :total="total"
-              :hide-on-single-page="true"
+              @size-change="handleSizeChange"
               @current-change="currentChange"
             />
           </div>
@@ -69,6 +81,10 @@ import { tagList } from "/@/api/tag/tag";
 import { useRouter } from "vue-router";
 
 import { tagListResponseType } from "/@/api/tag/data";
+import { pagePublishedArticle } from "/@/api/article/article";
+const AsyncArticleList = defineAsyncComponent(
+  () => import("/@/components/Box/ArticleBox/ArticleList.vue")
+);
 
 const router = useRouter();
 
@@ -95,13 +111,16 @@ const init = async () => {
 
     //在Vue Router中，无论路由参数在URL中的形式是什么，都会以字符串的形式传递到路由组件中
     const id = Number(router.currentRoute.value.query.id); // 当前路由的 id 参数
-    console.log(typeof id);
-
+    //console.log(typeof id);
     if (id && tags.value.some((ele) => ele.id === id)) {
       // id表示的id存在
       tagClick(id);
     } else {
-      tagClick(tags.value[0].id);
+      if (tags.value.length > 0) {
+        tagClick(tags.value[0].id);
+      } else {
+        console.error("标签列表为空");
+      }
     }
   } catch (error) {
     console.error(error);
@@ -116,12 +135,18 @@ const tagName = computed(() => {
 const tagClick = (id) => {
   tagId.value = id;
   current.value = 1;
-  //getArtList();
+  getArtList();
 };
 
-// 分页监控
-const currentChange = (current) => {
-  current.value = current;
+// 分页监听, 选择第几页
+const currentChange = (cur) => {
+  current.value = cur;
+  getArtList();
+};
+
+// 分页监听, 每页数量
+const handleSizeChange = (selectSize) => {
+  size.value = selectSize;
   getArtList();
 };
 
@@ -133,143 +158,149 @@ const getArtList = async () => {
     size: size.value,
     tagId: tagId.value,
   };
-  pagePublishedArticle(params).then(
-    (res) => {
-      total.value = res.data.total;
-      artList.value = res.data.records;
-      loading.value = false;
-      $refs.container.scrollTop = 0;
-    },
-    (error) => {
-      console.error(error);
-      loading.value = false;
-    }
-  );
+  try {
+    const data = await pagePublishedArticle(params);
+    // console.log(data);
+    loading.value = false;
+    total.value = data.total;
+    artList.value = data.records;
+  } catch (error) {
+    console.error(error);
+    loading.value = false;
+  }
 };
 </script>
 
 <style lang="less" scoped>
-.left-side {
-  margin-top: 5px;
-  margin-left: 20px;
-  flex: 1;
-  background: #fff;
-  border-radius: 0.5rem;
-  margin-bottom: 20px;
+.container {
   min-height: 605px;
+  .left-side {
+    margin-top: 5px;
+    margin-left: 20px;
+    flex: 1;
+    border-radius: 0.5rem;
+    margin-bottom: 20px;
 
-  @media screen and (max-width: 922px) {
-    margin-right: 0;
-  }
+    background: #fff;
+    @media screen and (max-width: 922px) {
+      margin-right: 0;
+    }
 
-  .content-head {
-    padding: 30px 30px;
-    font-weight: 700;
-    font-size: 25px;
-    border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.1);
+    .content-head {
+      padding: 30px 30px;
+      font-weight: 700;
+      font-size: 25px;
+      border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.1);
 
-    .content-row {
-      padding: 0;
+      .content-row {
+        padding: 0;
+        margin: 0;
+      }
+
+      .content-des {
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: normal;
+        color: #909090;
+      }
+    }
+
+    .content-list {
       margin: 0;
-    }
+      box-sizing: border-box;
 
-    .content-des {
-      margin-top: 10px;
-      font-size: 14px;
-      font-weight: normal;
-      color: #909090;
-    }
-  }
-
-  .content-list {
-    margin: 0;
-    box-sizing: border-box;
-
-    .el-pagination {
-      text-align: center;
-      padding: 30px;
-      padding-bottom: 0;
-      background: #eee;
+      .el-pagination {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        padding: 30px;
+        padding-bottom: 0;
+        background: #eee;
+      }
     }
   }
-}
 
-.right-side {
-  margin-top: 10px;
-  margin-right: 20px;
-  border-radius: 0.5rem;
-  background: #fff;
-  margin-left: 20px;
-  font-size: 16px;
-  min-height: 190px;
+  .right-side {
+    margin-top: 10px;
+    margin-right: 20px;
+    border-radius: 0.5rem;
+    background: #fff;
+    margin-left: 20px;
+    font-size: 16px;
+    min-height: 190px;
 
-  .tag-box {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+    .tag-box {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
 
-    // 下划线
-    .box-head {
-      border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.2);
-      padding: 12px 10px;
-    }
+      // 下划线
+      .box-head {
+        border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.2);
+        padding: 12px 10px;
+      }
 
-    .tag-list {
-      margin: 10px;
-      padding: 0;
-      min-height: 310px;
+      .tag-list {
+        margin: 10px;
+        padding: 0;
+        min-height: 310px;
 
-      .list-item {
-        list-style: none;
-        float: left;
-        color: inherit;
-        background-color: #f3f6f3;
-        margin-right: 12px;
-        margin-bottom: 12px;
-        padding: 10px 22px;
-        border-radius: 30px;
-        cursor: pointer;
+        .list-item {
+          list-style: none;
+          float: left;
+          color: inherit;
+          background-color: #f3f6f3;
+          margin-right: 12px;
+          margin-bottom: 12px;
+          padding: 10px 22px;
+          border-radius: 30px;
+          cursor: pointer;
 
-        &:hover {
+          &:hover {
+            background-color: #79bbdc;
+            color: #fff;
+          }
+        }
+
+        .active {
           background-color: #79bbdc;
           color: #fff;
         }
       }
     }
-  }
 
-  @media screen and (max-width: 922px) {
-    display: none;
+    @media screen and (max-width: 922px) {
+      display: none;
+    }
+  }
+  // }
+
+  .list-header {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    white-space: nowrap;
+    overflow-x: scroll;
+    font-size: 14px;
+    background: #fff;
+    border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.1);
+
+    &:first-child {
+      margin-left: 5px;
+    }
+
+    .list-header-item {
+      list-style: none;
+      cursor: pointer;
+      padding: 15px;
+      margin-right: 5px;
+    }
+
+    .header-item-active {
+      color: #007fff;
+    }
   }
 }
-// }
-
-.list-header {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  width: 100vw;
-  white-space: nowrap;
-  overflow-x: scroll;
-  font-size: 14px;
-  background: #fff;
-  border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.1);
-
-  &:first-child {
-    margin-left: 5px;
-  }
-
-  .list-header-item {
-    list-style: none;
-    cursor: pointer;
-    padding: 15px;
-    margin-right: 5px;
-  }
-
-  .header-item-active {
-    color: #007fff;
-  }
-}
-
 </style>

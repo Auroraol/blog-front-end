@@ -10,9 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * 服务安全上下文, 任务上下文
- *
- * @author: yaohw
- * @create: 2019-11-03 15:00
  **/
 public class ServerSecurityContext {
 	/**

@@ -1,16 +1,18 @@
 <template>
   <ul
-    v-loading="loading"
     class="note-list"
+    v-loading="loading"
     element-loading-text="拼命加载中"
     element-loading-spinner="el-icon-loading"
     element-loading-background="#fff"
   >
     <transition-group name="fade-list">
       <li v-for="(item, index) in list" :key="index" class="list-item">
+         <!-- 封面 -->
         <div class="wrap-img">
           <img :src="item.cover" />
         </div>
+        <!-- 用户  -->
         <div class="wrapper-meta">
           <div class="avatar-wrapper">
             <img class="user-avatar" :src="item.user.avatar" />
@@ -21,13 +23,14 @@
             item.categoryName
           }}</span>
         </div>
-
+        <!-- 文章内容 -->
         <div class="content">
           <router-link :to="'/article/' + item.id" class="title"
             ><span v-if="item.original !== 1">【转载】</span>
             {{ item.title }}</router-link
           >
           <p class="abstract multi-ellipsis--l3">{{ item.summary }}</p>
+          <!-- 文章标签 -->
           <div class="tags-wrapper">
             <span
               v-for="(tag, index2) in item.tagList"
@@ -38,6 +41,7 @@
               {{ tag.name }}
             </span>
           </div>
+          <!-- 评论点赞收藏浏览 -->
           <div class="meta">
             <span>{{ item.commentCount }}&ensp;评论</span>
             <span>{{ item.likeCount }}&ensp;点赞</span>
@@ -48,7 +52,8 @@
       </li>
     </transition-group>
     <div v-show="list.length === 0 && !loading" class="list-empty">
-      列表为空
+      <!-- 列表为空 -->
+      <el-empty description="列表为空" />
     </div>
   </ul>
 </template>
@@ -56,7 +61,6 @@
 <script setup lang="ts">
 import { formatDate } from "/@/utils/format/format-time";
 import { useRouter } from "vue-router";
-
 
 const router = useRouter();
 
@@ -74,15 +78,17 @@ const props = defineProps({
   },
 });
 
-
 const formatD = (str: string): string => {
+  //2024-04-08 15:03:51 -> 2024/04/08 15:03:51
   str = str.replace(/-/g, "/");
   const date = new Date(str);
   const now = new Date();
+  // 是当前年,就不显示年份
   return date.getFullYear() === now.getFullYear()
     ? formatDate(new Date(str), "mm月dd日")
     : formatDate(new Date(str), "YYYY年mm月dd日");
 };
+
 const categoryClick = (id: string) => {
   if (router.currentRoute.value.path !== "/category") {
     router.push({
@@ -108,15 +114,21 @@ const tagClick = (id: string) => {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  color: #999;
   min-height: 50px;
+  background-color: #fff;
+  border-radius: 1rem;
 
   .list-item {
-    list-style: none;
-    position: relative;
+    //   &:hover {
+    //     cursor: pointer;
+    //     transform: translateY(-.1rem);
+
+    // }
+
+    position: relative;  /*相对定位*/
     min-height: 200px;
     width: 100%;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #1413132f;
     padding: 15px 2px 15px 30px;
     margin-top: 5px;
 
@@ -127,19 +139,20 @@ const tagClick = (id: string) => {
 
     .active {
       cursor: pointer;
-
       &:hover {
         color: #007fff;
       }
     }
-
+    
+    // 封面
     .wrap-img {
-      position: absolute;
+      position: absolute; /*绝对定位 根据父类偏移距离 left right top bottom*/
       width: 150px;
       height: 90px;
       top: 50%;
       transform: translateY(-50%);
-      right: 18px;
+      right: 20px;
+
       overflow: hidden;
       border-radius: 4px;
       border: 1px solid #f3f7fa;
@@ -156,8 +169,9 @@ const tagClick = (id: string) => {
       }
     }
 
+    //用户
     .wrapper-meta {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -183,6 +197,7 @@ const tagClick = (id: string) => {
       }
     }
 
+    // 文章内容
     .content {
       width: 100%;
       padding-right: 180px;
@@ -259,13 +274,13 @@ const tagClick = (id: string) => {
     }
   }
 
-  .list-empty {
-    background: #fff;
-    width: 100%;
-    height: 100px;
-    line-height: 100px;
-    border-bottom: 1px solid #f0f0f0;
-    text-align: center;
-  }
+  // .list-empty {
+  //   background: #fff;
+  //   width: 100%;
+  //   height: 100px;
+  //   line-height: 100px;
+  //   border-bottom: 1px solid #f0f0f0;
+  //   text-align: center;
+  // }
 }
 </style>

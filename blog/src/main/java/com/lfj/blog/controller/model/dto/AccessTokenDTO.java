@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * 2019-11-04 17:03
+ * 登录返回前端AccessToken
  **/
 @Data
 @Accessors(chain = true)

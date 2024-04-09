@@ -25,7 +25,7 @@ import java.util.List;
 @ApiModel(value = "ArticleVo对象", description = "文章详细对象")
 public class ArticleVo extends Article {
 
-	@ApiModelProperty("作者")
+	@ApiModelProperty("作者信息")
 	private User user;
 
 	@ApiModelProperty("标签列表")

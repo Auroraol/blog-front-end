@@ -26,7 +26,7 @@
         <result property="reproduce" column="reproduce" jdbcType="VARCHAR"/>
         <result property="deleted" column="deleted" jdbcType="TINYINT"/>
     </resultMap>
-    <!--多表查询, ArticleVo封装Article实体数据部分数据+User部分数据+tag部分书籍-->
+    <!--多表查询, ArticleVo封装Article实体数据部分数据+User部分数据+tag部分数据-->
     <resultMap id="articleVoResultMap" type="com.lfj.blog.service.vo.ArticleVo">
         <id property="id" column="id"/>
         <result property="original" column="original"/>
@@ -47,11 +47,13 @@
         <result property="updateTime" column="update_time"/>
         <result property="reproduce" column="reproduce"/>
         <result property="deleted" column="deleted"/>
+        <!--Article和User 一对一的关系-->
         <association property="user" javaType="com.lfj.blog.entity.User">
             <id property="id" column="u_user_id"/>
             <result property="nickname" column="nickname"/>
             <result property="avatar" column="avatar"/>
         </association>
+        <!--Article和Tag 多对一的关系-->
         <collection property="tagList" ofType="com.lfj.blog.entity.Tag">
             <id property="id" column="tag_id"/>
             <result property="name" column="tag_name"/>
@@ -74,7 +76,7 @@
         inner_a
         .
         id
-        , inner_a.original, inner_a.user_id, inner_a.category_name, inner_a.category_id, inner_a.title, inner_a.summary, inner_a.content, inner_a.html_content, inner_a.cover, inner_a.status, inner_a.view_count,
+        ,inner_a.original, inner_a.user_id, inner_a.category_name, inner_a.category_id, inner_a.title, inner_a.summary, inner_a.content, inner_a.html_content, inner_a.cover, inner_a.status, inner_a.view_count,
         inner_a.comment_count, inner_a.like_count, inner_a.collect_count, inner_a.publish_time, inner_a.update_time, inner_a.reproduce, inner_a.deleted
     </sql>
 
@@ -167,6 +169,7 @@
         t.id tag_id,
         t.name tag_name
         from
+        -- 表子查询
         (
         select
         <include refid="Article_Column_List"/>
@@ -177,35 +180,40 @@
         + inner_a.collect_count * 0.25
         ) as score
         from article inner_a
-        where inner_a.deleted = 0
+
+        where
+        inner_a.deleted = 0 -- 未删除的
         <if test="status != null">
             and inner_a.status = #{status}
         </if>
         <if test="title != null and title != ''">
-            and inner_a.title like concat('%',concat(#{title}, '%'))
+            and inner_a.title like concat('%',concat(#{title}, '%')) --生成字符串 "%apple%"，用于进行模糊匹配操作
         </if>
         <if test="categoryId != null">
             and inner_a.category_id = #{categoryId}
         </if>
         <if test="start != null and end != null">
-            and inner_a.publish_time >= #{start} and inner_a.publish_time <![CDATA[<]]> #{end}
+            and inner_a.publish_time >= #{start} and inner_a.publish_time <![CDATA[<]]> #{end} --使用了 CDATA 标记来包裹比较符号小于
+            --以防止标签。
         </if>
         <if test="tagId != null">
             and inner_a.id in (select inner_a_t.article_id from article_tag inner_a_t where inner_a_t.tag_id = #{tagId})
         </if>
+        -- 排序
         <choose>
             <when test="orderBy == 'publish_time'">
-                order by inner_a.publish_time desc
+                order by inner_a.publish_time desc -- 从大到小
             </when>
             <otherwise>
                 order by inner_a.view_count desc
             </otherwise>
         </choose>
-        limit #{offset},#{limit}
+        limit #{offset},#{limit} -- 分页
         ) outer_a
         left join user u on u.id = outer_a.user_id
         left join article_tag a_t on a_t.article_id = outer_a.id
         left join tag t on t.id = a_t.tag_id
+        -- 排序
         <choose>
             <when test="orderBy == 'publish_time'">
                 order by outer_a.publish_time desc
@@ -330,24 +338,29 @@
     <!--            limit #{offset}, #{limit}-->
     <!--    </select>-->
 
-    <!--    &lt;!&ndash; 查询上一篇和下一篇 &ndash;&gt;-->
-    <!--    <select id="selectPreAndNext" resultMap="articleResultMap">-->
-    <!--        (select a.id,-->
-    <!--                a.title-->
-    <!--         from article a-->
-    <!--         where a.id <![CDATA[<]]> #{id}-->
-    <!--           and a.deleted = 0-->
-    <!--           and a.status = 0-->
-    <!--         order by a.id desc limit 1)-->
-    <!--        union all-->
-    <!--        (select b.id,-->
-    <!--                b.title-->
-    <!--         from article b-->
-    <!--         where b.id > #{id}-->
-    <!--           and b.deleted = 0-->
-    <!--           and b.status = 0-->
-    <!--         order by b.id limit 1)-->
-    <!--    </select>-->
+    <!-- 查询上一篇和下一篇
+    具体来说，这个查询可以分为两部分：
+第一个子查询选取比给定 id 小的文章中 id 最大的一篇，并且符合 deleted = 0 和 status = 0 的条件。这一部分用于获取上一篇文章的信息。
+第二个子查询选取比给定 id 大的文章中 id 最小的一篇，并且同样符合 deleted = 0 和 status = 0 的条件。这一部分用于获取下一篇文章的信息。
+然后，这两个子查询的结果通过 union all 进行合并，最终将上一篇和下一篇文章的信息组合在一起返回。
+    -->
+    <select id="selectPreAndNext" resultMap="BaseResultMap">
+        (select a.id,
+                a.title
+         from article a
+         where a.id <![CDATA[<]]> #{id}
+           and a.deleted = 0
+           and a.status = 0
+         order by a.id desc limit 1)
+        union all
+        (select b.id,
+                b.title
+         from article b
+         where b.id > #{id}
+           and b.deleted = 0
+           and b.status = 0
+         order by b.id limit 1)
+    </select>
 
     <!--    &lt;!&ndash; 文章分类统计查询 &ndash;&gt;-->
     <!--    <select id="selectCategoryStatistic" resultType="cn.poile.blog.vo.ArticleCategoryStatisticsVo">-->

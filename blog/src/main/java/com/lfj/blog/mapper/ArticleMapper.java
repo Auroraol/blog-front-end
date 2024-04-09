@@ -45,6 +45,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
 							@Param("end") String end,
 							@Param("title") String title);
 
+
 	/**
 	 * 根据文章id查询
 	 *
@@ -54,13 +55,13 @@ public interface ArticleMapper extends BaseMapper<Article> {
 	 */
 	ArticleVo selectArticleVoById(@Param("id") int id, @Param("status") Integer status);
 
-//	/**
-//	 * 查询上一篇和下一篇
-//	 *
-//	 * @param id
-//	 * @return
-//	 */
-//	List<Article> selectPreAndNext(@Param("id") int id);
+	/**
+	 * 查询上一篇和下一篇
+	 *
+	 * @param id
+	 * @return
+	 */
+	List<Article> selectPreAndNext(@Param("id") int id);
 
 
 	/**

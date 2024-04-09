@@ -50,12 +50,13 @@ public class ArticleController {
 															 @ApiParam("标签id，非必传") @RequestParam(value = "tagId", required = false) Integer tagId,
 															 @ApiParam("年月,非必传,格式:yyyy-mm") @YearMonthFormat @RequestParam(value = "yearMonth", required = false) String yearMonth,
 															 @ApiParam("标题关键字，非必传") @RequestParam(value = "title", required = false) String title,
-															 @ApiParam("排序字段，倒序，非必传，默认:publish_time;可选项：发布时间:publish_time、热度:hot")
+															 @ApiParam("排序字段，倒序，非必传，默认:publish_time; 可选项：发布时间:publish_time、热度:hot")
 															 @RequestParam(value = "orderBy", required = false, defaultValue = "publish_time") String orderBy
 	) {
 		return ApiResponseResult.success(articleService.selectPublishedArticleVoPage(current, size, categoryId, tagId, yearMonth, title, orderBy));
 	}
-//
+
+	//
 //
 //	@GetMapping("/page")
 //	@PreAuthorize("hasAuthority('admin')")
@@ -95,23 +96,23 @@ public class ArticleController {
 //		return ApiResponseResult.success(articleService.selectArticleVoById(id));
 //	}
 //
-//	@GetMapping("/view/{id}")
-//	@ApiOperation(value = "获取文章详情信息", notes = "比列表返回的多一个文章内容，文章分类列表")
-//	public ApiResponseResult<ArticleVo> view(@ApiParam("文章id") @PathVariable("id") int id) {
-//		ArticleVo articleVo = articleService.selectOne(id);
-//		return ApiResponseResult.success(articleVo);
-//	}
-//
-//	@PutMapping("/increment_view/{id}")
-//	@ApiOperation(value = "新增浏览次数", notes = "20分钟内ip或用户浏览计数")
-//	public ApiResponseResult incrementView(@ApiParam("文章id") @PathVariable("id") int id) {
-//		boolean viewed = articleService.incrementView(id);
-//		if (viewed) {
+	@GetMapping("/view/{id}")
+	@ApiOperation(value = "获取文章详情信息", notes = "比列表返回的多一个文章内容，文章分类列表")
+	public ApiResponseResult<ArticleVo> view(@ApiParam("文章id") @PathVariable("id") int id) {
+		ArticleVo articleVo = articleService.selectOne(id);
+		return ApiResponseResult.success(articleVo);
+	}
+
+	@PutMapping("/increment_view/{id}")
+	@ApiOperation(value = "新增浏览次数", notes = "20分钟内ip或用户浏览计数")
+	public ApiResponseResult incrementView(@ApiParam("文章id") @PathVariable("id") int id) {
+		boolean viewed = articleService.incrementView(id);
+		if (viewed) {
 //			articleRecommendService.asyncRefresh(id);
-//		}
-//		return ApiResponseResult.success(viewed);
-//	}
-//
+		}
+		return ApiResponseResult.success(viewed);
+	}
+
 //
 //	@GetMapping("/archives/page")
 //	@ApiOperation(value = "文章归档分页查询", notes = "按年月归档，月份文章计数")

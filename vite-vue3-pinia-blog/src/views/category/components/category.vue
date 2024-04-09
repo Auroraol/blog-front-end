@@ -1,18 +1,22 @@
 <template>
   <div class="container">
-    <div class="left-list">
-      <ul v-if="device === 'desktop'">
-        <li
-          v-for="(category, index) in categorys"
-          :key="index"
-          class="left-list-item"
-          :class="{ 'left-list-item-active': categoryId === category.id }"
-          @click="chageTab(category.name)"
-        >
-          <span class="item-content">{{ category.name }}</span>
-        </li>
-      </ul>
-    </div>
+    <!-- 左 -->
+    <el-affix :offset="70">
+      <div class="left-list">
+        <ul v-if="device === 'desktop'">
+          <li
+            v-for="(category, index) in categorys"
+            :key="index"
+            class="left-list-item"
+            :class="{ 'left-list-item-active': categoryId === category.id }"
+            @click="changeTab(category.id)"
+          >
+            <span class="item-content">{{ category.name }}</span>
+          </li>
+        </ul>
+      </div>
+    </el-affix>
+    <!-- 右 -->
     <div class="content-list">
       <ul v-if="device !== 'desktop'" class="list-header">
         <li
@@ -25,15 +29,19 @@
           {{ category.name }}
         </li>
       </ul>
+      <!-- 文章 -->
       <article-list :list="artList" :loading="loading" />
-
+      <!-- 分页 -->
       <el-pagination
-        background
-        layout="prev, pager, next"
-        hide-on-single-page
-        :page-size="size"
-        :current-page="current"
+        v-model:current-page="current"
+        v-model:page-size="size"
+        :page-sizes="[5, 10, 20, 30]"
+        :small="small"
+        :disabled="disabled"
+        :background="background"
+        layout="total, sizes, prev, pager, next, jumper"
         :total="total"
+        @size-change="handleSizeChange"
         @current-change="currentChange"
       />
     </div>
@@ -41,6 +49,12 @@
 </template>
 <script setup>
 import { categoryList } from "/@/api/category/category";
+import ArticleList from "/@/components/Box/ArticleBox/ArticleList.vue";
+import { pagePublishedArticle } from "/@/api/article/article";
+// import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+// import en from 'element-plus/dist/locale/en.mjs'
+// const language = ref('zh-cn')
+// const locale = computed(() => (language.value === 'zh-cn' ? zhCn : en))
 // import { pagePublishedArticle } from '@/api/article.js'
 // import { ref } from 'vue'
 // import { useRouter } from 'vue-router'
@@ -48,18 +62,12 @@ import { categoryList } from "/@/api/category/category";
 
 import gsap from "gsap";
 
-// 桌面美化
-// 软件测试
-// Mac教程
-// 程序员日常
-// 日常生活
-
-const categoryId = ref(0);
 const categorys = ref([]);
+const categoryId = ref(0);
 const loading = ref(true);
 const artList = ref([]);
 const current = ref(1);
-const size = ref(10);
+const size = ref(4);
 const total = ref(0);
 const router = useRouter();
 
@@ -70,13 +78,13 @@ onMounted(() => {
   init();
   //动画
   gsap.from(".left-list", {
-    duration: 0.5,
+    duration: 0.8,
     x: -50,
     opacity: 0.2,
   });
   //动画
   gsap.from(".content-list", {
-    duration: 0.5,
+    duration: 0.8,
     x: 50,
     opacity: 0.2,
   });
@@ -86,59 +94,73 @@ onMounted(() => {
 const init = async () => {
   try {
     const res = await categoryList();
+
     categorys.value = res;
+    const id = Number(router.currentRoute.value.query.id); // 当前路由的 id 参数
+    if (id && categorys.value.some((ele) => ele.id === id)) {
+      // 显示成路由参数所表示的Tab
+      changeTab(id);
+    } else {
+      if (categorys.value.length > 0) {
+        changeTab(categorys.value[0].id);
+      } else {
+        console.error("分类列表为空");
+      }
+    }
   } catch (error) {
     console.error("获取分类列表失败");
   }
 };
 
 // tab更改
-const chageTab = (categoryId) => {
-  // total.value = 0
-  // current.value = 1
-  // categoryId.value = categoryId
-  // getArtList()
+const changeTab = (id) => {
+  total.value = 0;
+  current.value = 1;
+  categoryId.value = id;
+  getArtList();
 };
 
-// 分页监听
-const currentChange = (current) => {
-  // current.value = current
-  // getArtList()
+// 分页监听, 选择第几页
+const currentChange = (cur) => {
+  current.value = cur;
+  getArtList();
+};
+
+// 分页监听, 每页数量
+const handleSizeChange = (selectSize) => {
+  size.value = selectSize;
+  getArtList();
 };
 
 // 获取文章列表
-const getArtList = () => {
-  // loading.value = true
-  // const params = {
-  //   current: current.value,
-  //   size: size.value,
-  //   categoryId: categoryId.value
-  // }
-  // pagePublishedArticle(params).then(
-  //   res => {
-  //     total.value = res.data.total
-  //     artList.value = res.data.records
-  //     loading.value = false
-  //     // 如果你使用了 ref 来获取容器元素的引用，请确保该元素上有 ref 属性，如 ref="container"
-  //     const container = document.querySelector('[ref="container"]')
-  //     if (container) container.scrollTop = 0
-  //   },
-  //   error => {
-  //     console.error(error)
-  //     loading.value = false
-  //   }
-  // )
+const getArtList = async () => {
+  loading.value = true;
+  const params = {
+    current: current.value,
+    size: size.value,
+    categoryId: categoryId.value,
+  };
+  try {
+    const data = await pagePublishedArticle(params);
+    // console.log(data);
+    loading.value = false;
+    total.value = data.total;
+    artList.value = data.records;
+  } catch (error) {
+    console.error(error);
+    loading.value = false;
+  }
 };
 </script>
 
 <style lang="less" scoped>
 .container {
-
   margin-top: 5px;
   margin-left: 15px;
   margin-right: 15px;
   min-height: 631px;
   display: flex;
+  border-radius: 0.5rem;
 
   align-items: flex-start;
   .left-list {
@@ -182,11 +204,11 @@ const getArtList = () => {
       font-weight: 700;
 
       .item-content {
-        background: #007fff;
+        background: #79bbdc;
 
         &:hover {
           color: #fff;
-          background: #007fff;
+          background: #79bbdc;
         }
       }
     }
@@ -233,6 +255,8 @@ const getArtList = () => {
     }
 
     .el-pagination {
+      display: flex;
+      justify-content: center;
       text-align: center;
       padding: 30px;
       padding-bottom: 0;

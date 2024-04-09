@@ -3829,3 +3829,170 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 # 授权
 
 ![image-20240325223843507](SpringSecurity.assets/image-20240325223843507.png)
+
+
+
+# 用户上下文
+
+### ServerSecurityContext
+
+```java
+package com.lfj.blog.common.security;
+
+import com.lfj.blog.common.response.enums.ResponseCodeEnum;
+import com.lfj.blog.common.security.details.CustomUserDetails;
+import com.lfj.blog.common.security.token.AuthenticationToken;
+import com.lfj.blog.exception.ApiException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+/**
+ * 服务安全上下文, 任务上下文
+ **/
+public class ServerSecurityContext {
+	/**
+	 * 获取当前用户相信信息
+	 *
+	 * @return
+	 */
+	public static CustomUserDetails getUserDetail(boolean throwEx) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+		if (authentication == null && throwEx) {
+			throw new ApiException(ResponseCodeEnum.CREDENTIALS_INVALID.getCode(), ResponseCodeEnum.CREDENTIALS_INVALID.getMessage());
+		}
+		if (authentication == null) {
+			return null;
+		}
+		Object principal = authentication.getPrincipal();
+		if (principal == null && throwEx) {
+			throw new ApiException(ResponseCodeEnum.CREDENTIALS_INVALID.getCode(), ResponseCodeEnum.CREDENTIALS_INVALID.getMessage());
+		}
+		String noneUser = "anonymousUser";
+		if (noneUser.equals(principal)) {
+			return null;
+		}
+		return (CustomUserDetails) principal;
+	}
+
+	/**
+	 * 获取认证信息
+	 *
+	 * @return org.springframework.security.core.Authentication
+	 */
+	public static Authentication getAuthentication() {
+		SecurityContext context = SecurityContextHolder.getContext();
+		return context.getAuthentication();
+	}
+
+	/**
+	 * 获取AuthenticationToken
+	 *
+	 * @return con.lgj.blog.common.security.AuthenticationToken
+	 */
+	public static AuthenticationToken getAuthenticationToken(boolean throwEx) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+		if (authentication == null && throwEx) {
+			throw new ApiException(ResponseCodeEnum.CREDENTIALS_INVALID.getCode(), ResponseCodeEnum.CREDENTIALS_INVALID.getMessage());
+		}
+		if (authentication == null) {
+			return null;
+		}
+		Object details = authentication.getDetails();
+		if (details == null && throwEx) {
+			throw new ApiException(ResponseCodeEnum.CREDENTIALS_INVALID.getCode(), ResponseCodeEnum.CREDENTIALS_INVALID.getMessage());
+		}
+		return (AuthenticationToken) details;
+	}
+
+}
+
+```
+
+### 使用
+
+```java
+// 请求携带token, 可以用任务上下文获得authenticationToken
+		AuthenticationToken authenticationToken = ServerSecurityContext.getAuthenticationToken(true);
+
+// 获取任务上下文, 得到当前用户信息
+CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
+article.setUserId(userDetail.getId());
+```
+
+
+
+```java
+	/**
+	 * 发送邮箱验证链接
+	 *
+	 * @param email
+	 * @return void
+	 */
+	@Override
+	public void validateEmail(String email) {
+		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().eq(User::getEmail, email);
+		long count = count(queryWrapper);
+		if (count != 0) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "邮箱已被使用,请换个绑定");
+		}
+		// 请求携带token, 可以用任务上下文获得authenticationToken
+		AuthenticationToken authenticationToken = ServerSecurityContext.getAuthenticationToken(true);
+		Map<String, Object> params = new HashMap<>(1);
+		// 生成模板参数
+		RandomValueStringGenerator generator = new RandomValueStringGenerator();
+		String code = generator.generate();
+		String accessToken = authenticationToken.getAccessToken();
+		String checkUrl = prefix + "?code=" + code;
+		params.put("checkUrl", checkUrl);
+		// 服务端生成Redis缓存
+		String key = REDIS_MAIL_CODE_PREFIX + code;
+		Map<String, String> map = new HashMap<>(2);
+		map.put("access_token", accessToken);
+		map.put("email", email);
+		stringRedisTemplate.opsForHash().putAll(key, map);
+		stringRedisTemplate.expire(key, 2L, TimeUnit.HOURS);
+		// 发送邮箱
+		emailService.asyncSendHtmlMail(email, "邮箱验证", "email", params);
+	}
+```
+
+```java
+
+	/**
+	 * 绑定邮箱
+	 *
+	 * @param code
+	 * @return void
+	 */
+	@Override
+	public void bindEmail(String code) {
+		Map<Object, Object> resultMap = stringRedisTemplate.opsForHash().
+				entries(REDIS_MAIL_CODE_PREFIX + code);
+		if (resultMap.isEmpty()) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "code无效或code已过期");
+		}
+		String accessToken = (String) resultMap.get("access_token");
+		String email = (String) resultMap.get("email");
+		stringRedisTemplate.delete(REDIS_MAIL_CODE_PREFIX + code);
+		// 请求没有直接携带token, 不能用任务上下文
+		AuthenticationToken authToken = tokenStore.readByAccessToken(accessToken);
+		if (authToken == null) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "code无效或code已过期");
+		}
+		// 从Redis中得到保存的用户信息数据
+		CustomUserDetails principal = authToken.getPrincipal(); // 得到用户数据, 自定义AuthenticationToken中Principal属性保存着对应的用户数据
+		User user = new User();
+		Integer userId = principal.getId();
+		user.setId(userId);
+		user.setEmail(email);  // 更新邮箱
+		// 数据库数据更新
+		updateById(user);
+		// 清空用户缓存
+		tokenStore.clearUserCacheById(userId);
+	}
+```
+

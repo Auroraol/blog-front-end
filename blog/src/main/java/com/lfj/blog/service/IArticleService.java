@@ -51,4 +51,27 @@ public interface IArticleService extends IService<Article> {
 	 */
 	IPage<ArticleVo> selectPublishedArticleVoPage(long current, long size, Integer categoryId, Integer tagId, String yearMonth, String title, String orderBy);
 
+	/**
+	 * 文章详细(后台)
+	 *
+	 * @param id
+	 * @return
+	 */
+	ArticleVo selectArticleVoById(int id);
+
+	/**
+	 * 文章详情(前台)
+	 *
+	 * @param id
+	 * @return
+	 */
+	ArticleVo selectOne(int id);
+
+	/**
+	 * 新增浏览次数
+	 *
+	 * @param id
+	 * @return
+	 */
+	boolean incrementView(int id);
 }

@@ -48,7 +48,7 @@
             <!-- 使用了异步加载并且加上了加载动画的文章盒子 -->
             <Suspense>
               <template #default>
-              <AsyncArticleList :list="artList" :loading="loading"/>
+                <AsyncArticleList :list="artList" :loading="loading" />
               </template>
               <!-- 加载完成前的载入动画 -->
               <template #fallback>
@@ -82,7 +82,7 @@
 
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
-import { pagePublishedArticle } from '/@/api/article/article'
+import { pagePublishedArticle } from "/@/api/article/article";
 
 import axios from "axios";
 import gsap from "gsap";
@@ -106,6 +106,23 @@ const AsyncArticleList = defineAsyncComponent(
   () => import("/@/components/Box/ArticleBox/ArticleList.vue")
 );
 
+interface Article {
+  // 定义文章类型
+  // 根据您的数据，可能有其他字段，这里仅示例最基本的字段
+  id: number;
+  title: string;
+  content: string;
+  // 其他字段...
+}
+
+// 声明响应式数据
+const mainTabs = ref<string[]>(["最新", "热门"]);
+const current = ref<number>(1);
+const size = ref<number>(10);
+const total = ref<number>(0);
+const mainActive = ref<number>(0);
+const loading = ref<boolean>(false);
+const artList = ref<Article[]>([]); // artList 是一个 Article 类型的数组
 
 // 随机诗词
 const { data: poetry } = await axios.get("https://v1.jinrishici.com/all.json");
@@ -121,30 +138,26 @@ onMounted(() => {
   getArtList();
 });
 
-
-const artList = ref([]);
-const loading  = ref(false);
-    // 获取文章列表
- const getArtList = async () => {
-      loading.value = true;
-      const params = {
-        current: this.current,
-        size: this.size,
-        orderBy: this.orderBy
-      }
-    try {
-      const res =  await pagePublishedArticle(params);
-       this.loading = false
-          this.total = res.data.total
-          this.artList = res.data.records
-          this.$refs.container.scrollTop = 0
-    } catch (error) {
-       console.error(error);
-       loading.value = false;
-    }
-      
+// 获取文章列表
+const getArtList = async () => {
+  loading.value = true;
+  const params = {
+    // current: current.value,
+    size: size.value,
+    //排序
+  };
+  try {
+    const data = await pagePublishedArticle(params);
+    console.log(data);
+    
+    loading.value = false;
+    total.value = data.total;
+    artList.value = data.records;
+  } catch (error) {
+    console.error(error);
+    loading.value = false;
   }
-
+};
 </script>
 
 <style scoped lang="less">

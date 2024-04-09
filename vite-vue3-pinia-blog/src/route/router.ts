@@ -61,6 +61,11 @@ const routes = [
     meta: {
       title: "分类",
     },
+    props($route) {
+      return {
+        id: $route.query.id,
+      };
+    },
   },
   //{
   //   path: '/leavemsg',
@@ -133,9 +138,9 @@ const routes = [
   {
     path: "/about",
     name: "about",
-    component: () => import("/@/views/about.vue"),
+    component: () => import("/@/views/about/index.vue"),
     meta: {
-      title: "更多",
+      title: "关于",
     },
   },
   // , {
@@ -218,6 +223,15 @@ const routes = [
       };
     },
   },
+  {
+    path: '/article/:id',
+    component: () => import('/@/views/article-browser/index.vue'),
+    hidden: true,
+    meta: {
+      title: "浏览文章",
+    }
+  },
+
   // {
   //   path: '/archives',
   //   component: () => import('/@/view/archives/index'),

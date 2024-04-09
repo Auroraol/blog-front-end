@@ -1,7 +1,7 @@
 <template>
     <Suspense>
         <template #default>
-            <about></about>
+            <AsyncArticleBrowse></AsyncArticleBrowse>
         </template>
 
         <!-- 加载完成前的载入动画 -->
@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 //Suspense要异步引入组件
-const About = defineAsyncComponent(() => import('/@/components/About/About.vue'))
+const AsyncArticleBrowse = defineAsyncComponent(() => import('./components/ArticleBrowse.vue'))
 
 </script>
 

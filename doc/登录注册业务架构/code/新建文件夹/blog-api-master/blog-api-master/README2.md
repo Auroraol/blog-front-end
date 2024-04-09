@@ -1828,14 +1828,6 @@ name：分类名，必传
 |   reproduce   |                转载地址                 |
 |    deleted    |           已删除，1：是，0否            |
 
-
-
-
-
-
-
-
-
 ### 保存文章
 
 接口说明：
@@ -1843,7 +1835,8 @@ name：分类名，必传
 + **`文章id为null时为新增，不为null时为更新；`**
 + **`文章标签最多4个；`**
 + **`文章为转载时，需标出转载地址；`**
-+ **`接口将文章状态置为待发布状态;保存成功返回文章id；`**
++ **`接口将文章状态置为待发布状态;`**
++ **`保存成功返回文章id；`**
 
 请求方法：POST
 
@@ -1878,18 +1871,26 @@ name：分类名，必传
 保存成功：
 
 ```json
-{  
-    "code": 0,  
-    "message": "成功",
-    "data": 1
+{
+    "code": 200000,
+    "data": 1,
+    "message": "响应成功"
 }
 ```
+
+![image-20240408151925494](README2.assets/image-20240408151925494.png)
 
 
 
 ### 分页获取文章（前台）
 
+#### API接口
+
 接口说明：
+
++ 用于前端文章列表显示
+
+  <img src="README2.assets/image-20240409150129860.png" alt="image-20240409150129860" style="zoom: 33%;" />
 
 + **`只可获取到已发布的文章；`**
 
@@ -1959,6 +1960,99 @@ title：标题关键字，非必传
 }
 ```
 
+返回前端的数据是ArticleVo封装(Article实体数据部分数据  + User部分数据 + tag部分数据)
 
+
+
+
+
+#### Postman
+
+
+
+![image-20240408151907494](README2.assets/image-20240408151907494.png)
+
+
+
+### 文章详情（前台）
+
+请求方法：GET
+
+请求地址：/article/view/{id}
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+**接口说明：用于前台查看详情时调用；返回文章内容；返回上一篇和下一篇。**
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "id": 2,
+    "original": 1,
+    "categoryName": "一级分类二",
+    "categoryId": 2,
+    "title": "string",
+    "summary": "string",
+    "htmlContent": "string",
+    "cover": "string",
+    "status": 0,
+    "viewCount": 0,
+    "commentCount": 0,
+    "likeCount": 0,
+    "collectCount": 0,
+    "publishTime": "2020-01-02 20:24:16",
+    "updateTime": "2020-01-02 20:24:16",
+    "user": {
+      "id": 1,
+      "nickname": "小管家",
+      "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+    },
+    "tagList": [
+      {
+        "id": 1,
+        "name": "测试"
+      }
+    ],
+    "previous": {
+      "id": 1,
+      "title": "标题"
+    },
+    "next": {
+      "id": 3,
+      "title": "string2"
+    }
+  }
+}
+```
+
+![image-20240409151149684](README2.assets/image-20240409151149684.png)
+
+### 文章浏览数自增
+
+请求方法：PUT
+
+请求地址：/increment_view/{id}
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：20分钟内ip或用户文章浏览计数，data返回true则表示此次成功自增
+
+调用成功：
+
+```json
+{  
+    "code": 0,  
+    "message": "成功",
+    "data": true
+}
+```
 
 客户端 -> 用户<注册> -> 认证(登录) -> 用户/文章/

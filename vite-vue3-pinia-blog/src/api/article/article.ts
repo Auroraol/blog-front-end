@@ -40,7 +40,7 @@ import {request, get, post} from '/@/utils/network/axios'
  * @param {Object} params
  */
 export function pagePublishedArticle(params) {
-  return get(import.meta.env.VITE_APP_BASE_API + '/article/published/page', { params })
+  return get(import.meta.env.VITE_APP_BASE_API + '/article/published/page', params )
 }
 
 // /**
@@ -78,13 +78,13 @@ export function pagePublishedArticle(params) {
 //   return request.delete('/article/recommend/delete/' + id)
 // }
 
-// /**
-//  * @description 浏览文章
-//  * @param {Object} id
-//  */
-// export function viewArtilce(id) {
-//   return request.get('/article/view/' + id)
-// }
+/**
+ * @description 浏览文章
+ * @param {Object} id
+ */
+export function viewArtilce(id) {
+  return get(import.meta.env.VITE_APP_BASE_API +  '/article/view/' + id)
+}
 
 // /**
 //  * 自增浏览次数
