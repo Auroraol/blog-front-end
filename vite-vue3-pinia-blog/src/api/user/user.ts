@@ -145,17 +145,17 @@ export function validateEmail(params) {
 //   })
 // }
 
-// /**
-//  * 绑定新手机号
-//  * @param {Object} params
-//  */
-// export function rebindMobile(params) {
-//   return request({
-//     url: '/user/mobile/rebind',
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 绑定新手机号
+ * @param {Object} params
+ */
+export function rebindMobile(params) {
+  // return request({
+  //   url: '/user/mobile/rebind',
+  //   method: 'post',
+  //   params: params
+  // })
+}
 
 // /**
 //  * 分页获取用户

@@ -30,20 +30,14 @@ defineProps({
 
 <style lang="less" scoped>
 .post-container {
-  margin-top: 50px;
-
-  .info {
-    color: #999;
-    font-size: 12px;
-  }
-
+  
   .post-copyright {
     padding: 4px 10px;
     border-left: 3px solid #ff1700;
     background-color: #f9f9f9;
     list-style: none;
-    font-size: 12px;
-    line-height: 15px;
+    font-size: 14px;
+    line-height: 17px;
 
     .bold {
       font-weight: bold;

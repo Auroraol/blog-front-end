@@ -1,10 +1,12 @@
 <template>
+  <div class="app-container">
   <navigation></navigation>
   <el-config-provider :locale="zhCn">
     <!-- 路由视图 -->
     <router-view></router-view>
   </el-config-provider>
-  <foot></foot>
+  <foot class="foot"></foot>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -48,66 +50,83 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 </script>
 
 <style lang="less">
-@font-face {
-  font-family: "思源黑体 Normal";
-  font-weight: 350;
-  src: url("@/font-family/YkF40zSSGGwEVPSKgCFB7.woff2") format("woff2"),
-    url("@/font-family/YkF40zSSGGwEVPSKgCFB7.woff") format("woff");
-  font-display: auto;
+
+
+.app-container {
+ position: relative;
+  min-height: 100vh;
 }
 
-.default-theme p .figure img {
-  p .figure {
-    padding: 0;
-    border: none;
-  }
-  display: inline-block;
-  width: 20rem;
-  margin: 0;
-  border: none;
-}
 
-.chatMask {
+.foot {
+  /* Footer 组件样式 */
+  position: absolute;
+  bottom: 0;
   width: 100%;
-  height: 100%;
-  background-color: rgba(61, 61, 61, 0.6);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 4;
 }
 
-//标签tag的通用样式
-.labelTag {
-  display: inline-block;
-  font-size: 1.2rem;
-  background-color: var(--light-gray-blue);
-  color: #000;
-  margin: .2rem;
-  padding: .3rem 1rem;
-  border-radius: .7rem;
-  cursor: pointer;
-}
+// @font-face {
+//   font-family: "思源黑体 Normal";
+//   font-weight: 350;
+//   src: url("@/font-family/YkF40zSSGGwEVPSKgCFB7.woff2") format("woff2"),
+//     url("@/font-family/YkF40zSSGGwEVPSKgCFB7.woff") format("woff");
+//   font-display: auto;
+// }
 
-//弹出的消息框通用样式
-.el-dialog {
-  width: 50rem;
-}
+// .default-theme p .figure img {
+//   p .figure {
+//     padding: 0;
+//     border: none;
+//   }
+//   display: inline-block;
+//   width: 20rem;
+//   margin: 0;
+//   border: none;
+// }
 
-@media only screen and (max-width: 800px) {
+// .chatMask {
+//   width: 100%;
+//   height: 100%;
+//   background-color: rgba(61, 61, 61, 0.6);
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   z-index: 4;
+// }
 
-  body,
-  html,
-  #app {
-    font-size: 10px;
-    overflow-x: hidden;
-  }
+// //标签tag的通用样式
+// .labelTag {
+//   display: inline-block;
+//   font-size: 1.2rem;
+//   background-color: var(--light-gray-blue);
+//   color: #000;
+//   margin: .2rem;
+//   padding: .3rem 1rem;
+//   border-radius: .7rem;
+//   cursor: pointer;
+// }
 
-  .el-dialog {
-    width: 80%;
-  }
+// //弹出的消息框通用样式
+// .el-dialog {
+//   width: 50rem;
+// }
 
-}
+// @media only screen and (max-width: 800px) {
+
+//   body,
+//   html,
+//   #app {
+//     font-size: 10px;
+//     overflow-x: hidden;
+//   }
+
+//   .el-dialog {
+//     width: 80%;
+//   }
+
+// }
+
+
 
 //滚动条样式
 ::-webkit-scrollbar {
@@ -130,5 +149,4 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
     background-color: rgb(172, 172, 172);
   }
 }
-
 </style>

@@ -26,14 +26,7 @@
           </div>
           <div />
           <div class="content-list">
-            <Suspense>
-              <template #default>
-                <!-- <article></article> -->
-                <!-- <article-list :list="artList" :loading="loading" /> -->
-                <AsyncArticleList :list="artList" :loading="loading" />
-              </template>
-              <template #fallback> </template>
-            </Suspense>
+            <article-list :list="artList" :loading="loading" />
 
             <!-- 分页 -->
             <el-pagination

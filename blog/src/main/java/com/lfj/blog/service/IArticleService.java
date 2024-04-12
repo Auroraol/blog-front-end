@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.lfj.blog.controller.model.request.ArticleRequest;
 import com.lfj.blog.entity.Article;
 import com.lfj.blog.service.vo.ArticleVo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author 16658
@@ -74,4 +77,56 @@ public interface IArticleService extends IService<Article> {
 	 * @return
 	 */
 	boolean incrementView(int id);
+
+	/**
+	 * 相关文章查询
+	 * 通过文章分类查询同一分类的文章
+	 *
+	 * @param id
+	 * @param limit
+	 * @return
+	 */
+	List<ArticleVo> selectInterrelatedById(Integer id, Long limit);
+
+
+	/**
+	 * 点赞数自增
+	 *
+	 * @param articleId
+	 */
+	void likeCountIncrement(int articleId);
+
+	/**
+	 * 点赞数自减
+	 *
+	 * @param articleId
+	 */
+	void likeCountDecrement(int articleId);
+
+
+	/**
+	 * 收藏数自增
+	 *
+	 * @param articleId
+	 */
+	void collectCountIncrement(int articleId);
+
+	/**
+	 * 收藏数自减
+	 *
+	 * @param articleId
+	 */
+	void collectCountDecrement(int articleId);
+
+	/**
+	 * 分页查询用户收藏文章
+	 *
+	 * @param offset
+	 * @param limit
+	 * @param userId
+	 * @return
+	 */
+	List<ArticleVo> selectCollectByUserId(@Param("offset") long offset, @Param("limit") long limit, @Param("userId") Integer userId);
+
+
 }

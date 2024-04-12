@@ -9,67 +9,67 @@
       element-loading-background="#fff"
     >
       <li v-for="(item, index) in list" :key="index" class="list-item">
-        <router-link class="content-row title" :to="'/article/' + item.id">{{ item.title }}</router-link>
+        <router-link class="content-row title" :to="'/article/' + item.id">{{
+          item.title
+        }}</router-link>
         <p class="content-row">阅读&ensp;{{ item.viewCount }}</p>
       </li>
     </ul>
   </div>
 </template>
 
-<script>
-import { interrelated } from '@/api/article.js'
-export default {
-  props: {
-    articleId: {
-      type: [String, Number],
-      required: true
-    }
-  },
-  data() {
-    return {
-      loading: true,
-      list: []
-    }
-  },
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { interrelated } from "/@/api/article/article";
 
-  mounted() {
-    this.init()
+const props = defineProps({
+  articleId: {
+    type: [String, Number],
+    required: true,
   },
+});
 
-  methods: {
+const loading = ref(true);
+const list = ref<any[]>([]);
 
-    init() {
-      const params = { articleId: this.articleId, limit: 8 }
-      interrelated(params).then(
-        res => {
-          this.loading = false
-          this.list = res.data
-        }
-      )
-    }
+onMounted(() => {
+  init();
+});
+
+const init = async () => {
+  try {
+    const params = { articleId: props.articleId, limit: 6 };
+    const res = await interrelated(params);    
+    list.value = res;
+    loading.value = false;
+  } catch (error) {
+    console.error("相关文章获取失败");
+    
   }
-}
+};
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .in-container {
+
+ 
   width: 100%;
   background: #fff;
-  border-radius: 2px;
+  border-radius: 0.5rem;
   margin-bottom: 10px;
-  padding-bottom: 10px;
 
   .head {
+    font-size: 1.7rem;
     color: #2e3135;
-    border-bottom: 1px solid hsla(0,0%,59.2%,.2);
+    border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.2);
     padding: 12px 10px;
-    font-size: 14px;
   }
 
   .content-list {
+    max-height: 30px;
+    overflow-y: auto; /* 当内容溢出时显示滚动条 */
     margin: 10px;
-    padding: 0;
-    min-height: 50px;
+    min-height: 65px;
 
     .list-item {
       list-style: none;

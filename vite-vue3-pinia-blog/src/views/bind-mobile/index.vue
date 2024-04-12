@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { bindMobile } from '/@/api/user/user'
+// import { bindMobile } from '/@/api/user/user'
 import { validMobile } from '/@/utils/validate'
 import { sendCode } from '/@/api/sms/sms'
 export default {

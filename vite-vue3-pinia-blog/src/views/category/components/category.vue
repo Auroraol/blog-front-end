@@ -94,7 +94,6 @@ onMounted(() => {
 const init = async () => {
   try {
     const res = await categoryList();
-
     categorys.value = res;
     const id = Number(router.currentRoute.value.query.id); // 当前路由的 id 参数
     if (id && categorys.value.some((ele) => ele.id === id)) {

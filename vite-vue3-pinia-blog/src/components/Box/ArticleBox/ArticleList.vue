@@ -53,7 +53,7 @@
     </transition-group>
     <div v-show="list.length === 0 && !loading" class="list-empty">
       <!-- 列表为空 -->
-      <el-empty description="列表为空" />
+      <el-empty description="列表为空" /> 
     </div>
   </ul>
 </template>

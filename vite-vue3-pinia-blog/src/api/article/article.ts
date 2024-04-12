@@ -94,10 +94,10 @@ export function viewArtilce(id) {
 //   return request.put('/article/increment_view/' + id)
 // }
 
-// /**
-//  * @description 相关文章
-//  * @param {Object} params
-//  */
-// export function interrelated(params) {
-//   return request.get('/article/interrelated/list', { params } )
-// }
+/**
+ * @description 相关文章
+ * @param {Object} params
+ */
+export function interrelated(params) {
+  return get(import.meta.env.VITE_APP_BASE_API +   '/article/interrelated/list',  params )
+}

@@ -153,6 +153,7 @@ const getArtList = async () => {
     loading.value = false;
     total.value = data.total;
     artList.value = data.records;
+    
   } catch (error) {
     console.error(error);
     loading.value = false;

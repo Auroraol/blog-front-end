@@ -29,7 +29,7 @@
 import { validateEmail } from '/@/api/user/user';
 import { validEmail } from '/@/utils/validate';
 import { ref } from 'vue';
-import AppHeader from '@/components/AppHeader.vue';
+// import AppHeader from '@/components/AppHeader.vue';
 
 const loading = ref(false);
 const form = ref({

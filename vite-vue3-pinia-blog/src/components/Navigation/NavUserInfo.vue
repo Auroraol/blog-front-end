@@ -116,7 +116,7 @@ const errorHandler = () => true
 const logout = async () => {
   try {
     await useUserPinia.logout();
-    router.push("/index");
+    // router.push("/index");
   } catch (error) {
     ElMessage.error("退出失败");
   }

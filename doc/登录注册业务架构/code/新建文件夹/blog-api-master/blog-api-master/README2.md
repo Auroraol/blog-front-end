@@ -2056,3 +2056,333 @@ title：标题关键字，非必传
 ```
 
 客户端 -> 用户<注册> -> 认证(登录) -> 用户/文章/
+
+
+
+
+
+### 相关文章
+
+请求方法：GET
+
+请求地址：/article/interrelated/list
+
+请求参数：
+articleId：文章id，必传
+limit：列表数量，非必传，默认5
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+**接口说明：后台实际根据分类或标签查询。**
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": [
+    {
+      "id": 2,
+      "original": 1,
+      "categoryName": "一级分类二",
+      "categoryId": 2,
+      "title": "string",
+      "summary": "string",
+      "cover": "string",
+      "status": 0,
+      "viewCount": 1,
+      "commentCount": 0,
+      "likeCount": 0,
+      "collectCount": 0,
+      "publishTime": "2020-01-02 20:24:16",
+      "updateTime": "2020-01-02 20:24:16",
+      "user": {
+        "id": 1,
+        "nickname": "小管家",
+        "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+      },
+      "tagList": [
+        {
+          "id": 1,
+          "name": "测试"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "original": 1,
+      "categoryName": "一级分类二",
+      "categoryId": 2,
+      "title": "string2",
+      "summary": "string2",
+      "cover": "string2",
+      "status": 0,
+      "viewCount": 0,
+      "commentCount": 0,
+      "likeCount": 0,
+      "collectCount": 0,
+      "publishTime": "2020-01-02 20:24:36",
+      "updateTime": "2020-01-02 20:24:36",
+      "user": {
+        "id": 1,
+        "nickname": "小管家",
+        "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+      },
+      "tagList": [
+        {
+          "id": 1,
+          "name": "测试"
+        }
+      ]
+    }
+  ]
+}
+```
+
+
+
+
+
+## 文章点赞
+
+支持对文章进行点赞和取消点赞。
+
+### 文章点赞关联表设计
+
+|   字段名   |  描述  |
+| :--------: | :----: |
+|     id     |   id   |
+| article_id | 文章id |
+|  user_id   | 用户id |
+
+### 新增点赞
+
+请求方法：POST
+
+请求地址：/article/like/add
+
+请求参数：articleId：文章id，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：不可重复点赞。
+
+点赞成功:
+
+```json
+{
+  "code": 200000,
+  "message": "成功"
+}
+```
+
+
+
+![image-20240412162522133](README2.assets/image-20240412162522133.png)
+
+![image-20240412162531322](README2.assets/image-20240412162531322.png)
+
+![image-20240412164043827](README2.assets/image-20240412164043827.png)
+
+### 取消点赞
+
+请求方法：DELETE
+
+请求地址：/article/like/cancel
+
+请求参数：articleId：文章id，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：对已点赞文章取消点赞。
+
+取消成功:
+
+```json
+{
+  "code": 200000,
+  "message": "成功"
+}
+```
+
+![image-20240412164005418](README2.assets/image-20240412164005418.png)
+
+### 是否已点赞
+
+请求方法：GET
+
+请求地址：/article/like/liked/{articleId}
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：用于文章详情在登录情况下显示当前用户是否已对当前文章点赞；1:是，0:否。
+
+获取成功:
+
+```json
+{
+  "code": 200000,
+  "message": "成功",
+  "data": 1
+}
+```
+
+![image-20240412163304499](README2.assets/image-20240412163304499.png)
+
+## 文章收藏
+
+支持收藏文章。
+
+### 数据库文章收藏表设计
+
+|   字段名   |  描述  |
+| :--------: | :----: |
+|     id     |   id   |
+|  user_id   | 用户id |
+| article_id | 文章id |
+
+### 新增收藏
+
+请求方法：POST
+
+请求地址：/article/collect/add
+
+请求参数：articleId：文章id，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：不可重复收藏。
+
+收藏成功：
+
+```json
+{  
+    "code": 200000,  
+    "message": "成功"
+}
+```
+
+![image-20240412170021867](README2.assets/image-20240412170021867.png)
+
+### 删除收藏
+
+请求方法：DELETE
+
+请求地址：/article/collect/delete
+
+请求参数：articleId：文章id，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+成功：
+
+```json
+{  
+    "code": 200000,  
+    "message": "成功"
+}
+```
+
+![image-20240412170043483](README2.assets/image-20240412170043483.png)
+
+### 是否已收藏
+
+请求方法：GET
+
+请求地址：/article/collect/collected/{articleId}
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：用于文章详情在登录情况下显示当前用户是否已对当前文章收藏；1:是，0:否。
+
+获取成功:
+
+```json
+{
+  "code": 200000,
+  "message": "成功",
+  "data": 1
+}
+```
+
+![image-20240412170752060](README2.assets/image-20240412170752060.png)
+
+### 分页获取收藏
+
+请求方法：GET
+
+请求地址：/article/collect/page
+
+请求参数：
+current：当前页，非必传，默认1
+size：每页数量，非必传，默认5
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：查询用户收藏，并且文章处于已发布状态的文章。
+
+获取成功：
+
+```json
+{
+  "code": 200000,
+  "message": "成功",
+  "data": {
+    "records": [
+      {
+        "id": 1,
+        "original": 1,
+        "categoryName": "一级分类一",
+        "categoryId": 1,
+        "title": "标题",
+        "summary": "摘要",
+        "cover": "http:www.baidu.com",
+        "status": 0,
+        "viewCount": 2,
+        "commentCount": 1,
+        "likeCount": 0,
+        "collectCount": 1,
+        "publishTime": "2019-12-31 17:53:49",
+        "updateTime": "2019-12-31 17:53:49",
+        "user": {
+          "id": 1,
+          "nickname": "小管家",
+          "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+        },
+        "tagList": [
+          {
+            "id": 1,
+            "name": "测试"
+          }
+        ]
+      }
+    ],
+    "total": 1,
+    "size": 5,
+    "current": 1,
+    "searchCount": true,
+    "pages": 1
+  }
+}
+```
+
+![image-20240412170305085](README2.assets/image-20240412170305085.png)
+
+![image-20240412170348208](README2.assets/image-20240412170348208.png)

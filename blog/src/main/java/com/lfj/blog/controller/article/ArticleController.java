@@ -14,6 +14,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 /**
  * 文章表 前端控制器
  *
@@ -113,7 +116,7 @@ public class ArticleController {
 		return ApiResponseResult.success(viewed);
 	}
 
-//
+	//
 //	@GetMapping("/archives/page")
 //	@ApiOperation(value = "文章归档分页查询", notes = "按年月归档，月份文章计数")
 //	public ApiResponseResult<IPage<ArticleArchivesVo>> archives(
@@ -159,13 +162,13 @@ public class ArticleController {
 //		return ApiResponseResult.success();
 //	}
 //
-//	@GetMapping("/interrelated/list")
-//	@ApiOperation(value = "相关文章", notes = "根据分类查询，分类为空则根据标签查询")
-//	public ApiResponseResult<List<ArticleVo>> interrelated(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam(value = "articleId") Integer articleId,
-//														   @ApiParam("数量") @RequestParam(value = "limit", required = false, defaultValue = "5") Long limit
-//	) {
-//		return ApiResponseResult.success(articleService.selectInterrelatedById(articleId, limit));
-//	}
+	@GetMapping("/interrelated/list")
+	@ApiOperation(value = "相关文章", notes = "根据分类查询，分类为空则根据标签查询")
+	public ApiResponseResult<List<ArticleVo>> interrelated(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam(value = "articleId") Integer articleId,
+														   @ApiParam("数量") @RequestParam(value = "limit", required = false, defaultValue = "5") Long limit
+	) {
+		return ApiResponseResult.success(articleService.selectInterrelatedById(articleId, limit));
+	}
 //
 //	@GetMapping("/count")
 //	@ApiOperation(value = "已发布文章总数")

@@ -290,6 +290,96 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 		return false;
 	}
 
+	/**
+	 * 相关文章查询
+	 *
+	 * @param id
+	 * @return
+	 */
+	@Override
+	public List<ArticleVo> selectInterrelatedById(Integer id, Long limit) {
+
+		// 通过文章分类查询同一分类的文章
+		Article article = getById(id);
+		//
+		ArticlePageQueryWrapper articlePageQueryWrapper = new ArticlePageQueryWrapper();
+		articlePageQueryWrapper.setOffset(0L);
+		articlePageQueryWrapper.setLimit(limit);
+		articlePageQueryWrapper.setOrderBy("view_count");
+		articlePageQueryWrapper.setCategoryId(article.getCategoryId());
+		articlePageQueryWrapper.setStatus((ArticleStatusEnum.NORMAL.getStatus()));  //发布
+//		查询结果中排除与给定 id 相同的元素，并返回一个过滤后的 ArticleVo 对象列表
+		List<ArticleVo> resultList = this.baseMapper
+				.selectArticleVoPage(articlePageQueryWrapper).stream()
+				.filter(a -> !id.equals(a.getId())).collect(Collectors.toList());
+		// 分类下没有使用标签查询
+		if (CollectionUtils.isEmpty(resultList)) {
+			QueryWrapper<ArticleTag> queryWrapper = new QueryWrapper<>();
+			queryWrapper.lambda().eq(ArticleTag::getArticleId, id);
+			List<ArticleTag> articleTagList = articleTagService.list(queryWrapper);
+			if (!CollectionUtils.isEmpty(articleTagList)) {
+				resultList = this.baseMapper
+						.selectByTagList(articleTagList.stream().map(ArticleTag::getTagId).collect(Collectors.toList()), limit)
+						.stream().filter(a -> !id.equals(a.getId())).collect(Collectors.toList());
+			}
+		}
+		return resultList;
+	}
+
+	/**
+	 * 点赞数自增
+	 *
+	 * @param articleId
+	 */
+	@Override
+	public void likeCountIncrement(int articleId) {
+		articleMapper.likeCountIncrement(articleId);
+	}
+
+	/**
+	 * 点赞数自减
+	 *
+	 * @param articleId
+	 */
+	@Override
+	public void likeCountDecrement(int articleId) {
+		articleMapper.likeCountDecrement(articleId);
+	}
+
+
+	/**
+	 * 收藏数自增
+	 *
+	 * @param articleId
+	 */
+	@Override
+	public void collectCountIncrement(int articleId) {
+		articleMapper.collectCountIncrement(articleId);
+	}
+
+	/**
+	 * 收藏数自减
+	 *
+	 * @param articleId
+	 */
+	@Override
+	public void collectCountDecrement(int articleId) {
+		articleMapper.collectCountDecrement(articleId);
+	}
+
+	/**
+	 * 分页查询用户收藏文章(管理员)
+	 *
+	 * @param offset
+	 * @param limit
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public List<ArticleVo> selectCollectByUserId(long offset, long limit, Integer userId) {
+		return this.baseMapper.selectCollectByUserId(offset, limit, userId);
+	}
+
 
 	/**
 	 * 文章计数
