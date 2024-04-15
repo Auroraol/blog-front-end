@@ -380,6 +380,26 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 		return this.baseMapper.selectCollectByUserId(offset, limit, userId);
 	}
 
+	/**
+	 * 评论数自增
+	 *
+	 * @param articleId
+	 */
+	@Override
+	public void commentCountIncrement(int articleId) {
+		this.baseMapper.commentCountIncrement(articleId);
+	}
+
+	/**
+	 * 评论数数自减
+	 *
+	 * @param articleId
+	 */
+	@Override
+	public void commentCountDecrement(int articleId) {
+		this.baseMapper.commentCountDecrement(articleId);
+	}
+
 
 	/**
 	 * 文章计数

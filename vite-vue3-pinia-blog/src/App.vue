@@ -1,13 +1,16 @@
 <template>
-  <div class="app-container">
-  <navigation></navigation>
-  <el-config-provider :locale="zhCn">
-    <!-- 路由视图 -->
-    <router-view></router-view>
-  </el-config-provider>
-  <foot class="foot"></foot>
-    </div>
+  <div class="app">
+    <navigation></navigation>
+    <el-config-provider :locale="zhCn">
+      <!-- 路由视图 -->
+      <div id="v-content" v-bind:style="{ minHeight: Height + 'px' }">
+        <router-view></router-view>
+      </div>
+    </el-config-provider>
+    <foot></foot>
+  </div>
 </template>
+
 
 <script setup lang="ts">
 // 面包屑 不需要引入因为已经在 vite.config.ts 中引入了Components
@@ -18,6 +21,18 @@ import { ElConfigProvider } from "element-plus";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 // import { useStore } from '/@/store';
 // import { useStore } from '/@/store'
+const Height = ref(0);
+
+onMounted(() => {
+  // 动态设置内容高度，让 footer 始终居底，header+footer 的高度是 100
+  // Height.value = document.documentElement.clientHeight - 100;
+  Height.value = document.documentElement.clientHeight - 40;
+
+  // 监听浏览器窗口变化
+  window.onresize = () => {
+    Height.value = document.documentElement.clientHeight - 40;
+  };
+});
 
 // const pinia = useStore()
 
@@ -46,92 +61,13 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 //     pinia.userInfo = ''
 //   }
 // }
-
 </script>
 
 <style lang="less">
-
-
-.app-container {
- position: relative;
-  min-height: 100vh;
-}
-
-
-.foot {
-  /* Footer 组件样式 */
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-
-// @font-face {
-//   font-family: "思源黑体 Normal";
-//   font-weight: 350;
-//   src: url("@/font-family/YkF40zSSGGwEVPSKgCFB7.woff2") format("woff2"),
-//     url("@/font-family/YkF40zSSGGwEVPSKgCFB7.woff") format("woff");
-//   font-display: auto;
-// }
-
-// .default-theme p .figure img {
-//   p .figure {
-//     padding: 0;
-//     border: none;
-//   }
-//   display: inline-block;
-//   width: 20rem;
-//   margin: 0;
-//   border: none;
-// }
-
-// .chatMask {
-//   width: 100%;
-//   height: 100%;
-//   background-color: rgba(61, 61, 61, 0.6);
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   z-index: 4;
-// }
-
-// //标签tag的通用样式
-// .labelTag {
-//   display: inline-block;
-//   font-size: 1.2rem;
-//   background-color: var(--light-gray-blue);
-//   color: #000;
-//   margin: .2rem;
-//   padding: .3rem 1rem;
-//   border-radius: .7rem;
-//   cursor: pointer;
-// }
-
-// //弹出的消息框通用样式
-// .el-dialog {
-//   width: 50rem;
-// }
-
-// @media only screen and (max-width: 800px) {
-
-//   body,
-//   html,
-//   #app {
-//     font-size: 10px;
-//     overflow-x: hidden;
-//   }
-
-//   .el-dialog {
-//     width: 80%;
-//   }
-
-// }
-
-
-
 //滚动条样式
 ::-webkit-scrollbar {
-  width: .5rem;
-  height: .5rem;
+  width: 0.5rem;
+  height: 0.5rem;
   background: rgba(255, 255, 255, 0.6);
 }
 
@@ -142,8 +78,8 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 ::-webkit-scrollbar-thumb {
   border-radius: 0;
   background-color: rgb(218, 218, 218);
-  transition: all .2s;
-  border-radius: .5rem;
+  transition: all 0.2s;
+  border-radius: 0.5rem;
 
   &:hover {
     background-color: rgb(172, 172, 172);

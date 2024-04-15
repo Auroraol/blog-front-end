@@ -3,10 +3,11 @@
     <div class="content-container">
       <div class="content-head">
         <div class="edit-container">
-          <quill-editor ref="editor" v-model="content" :options="editorOption" />
+           <MdEditor v-model="content" previewTheme="vuepress" codeTheme="a11y"/>
         </div>
         <div class="main-tools-box">
-          <el-button :loading="cloading" type="danger" size="mini" @click="commentSubmit">评论</el-button>
+          <el-button :loading="cloading" type="danger" size="mini" 
+          @click="commentSubmit">评论</el-button>
         </div>
       </div>
       <div class="content-box">
@@ -81,7 +82,7 @@
                           <el-button style="color:#999;font-size: 12px;" size="mini" type="text" @click="reply.del_visible = false">取消</el-button>
                           <el-button style="font-size: 12px;" type="text" size="mini" @click="delReplySubmit(reply)">确定</el-button>
                         </div>
-                        <span slot="reference" class="reply-btn">删除</span>
+                        <span class="reply-btn">删除</span>
                       </el-popover>
                       <span class="reply-btn" @click="reClick(comment.id, reply.fromUser.id)">回复</span>
                     </div>
@@ -134,303 +135,271 @@
   </div>
 </template>
 
-<script>
-import { mapGetters } from 'vuex'
-import { parseDate } from '@/utils/index.js'
-import '@/assets/quill-emoji/quill-emoji.js'
-import { pageComment, addComment, addReply, deleteComment, deleteReply } from '@/api/comment.js'
-export default {
-  props: {
-    articleId: {
-      type: [String, Number],
-      required: true
+<script lang="ts" setup>
+import { ref, computed, onMounted } from 'vue';
+import { formatPast } from '/@/utils/format/format-time';
+// import { pageComment, addComment, addReply, deleteComment, deleteReply } from '/@/api/comment/comment';
+// import '@/assets/quill-emoji/quill-emoji.js';
+
+import { MdEditor } from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
+
+
+const articleId = ref('');
+const authorId = ref('');
+const content = ref('');
+const recontent = ref('');
+const loading = ref(false);
+const reEditVisible = ref(false);
+const current = ref(1);
+const size = ref(10);
+const total = ref(0);
+const commentList = ref([]);
+const commentId = ref(0);
+const toUserId = ref(0);
+const cloading = ref(false);
+const rloading = ref(false);
+
+const editorOption = {
+  modules: {
+    toolbar: {
+      container: [['emoji']]
     },
-    authorId: {
-      type: [String, Number],
-      required: true
-    }
+    'emoji-toolbar': true,
+    'emoji-shortname': true
   },
-  data() {
-    return {
-      content: '',
-      recontent: '',
-      loading: false,
-      editorOption: {
-        modules: {
-          toolbar: {
-            container: [['emoji']]
-          },
-          'emoji-toolbar': true,
-          'emoji-shortname': true
-        },
-        placeholder: '嗨，你好呀,欢迎在评论区评论哦~'
-      },
-      reEditVisible: false,
-      reEditorOption: {
-        modules: {
-          toolbar: {
-            container: [['emoji']]
-          },
-          'emoji-toolbar': true,
-          'emoji-shortname': true
-        },
-        placeholder: '回复点啥子呢？'
-      },
-      current: 1,
-      size: 10,
-      total: 0,
-      commentList: [],
-      commentId: 0,
-      toUserId: 0,
-      cloading: false,
-      rloading: false
-    }
-  },
+  placeholder: '嗨，你好呀,欢迎在评论区评论哦~'
+};
 
-  computed: {
-    ...mapGetters([
-      'userInfo',
-      'defaultAvatar',
-      'device'
-    ])
-  },
-
-  mounted() {
-    this.pageComment()
-  },
-
-  methods: {
-
-    // 日期转换
-    parseDate(str) {
-      // 解决ios 日期NAN问题
-      str = str.replace(/-/g, '/')
-      return parseDate(new Date(str))
+const reEditorOption = {
+  modules: {
+    toolbar: {
+      container: [['emoji']]
     },
+    'emoji-toolbar': true,
+    'emoji-shortname': true
+  },
+  placeholder: '回复点啥子呢？'
+};
 
-    // 回复弹框关闭事件
-    bClose() {
-      this.commentId = 0
-      this.toUserId = 0
-      this.reEditVisible = false
-      this.recontent = ''
-    },
+// const userInfo = computed(() => mapGetters('userInfo'));
+// const defaultAvatar = computed(() => mapGetters('defaultAvatar'));
+// const device = computed(() => mapGetters('device'));
 
-    // 监听分页
-    currentChange(current) {
-      this.current = current
-      this.pageComment()
-    },
+// 日期转换
+const parseDate = (str) => {
+  // 解决ios 日期NAN问题
+  str = str.replace(/-/g, '/');
+  return formatPast(new Date(str));
+};
 
-    // 获取分页数据
-    pageComment() {
-      this.loading = true
-      const params = {
-        articleId: this.articleId,
-        current: this.current,
-        size: this.size
-      }
-      pageComment(params).then(
+// 回复弹框关闭事件
+const bClose = () => {
+  commentId.value = 0;
+  toUserId.value = 0;
+  reEditVisible.value = false;
+  recontent.value = '';
+};
+
+// 监听分页
+const currentChange = (currentPage) => {
+  current.value = currentPage;
+  pageComment();
+};
+
+onMounted(() => {
+  pageComment();
+});
+// 获取分页数据
+const pageComment = () => {
+  loading.value = true;
+  const params = {
+    articleId: articleId.value,
+    current: current.value,
+    size: size.value
+  };
+  // pageComment(params).then(
+    // res => {
+    //   loading.value = false;
+    //   total.value = res.data.total;
+    //   const commentListData = res.data.records;
+    //   commentListData.forEach(comment => {
+    //     comment.del_visible = false;
+    //     comment.replyList.forEach(reply => {
+    //       reply.del_visible = false;
+    //     });
+    //   });
+    //   commentList.value = commentListData;
+    // },
+    // error => {
+    //   
+    //   loading.value = false;
+    // }
+  // );
+};
+
+// 重载
+const reload = () => {
+  current.value = 1;
+  pageComment();
+};
+
+// 评论提交
+const commentSubmit = () => {
+  if (!userInfo.value) {
+    // this.$store.commit('login/CHANGE_VISIBLE', true);
+    return;
+  }
+  const commentContent = content.value.replace(/<\/?p[^>]*>/gi, '');
+  if (!commentContent) {
+    // this.$message('还没输入内容呢~');
+    return;
+  }
+  const params = {
+    content: commentContent,
+    articleId: articleId.value
+  };
+  // const email = userInfo.value.email;
+  // if (!email) {
+  //   this.$confirm('没绑定邮箱接收不到回复提醒哦~', '提示', {
+  //     confirmButtonText: '马上绑定',
+  //     cancelButtonText: '下次一定',
+  //     showClose: false,
+  //     type: 'warning'
+  //   }).then(() => {
+  //     this.$router.push('/email-validate');
+  //   }).catch(() => {
+  //     cloading.value = true;
+  //     addComment(params).then(
+  //       res => {
+  //         cloading.value = false;
+  //         this.$message({
+  //           message: '评论成功',
+  //           type: 'success'
+  //         });
+  //         content.value = '';
+  //         reload();
+  //       },
+  //       error => {
+  //         
+  //         cloading.value = false;
+  //       }
+  //     );
+  //   });
+  // } else {
+  //   cloading.value = true;
+  //   addComment(params).then(
+  //     res => {
+  //       cloading.value = false;
+  //       this.$message({
+  //         message: '评论成功',
+  //         type: 'success'
+  //       });
+  //       content.value = '';
+  //       reload();
+  //     },
+  //     error => {
+  //       
+  //       cloading.value = false;
+  //     }
+  //   );
+  // }
+};
+
+// 删除回复提交
+const delReplySubmit = (reply) => {
+  const params = { replyId: reply.id };
+  // deleteReply(params).then(
+  //   res => {
+  //     this.$message({
+  //       message: '删除成功',
+  //       type: 'success'
+  //     });
+  //     reload();
+  //   }
+  // );
+};
+
+// 点击回复
+const reClick = (commentId, toUserId) => {
+  if (!userInfo.value) {
+    this.$store.commit('login/CHANGE_VISIBLE', true);
+    return;
+  }
+  reEditVisible.value = true;
+  commentId.value = commentId;
+  toUserId.value = toUserId;
+};
+
+// 回复提交
+const reSubmit = () => {
+  const content = recontent.value.replace(/<\/?p[^>]*>/gi, '');
+  if (!content) {
+    this.$message('还没输入内容呢~');
+    return;
+  }
+
+  const params = {
+    commentId: commentId.value,
+    articleId: articleId.value,
+    toUserId: toUserId.value,
+    content: content
+  };
+  const email = userInfo.value.email;
+  if (!email) {
+    this.$confirm('没绑定邮箱接收不到回复提醒哦~', '提示', {
+      confirmButtonText: '马上绑定',
+      cancelButtonText: '下次一定',
+      showClose: false,
+      type: 'warning'
+    }).then(() => {
+      this.$router.push('/email-validate');
+    }).catch(() => {
+      rloading.value = true;
+      addReply(params).then(
         res => {
-          this.loading = false
-          this.total = res.data.total
-          const commentList = res.data.records
-          const clen = commentList.length
-          for (var i = 0; i < clen; i++) {
-            commentList[i].del_visible = false
-            const replyList = commentList[i].replyList
-            const rlen = replyList.length
-            for (var j = 0; j < rlen; j++) {
-              replyList[j].del_visible = false
-            }
-          }
-          this.commentList = commentList
+          rloading.value = false;
+          reEditVisible.value = false;
+          recontent.value = '';
+          this.$message({
+            message: '回复成功',
+            type: 'success'
+          });
+          reload();
         },
         error => {
-          console.error(error)
-          this.loading = false
+          
+          rloading.value = false;
         }
-      )
-    },
-
-    // 重载
-    reload() {
-      this.current = 1
-      this.pageComment()
-    },
-
-    // 评论提交
-    commentSubmit() {
-      const userInfo = this.userInfo
-      if (!userInfo) {
-        this.$store.commit('login/CHANGE_VISIBLE', true)
-        return
+      );
+    });
+  } else {
+    rloading.value = true;
+    addReply(params).then(
+      res => {
+        rloading.value = false;
+        reEditVisible.value = false;
+        recontent.value = '';
+        this.$message({
+          message: '回复成功',
+          type: 'success'
+        });
+        reload();
+      },
+      error => {
+        
+        rloading.value = false;
       }
-      const content = this.content.replace(/<\/?p[^>]*>/gi, '')
-      if (!content) {
-        this.$message('还没输入内容呢~')
-        return
-      }
-      const params = {
-        content: content,
-        articleId: this.articleId
-      }
-      const email = userInfo.email
-      if (!email) {
-        this.$confirm('没绑定邮箱接收不到回复提醒哦~', '提示', {
-          confirmButtonText: '马上绑定',
-          cancelButtonText: '下次一定',
-          showClose: false,
-          type: 'warning'
-        }).then(() => {
-          this.$router.push('/email-validate')
-        }).catch(() => {
-          this.cloading = true
-          addComment(params).then(
-            res => {
-              this.cloading = false
-              this.$message({
-                message: '评论成功',
-                type: 'success'
-              })
-              this.content = ''
-              this.reload()
-            },
-            error => {
-              console.log(error)
-              this.cloading = false
-            }
-          )
-        })
-      } else {
-        this.cloading = true
-        addComment(params).then(
-          res => {
-            this.cloading = false
-            this.$message({
-              message: '评论成功',
-              type: 'success'
-            })
-            this.content = ''
-            this.reload()
-          },
-          error => {
-            console.log(error)
-            this.cloading = false
-          }
-        )
-      }
-    },
-
-    // 删除评论提交
-    delCommentSubmit(comment) {
-      const params = { commentId: comment.id }
-      deleteComment(params).then(
-        res => {
-          this.$message({
-            message: '删除成功',
-            type: 'success'
-          })
-          this.reload()
-        }
-      )
-    },
-
-    // 删除回复提交
-    delReplySubmit(reply) {
-      const params = { replyId: reply.id }
-      deleteReply(params).then(
-        res => {
-          this.$message({
-            message: '删除成功',
-            type: 'success'
-          })
-          this.reload()
-        }
-      )
-    },
-
-    // 点击回复
-    reClick(commentId, toUserId) {
-      const userInfo = this.userInfo
-      if (!userInfo) {
-        this.$store.commit('login/CHANGE_VISIBLE', true)
-        return
-      }
-      this.reEditVisible = true
-      this.commentId = commentId
-      this.toUserId = toUserId
-    },
-
-    // 回复提交
-    reSubmit() {
-      const content = this.recontent.replace(/<\/?p[^>]*>/gi, '')
-      if (!content) {
-        this.$message('还没输入内容呢~')
-        return
-      }
-
-      const params = {
-        commentId: this.commentId,
-        articleId: this.articleId,
-        toUserId: this.toUserId,
-        content: content
-      }
-      const email = this.userInfo.email
-      if (!email) {
-        this.$confirm('没绑定邮箱接收不到回复提醒哦~', '提示', {
-          confirmButtonText: '马上绑定',
-          cancelButtonText: '下次一定',
-          showClose: false,
-          type: 'warning'
-        }).then(() => {
-          this.$router.push('/email-validate')
-        }).catch(() => {
-          this.rloading = true
-          addReply(params).then(
-            res => {
-              this.rloading = false
-              this.reEditVisible = false
-              this.recontent = ''
-              this.$message({
-                message: '回复成功',
-                type: 'success'
-              })
-              this.reload()
-            },
-            error => {
-              console.error(error)
-              this.rloading = false
-            }
-          )
-        })
-      } else {
-        this.rloading = true
-        addReply(params).then(
-          res => {
-            this.rloading = false
-            this.reEditVisible = false
-            this.recontent = ''
-            this.$message({
-              message: '回复成功',
-              type: 'success'
-            })
-            this.reload()
-          },
-          error => {
-            console.error(error)
-            this.rloading = false
-          }
-        )
-      }
-    }
+    );
   }
-}
+};
+
+   
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .c-container {
-  @import '~@/styles/variables';
+  @import "/@/assets/styles/variables.css";
   width: 100%;
   overflow-x: hidden;
 

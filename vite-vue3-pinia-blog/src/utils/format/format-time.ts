@@ -43,6 +43,7 @@ export function parseTime(time, cFormat) {
 
 /**
  * 时间转换
+ * 
  * @param {number} time
  * @param {string} option
  * @returns {string}
@@ -187,6 +188,7 @@ export function getWeek(dateTime: Date): number {
  * 将时间转换为 `几秒前`、`几分钟前`、`几小时前`、`几天前`
  * @param param 当前时间，new Date() 格式或者字符串时间格式
  * @param format 需要转换的时间格式字符串
+ * @description param new Date("2024-04-05")
  * @description param 10秒：  10 * 1000
  * @description param 1分：   60 * 1000
  * @description param 1小时： 60 * 60 * 1000

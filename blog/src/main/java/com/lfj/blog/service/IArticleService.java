@@ -128,5 +128,17 @@ public interface IArticleService extends IService<Article> {
 	 */
 	List<ArticleVo> selectCollectByUserId(@Param("offset") long offset, @Param("limit") long limit, @Param("userId") Integer userId);
 
+	/**
+	 * 评论数自增
+	 *
+	 * @param articleId
+	 */
+	void commentCountIncrement(int articleId);
 
+	/**
+	 * 评论数自减
+	 *
+	 * @param articleId
+	 */
+	void commentCountDecrement(int articleId);
 }

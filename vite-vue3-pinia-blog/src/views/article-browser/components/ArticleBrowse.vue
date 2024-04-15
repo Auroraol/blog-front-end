@@ -4,12 +4,14 @@
       <el-affix offset="70">
         <BrowserSidePanel
           class="browserSide container"
+          v-if="device === 'desktop'"
+          :title="article.title"
         ></BrowserSidePanel>
       </el-affix>
     </el-col>
     <el-col :span="16">
-      <transition name="el-fade-in">
-        <div v-if="!loading">
+      <div v-if="!loading">
+        <transition name="el-fade-in">
           <div class="layout-left-side">
             <h2 class="art-title">
               <span v-if="article.original !== 1">【转载】</span>
@@ -33,24 +35,27 @@
               </div>
             </div>
           </div>
-          <div class="articleMd">
-            <!-- 文章内容 -->
-            <MdPreview
-              editorId="preview-only"
-              :modelValue="article.htmlContent"
-              previewTheme="vuepress"
-              codeTheme="a11y"
-              @onGetCatalog="getCatalog"
-            />
-          </div>
-          <!-- 版权信息  url: 文章地址 original:是否原创(1)-->
-          <div class="article-bottom">
-            <copy-right
-              :url="article.original === 1 ? url : article.reproduce"
-              :original="article.original"
-            />
-            <art-tags :tags="article.tagList" />
-            <ul class="pre-next">
+        </transition>
+        <div class="articleMd">
+          <!-- 文章内容 -->
+          <MdPreview
+            editorId="preview-only"
+            :modelValue="article.htmlContent"
+            previewTheme="vuepress"
+            codeTheme="a11y"
+            @onGetCatalog="getCatalog"
+          />
+        </div>
+
+        <!-- 版权信息  url: 文章地址 original:是否原创(1)-->
+        <div class="article-bottom">
+          <copy-right
+            :url="article.original === 1 ? url : article.reproduce"
+            :original="article.original"
+          />
+          <art-tags :tags="article.tagList" />
+          <div class="pre-next">
+            <ul>
               <li v-if="article.previous">
                 <router-link :to="'/article/' + article.previous.id">
                   上一篇&ensp;:&ensp;{{ article.previous.title }}
@@ -63,8 +68,10 @@
               </li>
             </ul>
           </div>
+           <!-- 评论 -->
+          <comment-list></comment-list>
         </div>
-      </transition>
+      </div>
     </el-col>
 
     <el-col :span="6"
@@ -104,7 +111,7 @@ import CopyRight from "./CopyRight.vue";
 import ArtTags from "./ArtTags.vue";
 import BrowserSidePanel from "./BrowserSidePanel.vue";
 import InterrelatedList from "./InterrelatedList.vue";
-// import CommentList from './CommentList.vue'
+import CommentList from './CommentList.vue'
 import { MdPreview, MdCatalog } from "md-editor-v3";
 // preview.css相比style.css少了编辑器那部分样式
 import "md-editor-v3/lib/preview.css";
@@ -349,7 +356,7 @@ const spanelRef = ref(null);
 // 过渡
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s;
+  transition: opacity 1s;
 }
 .fade-enter,
 .fade-leave-to {

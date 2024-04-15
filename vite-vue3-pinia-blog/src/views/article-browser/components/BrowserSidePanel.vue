@@ -80,8 +80,9 @@
                   "
                 >
                   <img
+                    style="width:120px;height:120px;margin: 5px;"
                     :src="
-                      'https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=' +
+                    'https://my.tv.sohu.com/user/a/wvideo/getQRCode.do?text='+
                       codedUrl
                     "
                   />
@@ -118,15 +119,7 @@ const props = defineProps({
   title: {
     type: String,
     default: "",
-  },
-  likeCount: {
-    type: [Number, String],
-    default: 0,
-  },
-  collectCount: {
-    type: [Number, String],
-    default: 0,
-  },
+  }
 });
 
 import useClipboard from "vue-clipboard3"; //  copy 功能插件
@@ -158,7 +151,7 @@ const token = computed(() => useGettersPinia.token);
 const liked = computed(() => token.value && ifPraise.value);
 const collected = computed(() => token.value && ifCollection.value);
 const codedUrl = computed(() => encodeURIComponent(url.value));
-const codedTitle = computed(() => encodeURIComponent(props.title));
+const codedTitle = computed(() => encodeURIComponent(props.title ));
 
 // 监视
 watch(token, (newValue, oldValue) => {
@@ -227,8 +220,6 @@ const praiseClick = async () => {
   // 登录后才能点赞
   if (!token.value) {
     //js中 null、undefined、空字符串均为假值
-    console.error("sss");
-
     useLoginPinia.changeVisible(true);
     return;
   }
@@ -239,7 +230,6 @@ const praiseClick = async () => {
     try {
       await addLike(params);
       // 向父组件传参
-      // emit('likeCountChanges', 1);
       ifPraise.value = true;
     } catch (error) {
       console.log(error);
@@ -247,7 +237,6 @@ const praiseClick = async () => {
   } else {
     try {
       cancelLiked(params);
-      // emit('likeCountChanges', -1);
       ifPraise.value = false;
     } catch (error) {
       console.log(error);
@@ -267,7 +256,6 @@ const collectionClick = async () => {
     try {
       await addCollect(params);
       // 向父组件传参
-      // emit('likeCountChanges', 1);
       ifCollection.value = true;
     } catch (error) {
       console.log(error);
@@ -275,7 +263,6 @@ const collectionClick = async () => {
   } else {
     try {
       cancelCollected(params);
-      // emit('likeCountChanges', -1);
       ifCollection.value = false;
     } catch (error) {
       console.log(error);

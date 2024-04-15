@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
+ * ArticleVo对象
  * 文章返回前端对象
  * 文章详细对象
  **/

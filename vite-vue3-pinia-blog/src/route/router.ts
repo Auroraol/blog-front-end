@@ -143,6 +143,14 @@ const routes = [
       title: "关于",
     },
   },
+  {
+    path: '/message',
+    component: () => import('/@/views/message/index.vue'),
+    hidden: true,
+    meta: {
+      title: "留言",
+    },
+  },
   // , {
   //   path: '/articleeditor',
   //   name: 'articleeditor',
@@ -384,7 +392,7 @@ const routes = [
   //   }
   // },
   // 路由分模块
-  // NoFond,
+  NoFond,
 ];
 
 // 导出路由

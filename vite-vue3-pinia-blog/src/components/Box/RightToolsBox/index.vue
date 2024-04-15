@@ -8,31 +8,21 @@
         </div>
         <span></span>
       </div>
-      <!-- <div class="randomArticleContent" :key="refreshDom">
-        <RandomArticle
-          v-for="item in listArr"
-          :key="item.id"
-          :article="item"
-          class="randomArticlerrr"
-        >
-        </RandomArticle>
-      </div> -->
     </div>
-        <right-side-tags></right-side-tags>
+    <!-- 标签 -->
+    <right-side-tags></right-side-tags>
+    
     <div class="message">
       <div class="messageTitle">
         <div class="title">
           <svg-icon name="liuyan" width="30px" height="30px"></svg-icon>
-          <div>最新留言</div>
+          <div>最新评论</div>
         </div>
         <span></span>
       </div>
       <div class="messageContent">
-        <!-- <miniMessage
-          v-for="item in messageList"
-          :key="item.id"
-          :item="item"
-        ></miniMessage> -->
+        <!-- <comment-list></comment-list> -->
+        <RightSideComment></RightSideComment>
       </div>
     </div>
   </div>
@@ -44,6 +34,7 @@ import { useRouter } from "vue-router";
 // import useAxios from "@/hooks/axios/axios";
 // import RandomArticle from '/@/components/Box/RightToolsBox/randomArticle.vue'
 // import miniMessage from '/@/components/Box/RightToolsBox/miniMessage.vue'
+import RightSideComment from "./RightSideComment.vue";
 import gsap from "gsap";
 
 const router = useRouter();

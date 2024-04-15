@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 文章页面查询包装器
+ * 用于构造分页查询
  **/
 @Data
 @AllArgsConstructor

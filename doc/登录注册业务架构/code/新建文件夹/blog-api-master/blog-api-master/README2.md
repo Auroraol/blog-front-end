@@ -2055,6 +2055,12 @@ title：标题关键字，非必传
 }
 ```
 
+
+
+
+
+
+
 客户端 -> 用户<注册> -> 认证(登录) -> 用户/文章/
 
 
@@ -2386,3 +2392,186 @@ size：每页数量，非必传，默认5
 ![image-20240412170305085](README2.assets/image-20240412170305085.png)
 
 ![image-20240412170348208](README2.assets/image-20240412170348208.png)
+
+
+
+
+
+## 文章评论与回复
+
+支持对文章进行评论以及对文章评论进行回复。
+
+数据库表分文章评论表和文章回复表。
+
+新增评论时会发送评论提醒邮件给文章作者，新增回复时会发送回复提醒邮件给被回复者，同时抄送到文章作者。
+
+> 发送邮件提醒需用户绑定邮箱，未绑定邮箱时提示未绑定邮箱，引导用户进行邮箱绑定。
+
+### 数据库文章评论表设计
+
+|    字段名    |          描述          |
+| :----------: | :--------------------: |
+|      id      |           id           |
+|  article_id  |         文章id         |
+| from_user_id |        评论者id        |
+|   content    |        评论内容        |
+| comment_time |        评论时间        |
+|   deleted    | 是否删除，1：是，0：否 |
+
+### 数据库文章回复表设计
+
+|    字段名    |          描述          |
+| :----------: | :--------------------: |
+|      id      |           id           |
+|  article_id  |         文章id         |
+|  comment_id  |         评论id         |
+| from_user_id |        回复者id        |
+|  to_user_id  |       被回复者id       |
+|   content    |        回复内容        |
+|  reply_time  |        回复时间        |
+|   deleted    | 是否删除，1：是，0：否 |
+
+
+
+
+
+### 新增评论
+
+请求方法：POST
+
+请求地址：/article/comment/add
+
+请求参数：
+articleId：文章id，必传
+content：评论内容，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：评论会给文章作者发送评论提醒邮件。
+
+评论成功:
+
+```json
+{
+    "code": 200000,
+    "message": "响应成功"
+}
+```
+
+
+
+![image-20240415162229855](README2.assets/image-20240415162244661.png)
+
+### 分页获取评论与回复
+
+请求方法：GET
+
+请求地址：/article/comment/page
+
+请求参数：
+current：当前页，非必传，默认1
+size：每页数量，非必传，默认5
+articleId：文章id，必传
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：评论下挂回复列表；按时间降序排序。
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "records": [
+      {
+        "id": 1,
+        "content": "测试",
+        "commentTime": "2020-01-05 12:52:16",
+        "fromUser": {
+          "id": 1,
+          "nickname": "小管家",
+          "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+          "admin": 1
+        },
+        "replyList": [
+          {
+            "id": 1,
+            "content": "自己回复自己可还行。",
+            "replyTime": "2020-01-05 13:23:55",
+            "fromUser": {
+              "id": 1,
+              "nickname": "小管家",
+              "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+              "admin": 1
+            },
+            "toUser": {
+              "id": 1,
+              "nickname": "小管家",
+              "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+              "admin": 1
+            }
+          }
+        ]
+      }
+    ],
+    "total": 1,
+    "size": 5,
+    "current": 1,
+    "searchCount": true,
+    "pages": 1
+  }
+}
+```
+
+![image-20240415162540829](README2.assets/image-20240415162540829.png)
+
+
+
+### 最新评论列表
+
+请求方法：GET
+
+请求地址：/article/comment/latest
+
+请求参数：limit：数量，非必传，默认5
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": [
+    {
+      "id": 1,
+      "content": "测试",
+      "commentTime": "2020-01-05 12:52:16",
+      "article": {
+        "id": 1,
+        "title": "标题"
+      },
+      "fromUser": {
+        "id": 1,
+        "nickname": "小管家",
+        "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+        "admin": 1
+      },
+      "replyList": []
+    }
+  ]
+}
+```
+
+
+
+![image-20240415164123971](README2.assets/image-20240415164123971.png)

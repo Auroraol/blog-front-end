@@ -67,7 +67,7 @@
               归档
             </el-menu-item>
 
-            <el-menu-item index="/leavemsg">
+            <el-menu-item index="/message">
               <el-icon><ChatLineRound /></el-icon>
               留言
             </el-menu-item>

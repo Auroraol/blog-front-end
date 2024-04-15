@@ -17,9 +17,11 @@ import { ref } from "vue";
 
 <style lang="less" scoped>
 .content {
-  height: 644px;
+  // height: 644px;
+    height: 618px;
+
   background-image: url("/image/imgs/1.png");
-  margin-bottom: -13px;
+  // margin-bottom: -13px;
 }
 
 /* 淡入淡出的过渡效果*/
