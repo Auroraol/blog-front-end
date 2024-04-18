@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.common.validator.annotation.YearMonthFormat;
 import com.lfj.blog.controller.model.request.ArticleRequest;
+import com.lfj.blog.service.ArticleRecommendService;
 import com.lfj.blog.service.IArticleService;
+import com.lfj.blog.service.vo.ArticleArchivesVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,8 +33,8 @@ public class ArticleController {
 	@Autowired
 	private IArticleService articleService;
 
-//	@Autowired
-//	private ArticleRecommendService articleRecommendService;
+	@Autowired
+	private ArticleRecommendService articleRecommendService;
 
 
 	@PostMapping("/save")
@@ -116,16 +118,16 @@ public class ArticleController {
 		return ApiResponseResult.success(viewed);
 	}
 
-	//
-//	@GetMapping("/archives/page")
-//	@ApiOperation(value = "文章归档分页查询", notes = "按年月归档，月份文章计数")
-//	public ApiResponseResult<IPage<ArticleArchivesVo>> archives(
-//			@ApiParam("当前页,非必传，默认为:1") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
-//			@ApiParam("每页数量,非必传，默认为:12") @RequestParam(value = "size", required = false, defaultValue = "12") long size) {
-//		return ApiResponseResult.success(articleService.selectArticleArchives(current, size));
-//	}
-//
-//	@GetMapping("/category/statistic")
+
+	@GetMapping("/archives/page")
+	@ApiOperation(value = "文章归档分页查询", notes = "按年月归档，月份文章计数")
+	public ApiResponseResult<IPage<ArticleArchivesVo>> archives(
+			@ApiParam("当前页,非必传，默认为:1") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
+			@ApiParam("每页数量,非必传，默认为:12") @RequestParam(value = "size", required = false, defaultValue = "12") long size) {
+		return ApiResponseResult.success(articleService.selectArticleArchives(current, size));
+	}
+
+	//	@GetMapping("/category/statistic")
 //	@ApiOperation(value = "文章分类统计", notes = "按分类计数文章数")
 //	public ApiResponseResult<List<ArticleCategoryStatisticsVo>> categoryStatistic() {
 //		return ApiResponseResult.success(articleService.selectCategoryStatistic());
@@ -137,31 +139,31 @@ public class ArticleController {
 //		return ApiResponseResult.success(articleService.selectTagStatistic());
 //	}
 //
-//	@PostMapping("/recommend/save")
-//	@PreAuthorize("hasAuthority('admin')")
-//	@ApiOperation(value = "添加到推荐，如果已存在则更新", notes = "需要accessToken，需要管理员权限")
-//	public ApiResponseResult recommendAdd(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam(value = "articleId") Integer articleId,
-//										  @ApiParam("分数，分数越高越排前面") @RequestParam(value = "score", required = false, defaultValue = "0") Double score) {
-//		articleRecommendService.add(articleId, score);
-//		return ApiResponseResult.success();
-//	}
-//
-//
-//	@GetMapping("/recommend/list")
-//	@ApiOperation(value = "获取文章推荐列表", notes = "按分数排序")
-//	public ApiResponseResult<List<ArticleVo>> recommendList() {
-//		return ApiResponseResult.success(articleRecommendService.list());
-//	}
-//
-//
-//	@PreAuthorize("hasAuthority('admin')")
-//	@DeleteMapping("/recommend/delete/{articleId}")
-//	@ApiOperation(value = "从推荐列表中删除", notes = "需要accessToken，需要管理员权限")
-//	public ApiResponseResult recommendDelete(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @PathVariable(value = "articleId") Integer articleId) {
-//		articleRecommendService.remove(articleId);
-//		return ApiResponseResult.success();
-//	}
-//
+	@PostMapping("/recommend/save")
+	@PreAuthorize("hasAuthority('admin')")
+	@ApiOperation(value = "添加到推荐，如果已存在则更新", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult recommendAdd(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam(value = "articleId") Integer articleId,
+										  @ApiParam("分数，分数越高越排前面") @RequestParam(value = "score", required = false, defaultValue = "0") Double score) {
+		articleRecommendService.add(articleId, score);
+		return ApiResponseResult.success();
+	}
+
+
+	@GetMapping("/recommend/list")
+	@ApiOperation(value = "获取文章推荐列表", notes = "按分数排序")
+	public ApiResponseResult<List<ArticleVo>> recommendList() {
+		return ApiResponseResult.success(articleRecommendService.list());
+	}
+
+
+	@PreAuthorize("hasAuthority('admin')")
+	@DeleteMapping("/recommend/delete/{articleId}")
+	@ApiOperation(value = "从推荐列表中删除", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult recommendDelete(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @PathVariable(value = "articleId") Integer articleId) {
+		articleRecommendService.remove(articleId);
+		return ApiResponseResult.success();
+	}
+
 	@GetMapping("/interrelated/list")
 	@ApiOperation(value = "相关文章", notes = "根据分类查询，分类为空则根据标签查询")
 	public ApiResponseResult<List<ArticleVo>> interrelated(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam(value = "articleId") Integer articleId,

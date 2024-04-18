@@ -140,6 +140,7 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 		// 保存数据库
 		User user = new User();
 		user.setUsername(username);
+		// 密码加密保存
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  // 使用spring security 加密密码
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
 		user.setMobile(Long.valueOf(mobile));

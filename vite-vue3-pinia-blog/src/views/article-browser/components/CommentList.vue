@@ -1,90 +1,192 @@
 <template>
   <div class="c-container">
     <div class="content-container">
+      <p class="main-tip-label">评论区</p>
       <div class="content-head">
         <div class="edit-container">
-           <MdEditor v-model="content" previewTheme="vuepress" codeTheme="a11y"/>
+          <MdEditor
+            class="editor"
+            v-model="content"
+            previewTheme="vuepress"
+            codeTheme="a11y"
+            placeholder="嗨，你好呀,欢迎在评论区评论哦~"
+            :toolbars="[0]"
+            :preview="false"
+            :footers="[]"
+          >
+            <template #defToolbars>
+              <Emoji
+                class="emoji"
+                :emojis="emojis"
+                :selectAfterInsert="false"
+              />
+            </template>
+          </MdEditor>
         </div>
         <div class="main-tools-box">
-          <el-button :loading="cloading" type="danger" size="mini" 
-          @click="commentSubmit">评论</el-button>
+          <!--   v-if="ifAddComment" -->
+          <BtnSend class="btnSend" @click="commentSubmit">
+            <template #default> 点击发布 </template>
+          </BtnSend>
         </div>
       </div>
+      <!-- 评论列表 -->
       <div class="content-box">
-        <p class="main-tip-label">评论列表
+        <p class="main-tip-label">
+          评论列表
           <span class="right">共{{ total }}条评论</span>
         </p>
 
-        <!-- 评论列表 -->
         <ul class="content-list">
           <transition-group name="fade-list">
-            <li v-for="(comment, index1) in commentList" :key="index1" class="list-item">
+            <li
+              v-for="(comment, index1) in commentList"
+              :key="index1"
+              class="list-item"
+            >
               <div class="cmt-li-title">
                 <div class="headimg">
-                  <img :src="comment.fromUser.avatar || defaultAvatar">
+                  <img :src="comment.fromUser.avatar || defaultAvatar" />
                 </div>
               </div>
               <div class="cmt-li-r">
                 <div class="top">
-                  <p class="nickname" :style="comment.fromUser.id === authorId ? 'color:#e74851' : ''">
+                  <p
+                    class="nickname"
+                    :style="
+                      comment.fromUser.id === authorId ? 'color:#e74851' : ''
+                    "
+                  >
                     {{ comment.fromUser.nickname }}
 
-                    <el-tag v-if="comment.fromUser.id === authorId" type="info" size="mini" effect="light">作者</el-tag>
+                    <el-tag
+                      v-if="comment.fromUser.id === authorId"
+                      type="info"
+                      size="small"
+                      effect="light"
+                      >作者</el-tag
+                    >
                   </p>
                   <p class="date">{{ parseDate(comment.commentTime) }}评论</p>
                 </div>
                 <p class="body-text" v-html="comment.content" />
                 <div class="btns-bar">
                   <el-popover
-                    v-if="userInfo && (
-                      userInfo.id === comment.fromUser.id
-                      || userInfo.id === authorId
-                      || userInfo.roles.includes('admin'))"
-                    v-model="comment.del_visible"
+                    v-if="
+                      userInfo &&
+                      (userInfo.id === comment.fromUser.id ||
+                        userInfo.id === authorId ||
+                        userInfo.roles.includes('admin'))
+                    "
+                    :visible="comment.del_visible"
                     placement="bottom"
                   >
-                    <p style="margin: 8px;">确定删除这一条评论吗？</p>
+                    <p style="margin: 8px">确定删除这一条评论吗？</p>
                     <div style="text-align: right; margin: 0">
-                      <el-button style="color:#999;font-size: 12px;" size="mini" type="text" @click="comment.del_visible = false">取消</el-button>
-                      <el-button style="font-size: 12px;" type="text" size="mini" @click="delCommentSubmit(comment)">确定</el-button>
+                      <el-button
+                        style="color: #999; font-size: 12px"
+                        size="mini"
+                        type="text"
+                        @click="comment.del_visible = false"
+                        >取消</el-button
+                      >
+                      <el-button
+                        style="font-size: 12px"
+                        type="text"
+                        size="mini"
+                        @click="delCommentSubmit(comment)"
+                        >确定</el-button
+                      >
                     </div>
-                    <span slot="reference" class="reply-btn">删除</span>
+                    <template #reference>
+                      <span
+                        class="reply-btn"
+                        @click="comment.del_visible = true"
+                        >删除</span
+                      >
+                    </template>
                   </el-popover>
-                  <span class="reply-btn" @click="reClick(comment.id, comment.fromUser.id)">回复</span>
+                  <span
+                    class="reply-btn"
+                    @click="reClick(comment.id, comment.fromUser.id)"
+                    >回复</span
+                  >
                 </div>
 
                 <!-- 回复列表 -->
                 <ul class="reply-list">
-                  <li v-for="(reply, index2) in comment.replyList" :key="index2" class="reply-item">
-                    <div class="reply-date">{{ parseDate(reply.replyTime) }}回复</div>
+                  <li
+                    v-for="(reply, index2) in comment.replyList"
+                    :key="index2"
+                    class="reply-item"
+                  >
+                    <div class="reply-date">
+                      {{ parseDate(reply.replyTime) }}回复
+                    </div>
                     <div class="reply-content">
                       <div class="headimg">
-                        <img :src="reply.fromUser.avatar || defaultAvatar">
+                        <img :src="reply.fromUser.avatar || defaultAvatar" />
                       </div>
                       <div class="nickname">
-                        <span :style="reply.fromUser.id === authorId ? 'color:#e74851' : ''">{{ reply.fromUser.nickname }}</span>
-                        <span style="color: #000000;">回复</span>
-                        <span :style="reply.toUser.id === authorId ? 'color:#e74851' : ''">@{{ reply.toUser.nickname }}</span>
+                        <span
+                          :style="
+                            reply.fromUser.id === authorId
+                              ? 'color:#e74851'
+                              : ''
+                          "
+                          >{{ reply.fromUser.nickname }}</span
+                        >
+                        <span style="color: #000000">回复</span>
+                        <span
+                          :style="
+                            reply.toUser.id === authorId ? 'color:#e74851' : ''
+                          "
+                          >@{{ reply.toUser.nickname }}</span
+                        >
                       </div>
                       <p class="reply-text" v-html="reply.content" />
                     </div>
                     <div class="btns-bar">
                       <el-popover
-                        v-if="userInfo &&
-                          (userInfo.id === reply.fromUser.id
-                          || userInfo.id === authorId
-                          || userInfo.roles.includes('admin'))"
-                        v-model="reply.del_visible"
+                        v-if="
+                          userInfo &&
+                          (userInfo.id === reply.fromUser.id ||
+                            userInfo.id === authorId ||
+                            userInfo.roles?.includes('admin'))
+                        "
+                        :visible="reply.del_visible"
                         placement="bottom"
                       >
-                        <p style="margin: 8px;">确定删除这一条回复吗？</p>
+                        <p style="margin: 8px">确定删除这一条回复吗？</p>
                         <div style="text-align: right; margin: 0">
-                          <el-button style="color:#999;font-size: 12px;" size="mini" type="text" @click="reply.del_visible = false">取消</el-button>
-                          <el-button style="font-size: 12px;" type="text" size="mini" @click="delReplySubmit(reply)">确定</el-button>
+                          <el-button
+                            style="color: #999; font-size: 12px"
+                            size="mini"
+                            type="text"
+                            @click="reply.del_visible = false"
+                            >取消</el-button
+                          >
+                          <el-button
+                            style="font-size: 12px"
+                            type="text"
+                            size="mini"
+                            @click="delReplySubmit(reply)"
+                            >确定</el-button
+                          >
                         </div>
-                        <span class="reply-btn">删除</span>
+                        <template #reference>
+                          <span
+                            class="reply-btn"
+                            @click="reply.del_visible = true"
+                            >删除</span
+                          >
+                        </template>
                       </el-popover>
-                      <span class="reply-btn" @click="reClick(comment.id, reply.fromUser.id)">回复</span>
+                      <span
+                        class="reply-btn"
+                        @click="reClick(comment.id, reply.fromUser.id)"
+                        >回复</span
+                      >
                     </div>
                   </li>
                 </ul>
@@ -98,61 +200,111 @@
           element-loading-text="拼命加载中"
           element-loading-spinner="el-icon-loading"
           element-loading-background="#fff"
-          style="color: #fff;width: 100%;height: 100px;"
-        >正在加载</div>
+          style="color: #fff; width: 100%; height: 100px"
+        >
+          正在加载
+        </div>
       </div>
-      <div v-if="!loading && commentList.length === 0" class="list-empty">还没有评论哦~</div>
+      <div v-if="!loading && commentList.length === 0" class="list-empty">
+        还没有评论哦~
+      </div>
     </div>
+
+    <!-- 分页 -->
     <el-pagination
       background
       layout="prev, pager, next"
       :page-size="size"
       :current-page="current"
-      :hide-on-single-page="true"
       :total="total"
       @current-change="currentChange"
     />
 
     <!-- 回复弹框 -->
     <el-dialog
-      :visible.sync="reEditVisible"
+      v-model="reEditVisible"
       title="提示"
-      :width="device === 'desktop'?'600px':'95%'"
+      :width="device === 'desktop' ? '700px' : '95%'"
       top="45vh"
       :modal="false"
       :show-close="false"
       class="rely-dialog"
-      :before-close="bClose"
+      @before-close="bClose"
     >
       <div class="re-editor-container">
-        <quill-editor v-model="recontent" :options="reEditorOption" />
+        <MdEditor
+          class="editor"
+          v-model="recontent"
+          previewTheme="vuepress"
+          codeTheme="a11y"
+          placeholder="回复点啥子呢"
+          :toolbars="[0]"
+          :preview="false"
+          :footers="[]"
+        >
+          <template #defToolbars>
+            <Emoji />
+          </template>
+        </MdEditor>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <template #footer>
         <el-button type="info" size="mini" @click="bClose">取 消</el-button>
-        <el-button :loading="rloading" type="danger" size="mini" @click="reSubmit">确 定</el-button>
-      </span>
+        <el-button
+          :loading="rloading"
+          type="danger"
+          size="mini"
+          @click="reSubmit"
+          >确 定</el-button
+        >
+      </template>
     </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue';
-import { formatPast } from '/@/utils/format/format-time';
-// import { pageComment, addComment, addReply, deleteComment, deleteReply } from '/@/api/comment/comment';
+import { ref, computed, onMounted } from "vue";
+import { formatPast } from "/@/utils/format/format-time";
+
 // import '@/assets/quill-emoji/quill-emoji.js';
 
-import { MdEditor } from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
+import { MdEditor } from "md-editor-v3";
+import "md-editor-v3/lib/style.css";
+import { Emoji } from "@vavt/v3-extension";
+import "@vavt/v3-extension/lib/asset/Emoji.css";
 
+import { useRouter } from "vue-router";
+import { useUserStore } from "/@/store/index";
+import { useGetters } from "/@/store/getters";
 
-const articleId = ref('');
-const authorId = ref('');
-const content = ref('');
-const recontent = ref('');
-const loading = ref(false);
+import {
+  pageComment as apipageComment,
+  addComment,
+  addReply,
+  deleteComment,
+  deleteReply,
+} from "/@/api/comment/comment";
+
+// 引入 ref 函数来创建响应式数据
+const isReady = ref(false);
+
+const router = useRouter();
+const gettersStore = useGetters(); // 通过 useGetters() 获取 getters store 的实例
+
+// 参数
+const props = defineProps({
+  articleId: {
+    type: [String, Number],
+  },
+});
+
+//
+const device = ref("desktop");
+const content = ref("");
+const recontent = ref("");
+const loading = ref(false); //显示
 const reEditVisible = ref(false);
 const current = ref(1);
-const size = ref(10);
+const size = ref(5);
 const total = ref(0);
 const commentList = ref([]);
 const commentId = ref(0);
@@ -160,37 +312,40 @@ const toUserId = ref(0);
 const cloading = ref(false);
 const rloading = ref(false);
 
-const editorOption = {
-  modules: {
-    toolbar: {
-      container: [['emoji']]
-    },
-    'emoji-toolbar': true,
-    'emoji-shortname': true
-  },
-  placeholder: '嗨，你好呀,欢迎在评论区评论哦~'
-};
+//计算属性
+const userInfo = computed(() => gettersStore.userInfo);
+const authorId = computed(() => userInfo.id);
 
-const reEditorOption = {
-  modules: {
-    toolbar: {
-      container: [['emoji']]
-    },
-    'emoji-toolbar': true,
-    'emoji-shortname': true
-  },
-  placeholder: '回复点啥子呢？'
-};
 
 // const userInfo = computed(() => mapGetters('userInfo'));
 // const defaultAvatar = computed(() => mapGetters('defaultAvatar'));
 // const device = computed(() => mapGetters('device'));
 
+// 监听 props.articleId 的变化
+watch(
+  () => props.articleId,
+  (newArticleId, oldArticleId) => {
+    // 在 articleId 变化时重新获取评论数据
+    pageComment();
+  }
+);
+
+// 在组件挂载后执行获取数据的操作
+onMounted(async () => {
+  try {
+    pageComment();
+    // 数据获取完成，将 isReady 置为 true，让组件渲染
+    isReady.value = true;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+});
+
 // 日期转换
 const parseDate = (str) => {
   // 解决ios 日期NAN问题
-  str = str.replace(/-/g, '/');
-  return formatPast(new Date(str));
+  str = str.replace(/-/g, "/");
+  return formatPast(new Date(str), "YYYY-mm-dd HH-MM-SS");
 };
 
 // 回复弹框关闭事件
@@ -198,7 +353,7 @@ const bClose = () => {
   commentId.value = 0;
   toUserId.value = 0;
   reEditVisible.value = false;
-  recontent.value = '';
+  recontent.value = "";
 };
 
 // 监听分页
@@ -207,35 +362,48 @@ const currentChange = (currentPage) => {
   pageComment();
 };
 
-onMounted(() => {
-  pageComment();
-});
 // 获取分页数据
 const pageComment = () => {
-  loading.value = true;
+  loading.value = true; // 显示加载
   const params = {
-    articleId: articleId.value,
+    articleId: props.articleId,
     current: current.value,
-    size: size.value
+    size: size.value,
   };
-  // pageComment(params).then(
-    // res => {
-    //   loading.value = false;
-    //   total.value = res.data.total;
-    //   const commentListData = res.data.records;
-    //   commentListData.forEach(comment => {
-    //     comment.del_visible = false;
-    //     comment.replyList.forEach(reply => {
-    //       reply.del_visible = false;
-    //     });
-    //   });
-    //   commentList.value = commentListData;
-    // },
-    // error => {
-    //   
-    //   loading.value = false;
-    // }
-  // );
+
+  apipageComment(params).then(
+    (res) => {
+      loading.value = false;
+ total.value = res.total;
+    const commentList1 = res.records;
+    const clen = commentList1.length; //获取评论列表的长度，即评论数量。
+
+    for (let i = 0; i < clen; i++) {
+      commentList1[i].del_visible = false; //用来控制评论是否可见或是否可以被删除等功能的标识。
+      const replyList = commentList1[i].replyList; //获取当前评论的回复列表。
+      const rlen = replyList.length;
+      for (let j = 0; j < rlen; j++) {
+        replyList[j].del_visible = false; //用来控制回复是否可见或是否可以被删除等功能的标识。
+      }
+    }
+
+
+
+      // const commentListData1 = res.records;
+      // commentListData1.forEach((comment) => {
+      //   comment.del_visible = false;
+      //   comment.replyList.forEach((reply) => {
+      //     reply.del_visible = false;
+      //   });
+      // });
+ 
+      commentList.value = commentList1;
+    },
+    (error) => {
+      console.error(error);
+      loading.value = false;
+    }
+  );
 };
 
 // 重载
@@ -246,166 +414,205 @@ const reload = () => {
 
 // 评论提交
 const commentSubmit = () => {
+  // 用户登录了才能发起留言
   if (!userInfo.value) {
-    // this.$store.commit('login/CHANGE_VISIBLE', true);
+    // $store.commit('login/CHANGE_VISIBLE', true)
     return;
   }
-  const commentContent = content.value.replace(/<\/?p[^>]*>/gi, '');
-  if (!commentContent) {
-    // this.$message('还没输入内容呢~');
-    return;
-  }
-  const params = {
-    content: commentContent,
-    articleId: articleId.value
-  };
-  // const email = userInfo.value.email;
-  // if (!email) {
-  //   this.$confirm('没绑定邮箱接收不到回复提醒哦~', '提示', {
-  //     confirmButtonText: '马上绑定',
-  //     cancelButtonText: '下次一定',
-  //     showClose: false,
-  //     type: 'warning'
-  //   }).then(() => {
-  //     this.$router.push('/email-validate');
-  //   }).catch(() => {
-  //     cloading.value = true;
-  //     addComment(params).then(
-  //       res => {
-  //         cloading.value = false;
-  //         this.$message({
-  //           message: '评论成功',
-  //           type: 'success'
-  //         });
-  //         content.value = '';
-  //         reload();
-  //       },
-  //       error => {
-  //         
-  //         cloading.value = false;
-  //       }
-  //     );
-  //   });
-  // } else {
-  //   cloading.value = true;
-  //   addComment(params).then(
-  //     res => {
-  //       cloading.value = false;
-  //       this.$message({
-  //         message: '评论成功',
-  //         type: 'success'
-  //       });
-  //       content.value = '';
-  //       reload();
-  //     },
-  //     error => {
-  //       
-  //       cloading.value = false;
-  //     }
-  //   );
-  // }
-};
-
-// 删除回复提交
-const delReplySubmit = (reply) => {
-  const params = { replyId: reply.id };
-  // deleteReply(params).then(
-  //   res => {
-  //     this.$message({
-  //       message: '删除成功',
-  //       type: 'success'
-  //     });
-  //     reload();
-  //   }
-  // );
-};
-
-// 点击回复
-const reClick = (commentId, toUserId) => {
-  if (!userInfo.value) {
-    this.$store.commit('login/CHANGE_VISIBLE', true);
-    return;
-  }
-  reEditVisible.value = true;
-  commentId.value = commentId;
-  toUserId.value = toUserId;
-};
-
-// 回复提交
-const reSubmit = () => {
-  const content = recontent.value.replace(/<\/?p[^>]*>/gi, '');
-  if (!content) {
-    this.$message('还没输入内容呢~');
+  let contentValue = content.value.replace(/<\/?p[^>]*>/gi, "");
+  if (!contentValue) {
+    ElMessage("还没输入内容呢~");
     return;
   }
 
   const params = {
-    commentId: commentId.value,
-    articleId: articleId.value,
-    toUserId: toUserId.value,
-    content: content
+    content: contentValue,
+    articleId: props.articleId,
   };
   const email = userInfo.value.email;
   if (!email) {
-    this.$confirm('没绑定邮箱接收不到回复提醒哦~', '提示', {
-      confirmButtonText: '马上绑定',
-      cancelButtonText: '下次一定',
+    ElMessageBox.confirm("没绑定邮箱接收不到回复提醒哦~", "提示", {
+      confirmButtonText: "马上绑定",
+      cancelButtonText: "下次一定",
       showClose: false,
-      type: 'warning'
-    }).then(() => {
-      this.$router.push('/email-validate');
-    }).catch(() => {
-      rloading.value = true;
-      addReply(params).then(
-        res => {
-          rloading.value = false;
-          reEditVisible.value = false;
-          recontent.value = '';
-          this.$message({
-            message: '回复成功',
-            type: 'success'
-          });
-          reload();
-        },
-        error => {
-          
-          rloading.value = false;
-        }
-      );
-    });
+      type: "warning",
+    })
+      .then(() => {
+        // 用户点击确认按钮时的逻辑
+        router.push("/email-validate");
+      })
+      .catch(() => {
+        // 用户点击取消按钮时的逻辑
+        cloading.value = true;
+        addComment(params).then(
+          (res) => {
+            cloading.value = false;
+            ElMessage({
+              message: "留言成功",
+              type: "success",
+            });
+            content.value = "";
+            reload();
+          },
+          (error) => {
+            console.log(error);
+            cloading.value = false;
+          }
+        );
+      });
   } else {
-    rloading.value = true;
-    addReply(params).then(
-      res => {
-        rloading.value = false;
-        reEditVisible.value = false;
-        recontent.value = '';
-        this.$message({
-          message: '回复成功',
-          type: 'success'
+    cloading.value = true;
+    addComment(params).then(
+      (res) => {
+        cloading.value = false;
+        ElMessage({
+          message: "留言成功",
+          type: "success",
         });
+        content.value = "";
         reload();
       },
-      error => {
-        
-        rloading.value = false;
+      (error) => {
+        console.log(error);
+        cloading.value = false;
       }
     );
   }
 };
 
-   
+const delCommentSubmit = (comment) => {
+  const params = { commentId: comment.id };
+  deleteComment(params).then((res) => {
+    ElMessage({
+      message: "删除成功",
+      type: "success",
+    });
+    reload();
+  });
+};
+// 删除回复提交
+const delReplySubmit = (reply) => {
+  const params = { replyId: reply.id };
+  deleteReply(params).then((res) => {
+    ElMessage({
+      message: "删除成功",
+      type: "success",
+    });
+    reload();
+  });
+};
+
+// 点击回复
+const reClick = (commentIdValue, userIdValue) => {
+  if (!userInfo.value) {
+    return;
+  }
+  reEditVisible.value = true;
+  commentId.value = commentIdValue;
+  toUserId.value = userIdValue;
+};
+
+// 回复提交
+const reSubmit = () => {
+  let contentValue = recontent.value.replace(/<\/?p[^>]*>/gi, "");
+  if (!contentValue) {
+    ElMessage("还没输入内容呢~");
+    return;
+  }
+
+  const params = {
+    commentId: commentId.value,
+    articleId: props.articleId,
+    toUserId: toUserId.value,
+    content: contentValue,
+  };
+  const email = userInfo.value.email;
+  if (!email) {
+    ElMessageBox.confirm("没绑定邮箱接收不到回复提醒哦~", "提示", {
+      confirmButtonText: "马上绑定",
+      cancelButtonText: "下次一定",
+      showClose: false,
+      type: "warning",
+    })
+      .then(() => {
+        router.push("/email-validate");
+      })
+      .catch(() => {
+        rloading.value = true;
+        addReply(params).then(
+          (res) => {
+            console.error(res);
+            
+            rloading.value = false;
+            reEditVisible.value = false;
+            recontent.value = "";
+            ElMessage({
+              message: "回复成功",
+              type: "success",
+            });
+            reload();
+          },
+          (error) => {
+            rloading.value = false;
+          }
+        );
+      });
+  } else {
+    rloading.value = true;
+    addReply(params).then(
+      (res) => {
+        rloading.value = false;
+        reEditVisible.value = false;
+        recontent.value = "";
+        ElMessage({
+          message: "回复成功",
+          type: "success",
+        });
+        reload();
+      },
+      (error) => {
+        rloading.value = false;
+      }
+    );
+  }
+};
 </script>
 
 <style lang="less" scoped>
 .c-container {
   @import "/@/assets/styles/variables.css";
   width: 100%;
-  overflow-x: hidden;
 
+  .main-tip-label {
+    border-left: 5px solid #00a77c;
+    border-bottom: 1px solid #00a77c;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 2;
+    color: #545454;
+    padding-left: 10px;
+  }
+
+  //回复对话框
   .re-editor-container {
     margin: 0 auto;
     width: 90%;
+  }
+
+  .editor {
+    height: 180px;
+    border: 1px solid #e74851;
+    border-radius: 5px;
+    min-height: 120px;
+  }
+
+  //过渡
+  .fade-list-enter-active,
+  .fade-list-leave-active {
+    transition: opacity 0.5s;
+  }
+  .fade-list-enter, .fade-list-leave-to /* .fade-list-leave-active in <2.1.8 */ {
+    opacity: 0;
   }
 
   .content-container {
@@ -417,21 +624,11 @@ const reSubmit = () => {
     .content-head {
       padding: 0 20px;
 
-      .main-tip-label {
-        border-left: 5px solid #00a77c;
-        border-bottom: 1px solid #00a77c;
-        font-size: 16px;
-        font-weight: bold;
-        line-height: 2;
-        color: #545454;
-        padding-left: 10px;
-      }
-
       .edit-container {
-        margin: 0 auto;
+        margin: 15px auto;
         padding: 0 50px;
 
-        @media screen and (max-width: 960px){
+        @media screen and (max-width: 960px) {
           padding: 0;
         }
 
@@ -466,7 +663,7 @@ const reSubmit = () => {
       .main-tools-box {
         display: flex;
         flex-direction: row-reverse;
-        padding: 10px;
+        // padding: 10px;
         padding-right: 50px;
 
         @media screen and (max-width: 960px) {
@@ -479,7 +676,7 @@ const reSubmit = () => {
           width: 100px;
           line-height: 30px;
           border-radius: 4px;
-          border:none;
+          border: none;
           color: #fff;
           background: #e74851;
           font-size: 14px;
@@ -488,7 +685,6 @@ const reSubmit = () => {
     }
 
     .content-box {
-
       .main-tip-label {
         border-left: 5px solid #00a77c;
         border-bottom: 1px solid #00a77c;
@@ -521,11 +717,14 @@ const reSubmit = () => {
           margin-top: 15px;
 
           .cmt-li-title {
+            height: 70px;
             float: left;
 
             .headimg {
-              height: 42px;
-              width: 42px;
+              margin-top: 15px;
+              margin-left: 10px;
+              height: 40px;
+              width: 40px;
               border-radius: 50%;
               overflow: hidden;
               border: 1px solid rgba(0, 0, 0, 0.1);
@@ -551,7 +750,7 @@ const reSubmit = () => {
             }
 
             .top {
-              height: 25px;
+              height: 38px;
               width: 100%;
               margin-top: 5px;
               font-size: 12px;
@@ -728,50 +927,6 @@ const reSubmit = () => {
   .el-pagination {
     margin: 30px;
     text-align: center;
-  }
-}
-
-</style>
-
-<style scoped lang="scss">
-.rely-dialog >>> .el-button--text {
-  color: #999;
-}
-
-.rely-dialog >>> .el-button--text:hover {
-  color: #333;
-}
-
-.rely-dialog >>> .dialog__body {
-  padding: 10px;
-}
-
-.rely-dialog >>> .el-dialog__header {
-  display: none;
-}
-
-.rely-dialog >>> .el-dialog__body {
-  padding: 0;
-}
-.rely-dialog >>> .ql-container.ql-snow {
-  border: none;
-}
-
-.rely-dialog >>> .ql-toolbar.ql-snow {
-  border: none;
-}
-
-.rely-dialog >>> .ql-editor {
-  border: 1px #e74851 solid;
-  border-radius: 5px;
-  min-height: 80px;
-}
-
-.rely-dialog {
-  margin-right: 140px;
-
-  @media screen and (max-width: 960px) {
-    margin-right: 0;
   }
 }
 </style>

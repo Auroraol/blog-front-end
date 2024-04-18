@@ -22,6 +22,12 @@ public class RedisConfig {
 	 *
 	 * @param redisConnectionFactory
 	 * @return RedisTemplate
+	 * <p>
+	 * this.redisTemplate.opsForValue(); //提供了操作string类型的所有方法
+	 * *this.redisTemplate.opsForList();// 提供了操作List类型的所有方法
+	 * *this.redisTemplate.opsForset(); //提供了操作set类型的所有方法
+	 * *this.redisTemplate.opsForHash(); //提供了操作hash类型的所有方认
+	 * *this.redisTemplate.opsForZSet(); //提供了操作zset类型的所有方法
 	 */
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {

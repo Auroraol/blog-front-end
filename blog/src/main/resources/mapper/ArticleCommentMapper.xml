@@ -35,7 +35,7 @@
             <result property="avatar" column="c_from_user_avatar"/>
             <result property="admin" column="c_from_user_admin"/>
         </association>
-        <!-- 评论回复列表 -->
+        <!-- 回复列表 -->
         <collection property="replyList" ofType="com.lfj.blog.service.vo.ArticleReplyVo">
             <id property="id" column="reply_id"/>
             <result property="content" column="reply_content"/>

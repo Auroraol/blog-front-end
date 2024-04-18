@@ -15,10 +15,11 @@
         <router-link v-if="!props.userInfo.email" to="/email-validate">
           <el-dropdown-item>绑定邮箱</el-dropdown-item>
         </router-link>
-        <el-dropdown-item>
-          <span style="display: block" @click="logout"
+        <el-dropdown-item @click="logout">
+          <span style="display: block" 
             >退 出</span
-          ></el-dropdown-item
+          >
+          </el-dropdown-item
         >
       </el-dropdown-menu>
     </template>

@@ -20,6 +20,7 @@ import com.lfj.blog.service.IArticleService;
 import com.lfj.blog.service.IArticleTagService;
 import com.lfj.blog.service.ICategoryService;
 import com.lfj.blog.service.ITagService;
+import com.lfj.blog.service.vo.ArticleArchivesVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import com.lfj.blog.service.wrapper.ArticlePageQueryWrapper;
 import org.apache.commons.lang3.ArrayUtils;
@@ -398,6 +399,27 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	@Override
 	public void commentCountDecrement(int articleId) {
 		this.baseMapper.commentCountDecrement(articleId);
+	}
+
+	/**
+	 * 分页年月归档查询
+	 *
+	 * @param current
+	 * @param size
+	 * @return
+	 */
+	@Override
+	public IPage<ArticleArchivesVo> selectArticleArchives(long current, long size) {
+		Integer count = this.baseMapper.selectArticleArchivesCount(); // 文章归档计数
+		if (count == 0) {
+			return new Page<>(current, size);
+		}
+		//文章归档
+		List<ArticleArchivesVo> articleArchivesVoList =
+				this.baseMapper.selectArticleArchives((current - 1) * size, size);
+		Page<ArticleArchivesVo> page = new Page<>(current, size, count);
+		page.setRecords(articleArchivesVoList);
+		return page;
 	}
 
 

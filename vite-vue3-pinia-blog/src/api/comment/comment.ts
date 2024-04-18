@@ -4,7 +4,7 @@ import {request, get, post} from '/@/utils/network/axios'
  * @description 分页获取评论回复列表
  */
 export function pageComment(params) {
-  return get(import.meta.env.VITE_APP_BASE_API +'/article/comment/page',  params,true )
+  return get(import.meta.env.VITE_APP_BASE_API +'/article/comment/page',  params, true )
 }
 
 /**
@@ -15,7 +15,7 @@ export function addComment(params) {
   return request(import.meta.env.VITE_APP_BASE_API + '/article/comment/add',{
     method: 'post',
     params: params
-  }),true
+  }, true)
 }
 
 /**
@@ -36,7 +36,8 @@ export function addReply(params) {
 export function deleteComment(params) {
   return request(import.meta.env.VITE_APP_BASE_API +'/article/comment/delete', { 
     method: 'delete',
-    params: params }, true)
+    params: params 
+  }, true)
 }
 
 /**
@@ -54,5 +55,5 @@ export function deleteReply(params) {
  * @param {Object} params
  */
 export function latestCommentList(params) {
-  return get(import.meta.env.VITE_APP_BASE_API +'/article/comment/latest', params, true)
+  return get(import.meta.env.VITE_APP_BASE_API +'/article/comment/latest', params)
 }

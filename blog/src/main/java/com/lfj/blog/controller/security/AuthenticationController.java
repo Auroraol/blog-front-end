@@ -21,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,11 +68,15 @@ public class AuthenticationController {
 														  @ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
 		// 通过客户端认证请求头查询Client
 		Client client = getAndValidatedClient(authorization);
-		//生成响应的token
-		AuthenticationToken authenticationToken = authenticationService.usernameOrMobilePasswordAuthenticate(username, password, client);
-		// 部分返回
-		AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
-		return ApiResponseResult.success(accessTokenDTO);
+		try {
+			//生成响应的token
+			AuthenticationToken authenticationToken = authenticationService.usernameOrMobilePasswordAuthenticate(username, password, client);
+			// 部分返回
+			AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
+			return ApiResponseResult.success(accessTokenDTO);
+		} catch (BadCredentialsException e) {
+			return ApiResponseResult.accountError();
+		}
 	}
 
 	@PostMapping("/mobile/login")

@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 //Suspense要异步引入组件
-const AsyncIndexHome = defineAsyncComponent(() => import('./components/IndexHome.vue'))
+const AsyncIndexHome = defineAsyncComponent(() => import('/@/views/index/components/IndexHome.vue'))
 </script>
 
 <style scoped lang="less">

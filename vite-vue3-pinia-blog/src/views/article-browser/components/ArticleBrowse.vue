@@ -11,7 +11,7 @@
     </el-col>
     <el-col :span="16">
       <div v-if="!loading">
-        <transition name="el-fade-in">
+        <transition name="fade">
           <div class="layout-left-side">
             <h2 class="art-title">
               <span v-if="article.original !== 1">【转载】</span>
@@ -41,6 +41,7 @@
           <MdPreview
             editorId="preview-only"
             :modelValue="article.htmlContent"
+            :showCodeRowNumber="true"
             previewTheme="vuepress"
             codeTheme="a11y"
             @onGetCatalog="getCatalog"
@@ -68,9 +69,9 @@
               </li>
             </ul>
           </div>
-           <!-- 评论 -->
-          <comment-list></comment-list>
         </div>
+        <!-- 评论组件 -->
+        <comment-list :articleId="id"/>
       </div>
     </el-col>
 
@@ -79,7 +80,7 @@
       <el-affix offset="60">
         <!-- 相关阅读 -->
         <div v-if="device === 'desktop' && !loading" class="related-articles">
-          <interrelated-list :article-id="id" />
+          <interrelated-list :article-id="id" :authorId="authorId"/>
         </div>
         <!--文章目录-->
         <div class="catalog">
@@ -111,7 +112,7 @@ import CopyRight from "./CopyRight.vue";
 import ArtTags from "./ArtTags.vue";
 import BrowserSidePanel from "./BrowserSidePanel.vue";
 import InterrelatedList from "./InterrelatedList.vue";
-import CommentList from './CommentList.vue'
+import CommentList from "./CommentList.vue";
 import { MdPreview, MdCatalog } from "md-editor-v3";
 // preview.css相比style.css少了编辑器那部分样式
 import "md-editor-v3/lib/preview.css";
@@ -121,11 +122,13 @@ import { formatDate } from "/@/utils/format/format-time";
 //md-catalog目录的监听设置
 const scrollElement = document.documentElement;
 
+
 const article = ref("");
 const loading = ref(true);
 const id = ref(0);
 const url = ref("");
 const device = ref("desktop");
+
 
 const router = useRouter();
 
@@ -136,13 +139,19 @@ router.afterEach(() => {
 });
 
 // 初始化
-onMounted(() => {
+onMounted(async() => {
+    try {
   containerGsap();
+  containerGsap1();
   //   id.value = route.params?.id
   //在Vue Router中，无论路由参数在URL中的形式是什么，都会以字符串的形式传递到路由组件中
   id.value = Number(router.currentRoute.value.params.id); // 当前路由的 id 参数
   initArticle(); //加载文章
   url.value = window.location.href;
+
+   } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 });
 
 // 失效,选择使用watch
@@ -177,6 +186,16 @@ const containerGsap = () => {
   });
 };
 
+// 动画
+const containerGsap1 = () => {
+  gsap.from(".articleMd", {
+    duration: 0.3,
+  });
+};
+
+
+// 
+
 const catalogList = ref([]);
 const getCatalog = (list) => {
   console.log(list);
@@ -205,7 +224,7 @@ const getCatalog = (list) => {
 const initArticle = async () => {
   try {
     const data = await viewArtilce(id.value);
-    article.value = data;
+    article.value = data;    
     loading.value = false;
     // 初始化音频
     //   import('@/assets/audio/index.js').then(({ initAudio }) => {
@@ -243,6 +262,16 @@ const spanelRef = ref(null);
 </script>
 
 <style lang="less" scoped>
+// 过渡
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
 // 标题
 .layout-left-side {
   background: #fff;
@@ -351,15 +380,5 @@ const spanelRef = ref(null);
       }
     }
   }
-}
-
-// 过渡
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>

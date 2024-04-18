@@ -8,6 +8,8 @@ import java.util.function.Function;
 
 /**
  * 通用异步服务
+ * 使用: asyncService.runAsync((r) -> 回调函数);
+ * 用来邮箱发送
  **/
 @Log4j2
 @Component

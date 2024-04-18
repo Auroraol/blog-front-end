@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lfj.blog.controller.model.request.ArticleRequest;
 import com.lfj.blog.entity.Article;
+import com.lfj.blog.service.vo.ArticleArchivesVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -141,4 +142,14 @@ public interface IArticleService extends IService<Article> {
 	 * @param articleId
 	 */
 	void commentCountDecrement(int articleId);
+
+	/**
+	 * 分页年月归档查询
+	 *
+	 * @param current
+	 * @param size
+	 * @return
+	 */
+	IPage<ArticleArchivesVo> selectArticleArchives(long current, long size);
+
 }

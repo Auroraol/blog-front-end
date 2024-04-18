@@ -40,23 +40,20 @@ import java.util.Map;
 public class IArticleCommentServiceImpl extends ServiceImpl<ArticleCommentMapper, ArticleComment>
 		implements IArticleCommentService {
 	@Autowired
-	private IArticleService articleService;
+	ArticleCommentMapper articleCommentMapper;
 
 //	@Autowired
 //	private ArticleRecommendService recommendService;
-
+	@Autowired
+	private IArticleService articleService;
 	@Autowired
 	private EmailService emailService;
-
 	@Autowired
 	private IUserService userService;
-
 	@Autowired
 	private AsyncService asyncService;
-
 	@Value("${mail.article}")
 	private String prefix;
-
 
 	/**
 	 * 新增文章评论
@@ -130,7 +127,7 @@ public class IArticleCommentServiceImpl extends ServiceImpl<ArticleCommentMapper
 		if (count == 0) {
 			return new Page<>(current, size);
 		}
-		List<ArticleCommentVo> records = this.baseMapper.selectCommentAndReplyList((current - 1) * size, size, articleId);
+		List<ArticleCommentVo> records = articleCommentMapper.selectCommentAndReplyList((current - 1) * size, size, articleId);
 		Page<ArticleCommentVo> page = new Page<>(current, size, count);
 		page.setRecords(records);
 		return page;
@@ -144,7 +141,7 @@ public class IArticleCommentServiceImpl extends ServiceImpl<ArticleCommentMapper
 	 */
 	@Override
 	public List<ArticleCommentVo> selectLatestComment(long limit) {
-		return this.baseMapper.selectLatestComment(limit);
+		return articleCommentMapper.selectLatestComment(limit);
 	}
 
 	/**

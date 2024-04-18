@@ -474,7 +474,7 @@ gitee
 
 需要[客户端认证](https://copoile.github.io/api/auth/)： 是
 
-接口说明：**这里的access_token以请求参数形式传递而非请求头形式。**
+接口说明：**这里的access_token以参数形式传递而非请求头形式。**
 
 **退出成功：**
 
@@ -2033,6 +2033,135 @@ title：标题关键字，非必传
 
 ![image-20240409151149684](README2.assets/image-20240409151149684.png)
 
+### 分页获取文章（后台）
+
+请求方法：GET
+
+请求地址：/article/page
+
+请求参数：
+current：当前页，非必传，默认1
+size：每页数量，非必传，默认5
+status：文章状态,非必传，不传查全部；0:已发布，1:未发布，2:回收站
+categoryId：分类id，非必传
+tagId：标签id，非必传
+yearMonth：年月,格式yyyy-mm，非必传
+title：标题关键字，非必传
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：查询非已删除的文章，用于文章后台管理。
+
+
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "records": [
+      {
+        "id": 1,
+        "original": 1,
+        "categoryName": "一级分类一",
+        "categoryId": 1,
+        "title": "标题",
+        "summary": "摘要",
+        "cover": "http:www.baidu.com",
+        "status": 1,
+        "viewCount": 0,
+        "commentCount": 0,
+        "likeCount": 0,
+        "collectCount": 0,
+        "publishTime": "2019-12-31 17:53:49",
+        "updateTime": "2019-12-31 17:53:49",
+        "user": {
+          "id": 1,
+          "nickname": "小管家",
+          "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+        },
+        "tagList": [
+          {
+            "id": 1,
+            "name": "测试"
+          }
+        ]
+      }
+    ],
+    "total": 1,
+    "size": 5,
+    "current": 1,
+    "searchCount": true,
+    "pages": 1
+  }
+}
+```
+
+### 文章详情（后台）
+
+请求方法：GET
+
+请求地址：/article/detail/{id}
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：用于后台文章编辑或查看详情时调用；返回文章内容；返回分类列表，在启用分类区分子父类情况下，用于编辑时分类回显,数组顺序为[node3, node2, root]。
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "id": 1,
+    "original": 1,
+    "categoryName": "一级分类一",
+    "categoryId": 1,
+    "title": "标题",
+    "summary": "摘要",
+    "content": "内容",
+    "htmlContent": "内容",
+    "cover": "http:www.baidu.com",
+    "status": 1,
+    "viewCount": 0,
+    "commentCount": 0,
+    "likeCount": 0,
+    "collectCount": 0,
+    "publishTime": "2019-12-31 17:53:49",
+    "updateTime": "2019-12-31 17:53:49",
+    "user": {
+      "id": 1,
+      "nickname": "小管家",
+      "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+    },
+    "tagList": [
+      {
+        "id": 1,
+        "name": "测试"
+      }
+    ],
+    "categoryList": [
+      {
+        "id": 1,
+        "name": "一级分类一",
+        "parentId": 0
+      }
+    ]
+  }
+}
+```
+
+
+
+
+
 ### 文章浏览数自增
 
 请求方法：PUT
@@ -2150,7 +2279,326 @@ limit：列表数量，非必传，默认5
 
 
 
+### 丢弃文章
 
+请求方法：DELETE
+
+请求地址：/article/discard/{id}
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：**文章状态将置为回收站状态。**
+
+丢弃成功：
+
+```json
+{  
+    "code": 0,  
+    "message": "成功"
+}
+```
+
+### 删除文章
+
+请求方法：DELETE
+
+请求地址：/article/delete/{id}
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：**逻辑删除。**
+
+删除成功：
+
+```json
+{  
+    "code": 0,  
+    "message": "成功"
+}
+```
+
+### 修改文章状态
+
+请求方法：POST
+
+请求地址：/article/status/update
+
+请求参数：
+articleId：文章id，必传
+status：文章状态，必传，值可选项，0:发布，1:待发布，2:回收站
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：用于发布文章撤回，删除文章撤回等操作。
+
+修改成功：
+
+```json
+{  
+    "code": 0,  
+    "message": "成功"
+}
+```
+
+### 文章归档
+
+请求方法：GET
+
+请求地址：/article/archives/page
+
+请求参数：
+current：当前页，非必传，默认1
+size：每页数量，非必传，默认12
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：**按年月归档，月份文章计数。**
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "records": [
+      {
+        "yearMonth": "2020-01",
+        "articleCount": 2
+      },
+      {
+        "yearMonth": "2019-12",
+        "articleCount": 1
+      }
+    ],
+    "total": 2,
+    "size": 12,
+    "current": 1,
+    "searchCount": true,
+    "pages": 1
+  }
+}
+```
+
+### 标签文章统计
+
+请求方法：GET
+
+请求地址：/article/tag/statistic
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：按标签计数文章数。
+
+
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": [
+    {
+      "id": 1,
+      "name": "测试",
+      "articleCount": 3
+    }
+  ]
+}
+```
+
+### 分类文章统计
+
+请求方法：GET
+
+请求地址：/article/category/statistic
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：按分类计数文章数。
+
+
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": [
+    {
+      "id": 1,
+      "name": "一级分类一",
+      "parentId": 0,
+      "articleCount": 1
+    },
+    {
+      "id": 2,
+      "name": "一级分类二",
+      "parentId": 0,
+      "articleCount": 2
+    },
+    {
+      "id": 3,
+      "name": "二级分类一",
+      "parentId": 1,
+      "articleCount": 0
+    },
+    {
+      "id": 4,
+      "name": "彩色",
+      "parentId": 0,
+      "articleCount": 0
+    }
+  ]
+}
+```
+
+## 文章推荐
+
+文章推荐为手动推荐，可用于首页专栏【推荐阅读】或轮播之类的。
+
+文章推荐基于redis的zset实现，数据直接存储在redis中，按分数顺序排序，及score可当作是排序字段。
+
+### 保存到推荐
+
+请求方法：POST
+
+请求地址：/article/recommend/save
+
+请求参数：
+articleId：文章id，必传
+score：分数，必传
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：只能添加已发布文章；若已添加则更新缓存；分数即为排序（顺序）。
+
+保存成功：
+
+```json
+{  
+    "code": 0,  
+    "message": "成功"
+}
+```
+
+![image-20240418104850117](README2.assets/image-20240418104850117.png)
+
+### 删除推荐
+
+请求方法：DELETE
+
+请求地址：/article/recommend/delete/{articleId}
+
+需要access_token： 是
+
+需要管理员权限： 是
+
+接口说明：从推荐列表中删除。
+
+删除成功：
+
+```json
+{  
+    "code": 0,  
+    "message": "成功"
+}
+```
+
+### 获取推荐列表
+
+请求方法：GET
+
+请求地址：/article/recommend/list
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：获取文章推荐列表。
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": [
+    {
+      "id": 1,
+      "original": 1,
+      "categoryName": "一级分类一",
+      "categoryId": 1,
+      "title": "标题",
+      "summary": "摘要",
+      "cover": "http:www.baidu.com",
+      "status": 0,
+      "viewCount": 1,
+      "commentCount": 0,
+      "likeCount": 0,
+      "collectCount": 0,
+      "publishTime": "2019-12-31 17:53:49",
+      "updateTime": "2019-12-31 17:53:49",
+      "user": {
+        "id": 1,
+        "nickname": "小管家",
+        "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+      },
+      "tagList": [
+        {
+          "id": 1,
+          "name": "测试"
+        }
+      ],
+      "recommendScore": 1
+    },
+    {
+      "id": 2,
+      "original": 1,
+      "categoryName": "一级分类二",
+      "categoryId": 2,
+      "title": "string",
+      "summary": "string",
+      "cover": "string",
+      "status": 0,
+      "viewCount": 1,
+      "commentCount": 0,
+      "likeCount": 0,
+      "collectCount": 0,
+      "publishTime": "2020-01-02 20:24:16",
+      "updateTime": "2020-01-02 20:24:16",
+      "user": {
+        "id": 1,
+        "nickname": "小管家",
+        "avatar": "https://poile-img.nos-eastchina1.126.net/me.png"
+      },
+      "tagList": [
+        {
+          "id": 1,
+          "name": "测试"
+        }
+      ],
+      "recommendScore": 2
+    }
+  ]
+}
+```
 
 ## 文章点赞
 
@@ -2575,3 +3023,371 @@ articleId：文章id，必传
 
 
 ![image-20240415164123971](README2.assets/image-20240415164123971.png)
+
+
+
+### 删除评论
+
+请求方法：DELETE
+
+请求地址：/article/comment/delete
+
+请求参数：commentId：评论id，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：逻辑删除；本人或系统管理员可删除。
+
+删除成功:
+
+```json
+{
+  "code": 0,
+  "message": "成功"
+}
+```
+
+### 新增评论回复
+
+请求方法：POST
+
+请求地址：/article/reply/add
+
+请求参数：
+articleId：文章id，必传
+commentId：评论id，必传
+toUserId：被回复者id，必传
+content：回复内容，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：评论回复会发送回复提醒邮件给被回复者，同时也会超送到文章作者。
+
+回复成功:
+
+```json
+{
+  "code": 0,
+  "message": "成功"
+}
+```
+
+### 删除评论回复
+
+请求方法：DELETE
+
+请求地址：/article/reply/delete
+
+请求参数：replyId：回复id，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：逻辑删除；本人或管理员可删除。
+
+删除成功:
+
+```json
+{
+  "code": 0,
+  "message": "成功"
+}
+```
+
+## 分页获取评论与回复
+
+请求方法：GET
+
+请求地址：/article/comment/page
+
+请求参数：
+current：当前页，非必传，默认1
+size：每页数量，非必传，默认5
+articleId：文章id，必传
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：评论下挂回复列表；按时间降序排序。
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "records": [
+      {
+        "id": 1,
+        "content": "测试",
+        "commentTime": "2020-01-05 12:52:16",
+        "fromUser": {
+          "id": 1,
+          "nickname": "小管家",
+          "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+          "admin": 1
+        },
+        "replyList": [
+          {
+            "id": 1,
+            "content": "自己回复自己可还行。",
+            "replyTime": "2020-01-05 13:23:55",
+            "fromUser": {
+              "id": 1,
+              "nickname": "小管家",
+              "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+              "admin": 1
+            },
+            "toUser": {
+              "id": 1,
+              "nickname": "小管家",
+              "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+              "admin": 1
+            }
+          }
+        ]
+      }
+    ],
+    "total": 1,
+    "size": 5,
+    "current": 1,
+    "searchCount": true,
+    "pages": 1
+  }
+}
+```
+
+## 最新评论列表
+
+请求方法：GET
+
+请求地址：/article/comment/latest
+
+请求参数：limit：数量，非必传，默认5
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": [
+    {
+      "id": 1,
+      "content": "测试",
+      "commentTime": "2020-01-05 12:52:16",
+      "article": {
+        "id": 1,
+        "title": "标题"
+      },
+      "fromUser": {
+        "id": 1,
+        "nickname": "小管家",
+        "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+        "admin": 1
+      },
+      "replyList": []
+    }
+  ]
+}
+```
+
+## 留言与回复
+
+留言与留言回复使用同一张表。留言会发送留言提醒邮件给管理员，留言回复会发送留言回复提醒邮件给被回复者并抄送到管理员。
+
+发送邮件提醒需用户绑定邮箱，未绑定邮箱时最好提示未绑定邮箱，引导用户进行邮箱绑定。
+
+### 数据库留言表设计
+
+|    字段名    |           描述           |
+| :----------: | :----------------------: |
+|      id      |            id            |
+|     pid      |    父id，留言时为null    |
+| from_user_id |     留言（回复）者id     |
+|  to_user_id  | 被回复者id，留言时为null |
+|   content    |           内容           |
+| create_time  |           时间           |
+|   deleted    |  是否删除，1：是，0：否  |
+
+### 新增留言
+
+请求方法：POST
+
+请求地址：/leave/message/add
+
+请求参数：content：内容，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：留言会给管理员发送留言提醒邮件。
+
+新增成功:
+
+```json
+{
+  "code": 200000,
+  "message": "成功"
+}
+```
+
+![image-20240416152531766](README2.assets/image-20240416152531766.png)
+
+### 新增留言回复
+
+请求方法：POST
+
+请求地址：/leave/message/reply
+
+请求参数：
+pid：父(留言)id，必传
+toUserId：被回复者id，必传
+content：内容，必传
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：留言回复会发送留言回复提醒邮件给被回复者并抄送到管理员。
+
+回复成功:
+
+```json
+{
+  "code": 0,
+  "message": "成功"
+}
+```
+
+### 分页获取留言与回复
+
+请求方法：GET
+
+请求地址：/leave/message/page
+
+请求参数：
+current：当前页，非必传，默认1
+size：每页数量，非必传，默认5
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：留言下挂回复列表；按时间降序排序。
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": {
+    "records": [
+      {
+        "id": 1,
+        "content": "留言测试",
+        "createTime": "2020-01-05 14:17:33",
+        "fromUser": {
+          "id": 1,
+          "nickname": "小管家",
+          "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+          "admin": 1
+        },
+        "replyList": [
+          {
+            "id": 2,
+            "content": "留言回复",
+            "createTime": "2020-01-05 14:35:53",
+            "fromUser": {
+              "id": 1,
+              "nickname": "小管家",
+              "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+              "admin": 1
+            },
+            "toUser": {
+              "id": 1,
+              "nickname": "小管家",
+              "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+              "admin": 1
+            }
+          }
+        ]
+      }
+    ],
+    "total": 1,
+    "size": 5,
+    "current": 1,
+    "searchCount": true,
+    "pages": 1
+  }
+}
+```
+
+### 最新留言列表
+
+请求方法：GET
+
+请求地址：/leave/message/latest
+
+请求参数：limit：数量，非必传，默认5
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+获取成功：
+
+```json
+{
+  "code": 0,
+  "message": "成功",
+  "data": [
+    {
+      "id": 1,
+      "content": "留言测试",
+      "createTime": "2020-01-05 14:17:33",
+      "fromUser": {
+        "id": 1,
+        "nickname": "小管家",
+        "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
+        "admin": 1
+      },
+      "replyList": []
+    }
+  ]
+}
+```
+
+### 删除留言或回复
+
+请求方法：DELETE
+
+请求地址：/leave/message/delete/{id}
+
+需要access_token： 是
+
+需要管理员权限： 否
+
+接口说明：逻辑删除；本人或管理员可删除。
+
+删除成功:
+
+```json
+{
+  "code": 0,
+  "message": "成功"
+}
+```

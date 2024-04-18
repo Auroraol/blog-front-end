@@ -353,6 +353,8 @@ public class EmailService {
 
 ## Controller
 
+![image-20240417161743563](zREDEME.assets/image-20240417161743563.png)
+
 ```java
 	/**
 	 * 发送邮箱验证链接

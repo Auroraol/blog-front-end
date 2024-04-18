@@ -9,11 +9,11 @@ import com.lfj.blog.entity.Client;
 import com.lfj.blog.service.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 /**
  * 2019-10-28 18:27
@@ -46,14 +46,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		// （PS： 在后面JwtAuthenticationTokenFilter类中使用此UsernamePasswordAuthenticationToken的时候，构造的入参也可以放（用户LoginUser）类型
 		UsernamePasswordAuthenticationToken authenticationToken =
 				new UsernamePasswordAuthenticationToken(s, password);
-
 		// 对认证信息进行认证, AuthenticationManager的authenticate()方法来进行用户认证
-		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-		if (Objects.isNull(authenticate)) {
-			throw new RuntimeException("用户名或密码错误");
+		try {
+			Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+			// 将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
+			return redisTokenStore.storeToken(authenticate, client);
+		} catch (AuthenticationException e) {
+			// 认证失败，抛出 BadCredentialsException
+			throw new BadCredentialsException("用户名或密码错误");
 		}
-		// 将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
-		return redisTokenStore.storeToken(authenticate, client);
+//		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+//		if (Objects.isNull(authenticate)) {
+//			throw new RuntimeException("用户名或密码错误");
+//		}
+//		// 将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
+//		return redisTokenStore.storeToken(authenticate, client);
 	}
 
 	/**

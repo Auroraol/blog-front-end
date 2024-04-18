@@ -62,7 +62,7 @@
               <el-icon><Reading /></el-icon>
               文章
             </el-menu-item>
-            <el-menu-item index="/guidang">
+            <el-menu-item index="/archives">
             <el-icon><Files /></el-icon>
               归档
             </el-menu-item>

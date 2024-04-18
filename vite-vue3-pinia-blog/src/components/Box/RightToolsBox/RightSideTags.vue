@@ -2,9 +2,12 @@
   <div class="container">
     <div class="tagsTitle">
       <svg-icon name="24gl-tags3" width="30px" height="30px"></svg-icon>
-      <div class="title">标签</div>
+      标签
+      <div class="title"></div>
       <router-link class="right btn" to="/tag">全部标签</router-link>
     </div>
+    <span></span>
+
     <div class="tags">
       <ul
         v-loading="loading"
@@ -64,14 +67,14 @@ onMounted(init);
   margin-top: 2rem;
   width: 100%;
   background-color: #fff;
-  box-shadow: 0 0 0.5rem 0.2rem var(--gray-light-sahdow);
+  // box-shadow: 0 0 0.5rem 0.2rem var(--gray-light-sahdow);
   border-radius: 0.5rem;
   transition: all 0.3s;
-
-  // 鼠标悬停
-  &:hover {
-    box-shadow: 0.1rem 0.1rem 0.5rem var(--gray-sahdow); //阴影
-  }
+  padding: 0 1rem;
+  // // 鼠标悬停
+  // &:hover {
+  //   box-shadow: 0.1rem 0.1rem 0.5rem var(--gray-sahdow); //阴影
+  // }
 
   .tagsTitle {
     width: 90%;
@@ -80,12 +83,12 @@ onMounted(init);
     height: 5rem;
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;
-    border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.2);
+    justify-content: flex-end;
+    // border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.2);
 
-    .title {
-      margin-left: 0.5rem;
-    }
+    // .title {
+    //   margin-left: 0rem;
+    // }
 
     .right {
       margin-left: auto; /* 推到容器的右侧 */
@@ -94,9 +97,10 @@ onMounted(init);
       // color: #53b7e9;
     }
   }
-
+  
   // 彩色下划线
   span {
+    margin-top: -10px;
     display: block;
     width: 100%;
     height: 0.5rem;

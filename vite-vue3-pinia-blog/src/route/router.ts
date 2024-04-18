@@ -151,6 +151,14 @@ const routes = [
       title: "留言",
     },
   },
+  {
+    path: '/archives',
+    component: () => import('/@/views/archives/index.vue'),
+    hidden: true,
+    meta: {
+      title: "归档",
+    },
+  },
   // , {
   //   path: '/articleeditor',
   //   name: 'articleeditor',

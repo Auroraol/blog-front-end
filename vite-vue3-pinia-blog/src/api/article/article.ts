@@ -51,32 +51,33 @@ export function pagePublishedArticle(params) {
 //   return request.delete(`/article/delete/${id}`)
 // }
 
-// /**
-//  * 添加或更新推荐
-//  * @param {Object} params
-//  */
-// export function addRecommend(params) {
-//   return request({
-//     url: '/article/recommend/save',
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 添加或更新推荐
+ * @param {Object} params
+ */
+export function addRecommend(params) {
+  return request(import.meta.env.VITE_APP_BASE_API +  '/article/recommend/save',{
+    method: 'post',
+    params: params
+  }, 
+  true)
+}
 
-// /**
-//  * @description 推荐列表
-//  */
-// export function recommendList() {
-//   return request.get('/article/recommend/list')
-// }
+/**
+ * @description 推荐列表
+ */
+export function recommendList() {
+  return get(import.meta.env.VITE_APP_BASE_API + '/article/recommend/list')
+}
 
-// /**
-//  * 移除推荐
-//  * @param {Number} id
-//  */
-// export function deleteRecommend(id) {
-//   return request.delete('/article/recommend/delete/' + id)
-// }
+/**
+ * 移除推荐
+ * @param {Number} id
+ */
+export function deleteRecommend(id) {
+  return request(import.meta.env.VITE_APP_BASE_API + '/article/recommend/delete/' + id,{ 
+    method:"delete"}, true)
+}
 
 /**
  * @description 浏览文章

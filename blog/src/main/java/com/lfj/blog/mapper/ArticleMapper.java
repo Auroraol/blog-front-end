@@ -2,6 +2,7 @@ package com.lfj.blog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lfj.blog.entity.Article;
+import com.lfj.blog.service.vo.ArticleArchivesVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import com.lfj.blog.service.wrapper.ArticlePageQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -71,15 +72,15 @@ public interface ArticleMapper extends BaseMapper<Article> {
 	 */
 	Integer selectArticleArchivesCount();
 
-//	/**
-//	 * 文章归档
-//	 *
-//	 * @param offset
-//	 * @param limit
-//	 * @return
-//	 */
-//	List<ArticleArchivesVo> selectArticleArchives(@Param("offset") long offset, @Param("limit") long limit);
-//
+	/**
+	 * 文章归档
+	 *
+	 * @param offset
+	 * @param limit
+	 * @return
+	 */
+	List<ArticleArchivesVo> selectArticleArchives(@Param("offset") long offset, @Param("limit") long limit);
+
 //	/**
 //	 * 按分类计数文章数
 //	 *

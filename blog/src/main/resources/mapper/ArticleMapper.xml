@@ -326,17 +326,17 @@
             ) temp
     </select>
 
-    <!--    &lt;!&ndash; 文章归档 &ndash;&gt;-->
-    <!--    <select id="selectArticleArchives" resultType="com.lfj.blog.service.vo.ArticleArchivesVo">-->
-    <!--        select date_format(a.publish_time, '%Y-%m') yearMonth,-->
-    <!--               count(1)                             article_count-->
-    <!--        from article a-->
-    <!--        where a.status = 0-->
-    <!--          and a.deleted = 0-->
-    <!--        group by yearMonth-->
-    <!--        order by yearMonth desc-->
-    <!--            limit #{offset}, #{limit}-->
-    <!--    </select>-->
+    <!-- 文章归档 -->
+    <select id="selectArticleArchives" resultType="com.lfj.blog.service.vo.ArticleArchivesVo">
+        select date_format(a.publish_time, '%Y-%m') yearMonth,
+               count(1)                             article_count
+        from article a
+        where a.status = 0
+          and a.deleted = 0
+        group by yearMonth
+        order by yearMonth desc
+            limit #{offset}, #{limit}
+    </select>
 
     <!-- 查询上一篇和下一篇
     具体来说，这个查询可以分为两部分：
