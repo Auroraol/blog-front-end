@@ -5,7 +5,7 @@
         <li v-for="(item, index) in list" :key="index" class="item">
           <a :href="item.url" target="_blank">
             <div class="logo-box">
-                <el-avatar :src="item.icon" />
+              <el-avatar :src="item.icon" />
             </div>
             <div class="content-box">{{ item.name }}</div>
           </a>
@@ -30,40 +30,34 @@ onMounted(async () => {
   } catch (error) {
     ElMessage.error("获取失败");
   }
-  
+
   //动画
   gsap.from(".list", {
     duration: 0.5,
     x: -50,
     opacity: 0.2,
   });
-
 });
 </script>
 
 <style lang="less" scoped>
 .container {
   @import "/@/assets/styles/variables.css";
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
   height: 100vh;
-  overflow-x: hidden;
-  overflow-y: -webkit-overlay;
-  overflow-y: overlay;
   background: #fff;
 
   .content-container {
-    max-width: 820px;
     margin: 0 auto;
-    margin-top: 15px;
+    margin-top: 5px;
     border-radius: 2px;
 
     .list {
       width: 100%;
-      padding: 0;
-      margin: 0;
-      margin-top: 10vh;
       box-sizing: border-box;
       padding: 10px;
+
       display: flex;
       flex-wrap: wrap;
 
@@ -74,11 +68,13 @@ onMounted(async () => {
 
       .item {
         list-style: none;
+
         margin: 10px;
         margin-bottom: 25px;
         position: relative;
 
         .logo-box {
+          margin-top: 5px;
           overflow: hidden;
           border-radius: 50%;
           position: absolute;

@@ -187,14 +187,15 @@
             and inner_a.status = #{status}
         </if>
         <if test="title != null and title != ''">
-            and inner_a.title like concat('%',concat(#{title}, '%')) --生成字符串 "%apple%"，用于进行模糊匹配操作
+            and inner_a.title like concat('%',concat(#{title}, '%')) -- 生成字符串 "%apple%"，用于进行模糊匹配操作
         </if>
         <if test="categoryId != null">
             and inner_a.category_id = #{categoryId}
         </if>
         <if test="start != null and end != null">
-            and inner_a.publish_time >= #{start} and inner_a.publish_time <![CDATA[<]]> #{end} --使用了 CDATA 标记来包裹比较符号小于
-            --以防止标签。
+            and inner_a.publish_time >= #{start} and inner_a.publish_time <![CDATA[<]]> #{end} -- 使用了 CDATA
+            -- 标记来包裹比较符号小于
+            -- 以防止标签。
         </if>
         <if test="tagId != null">
             and inner_a.id in (select inner_a_t.article_id from article_tag inner_a_t where inner_a_t.tag_id = #{tagId})
@@ -312,18 +313,11 @@
     <!-- 文章归档计数 -->
     <select id="selectArticleArchivesCount" resultType="Integer">
         select count(1) count
-        from
-            (
-            select
-            date_format(a.publish_time, '%Y-%m') yearMonth
-            from
-            article a
-            where
-            a.status = 0
-            and a.deleted = 0
-            group by
-            yearMonth
-            ) temp
+        from (select date_format(a.publish_time, '%Y-%m') yearMonth
+              from article a
+              where a.status = 0
+                and a.deleted = 0
+              group by yearMonth) temp
     </select>
 
     <!-- 文章归档 -->
@@ -335,7 +329,7 @@
           and a.deleted = 0
         group by yearMonth
         order by yearMonth desc
-            limit #{offset}, #{limit}
+        limit #{offset}, #{limit}
     </select>
 
     <!-- 查询上一篇和下一篇
@@ -351,7 +345,8 @@
          where a.id <![CDATA[<]]> #{id}
            and a.deleted = 0
            and a.status = 0
-         order by a.id desc limit 1)
+         order by a.id desc
+         limit 1)
         union all
         (select b.id,
                 b.title
@@ -359,7 +354,8 @@
          where b.id > #{id}
            and b.deleted = 0
            and b.status = 0
-         order by b.id limit 1)
+         order by b.id
+         limit 1)
     </select>
 
     <!--    &lt;!&ndash; 文章分类统计查询 &ndash;&gt;-->

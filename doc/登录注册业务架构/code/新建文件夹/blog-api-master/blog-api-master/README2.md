@@ -1907,7 +1907,7 @@ current：当前页，非必传，默认1
 size：每页数量，非必传，默认5
 categoryId：分类id，非必传
 tagId：标签id，非必传
-yearMonth：年月, 格式yyyy-mm，非必传
+yearMonth：年月, 格式yyyy-mm，非必传(获取整个月份)
 orderBy：排序字段，倒序，非必传，默认:publish_time;  可选项：发布时间:publish_time、浏览数:view_count
 title：标题关键字，非必传
 
@@ -1974,7 +1974,7 @@ title：标题关键字，非必传
 
 
 
-### 文章详情（前台）
+### 文章详情(浏览文章)（前台）
 
 请求方法：GET
 

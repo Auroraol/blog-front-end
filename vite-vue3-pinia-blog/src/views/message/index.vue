@@ -669,7 +669,6 @@ const reSubmit = () => {
 
   .content-container {
     background: #fff;
-    // max-width: $ContentContainerW;
     margin: 0 auto;
     margin-top: 5px;
     border-radius: 2px;
@@ -768,7 +767,7 @@ const reSubmit = () => {
         //过渡
         .fade-list-enter-active,
         .fade-list-leave-active {
-          transition: opacity 0.5s;
+          transition: opacity 0.3s;
         }
         .fade-list-enter, .fade-list-leave-to /* .fade-list-leave-active in <2.1.8 */ {
           opacity: 0;

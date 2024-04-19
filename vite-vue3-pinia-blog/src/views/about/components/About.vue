@@ -112,6 +112,7 @@ window.addEventListener("keyup", (key) => {
   border-radius: 0.6rem;
   background-color: #fff;
   border-radius: 1rem;
+  margin-top: 5px;
 
   .head {
     width: 100%;

@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -191,7 +192,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 * @param size
 	 * @param categoryId
 	 * @param tagId
-	 * @param yearMonth  归档年月，因为数据库函数date_format会使publish_time索引失效，索引转换下再查询
+	 * @param yearMonth  归档年月，如2024-04
 	 * @param title
 	 * @param orderBy    排序
 	 * @return
@@ -200,15 +201,21 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	public IPage<ArticleVo> selectPublishedArticleVoPage(long current, long size,
 														 Integer categoryId, Integer tagId,
 														 String yearMonth, String title, String orderBy) {
-		// 查询start-end时期的文章
-		String[] startAndEndOfMonth = getStartAndEndOfMonth(yearMonth);
-		String start = startAndEndOfMonth[0];
-		String end = startAndEndOfMonth[1];
+		// 计算查询时间范围
+		String start = null;
+		String end = null;
+		if (!ObjectUtils.isEmpty(yearMonth)) {
+			// 查询start-end时期的文章 用了查询整个月份的 如2024-04-01到2024-05-01
+			String[] startAndEndOfMonth = getStartAndEndOfMonth(yearMonth);
+			start = startAndEndOfMonth[0];
+			end = startAndEndOfMonth[1];
+		}
+		// 查询总数
 		int count = selectPageCount(ArticleStatusEnum.NORMAL.getStatus(), categoryId, tagId, start, end, title);
 		if (count == 0) {
 			return new Page<>(current, size);
 		}
-		//自定义查询Wrapper
+		//自定义查询Wrapper  // 构建查询条件
 		ArticlePageQueryWrapper queryWrapper = new ArticlePageQueryWrapper();
 		queryWrapper.setOffset((current - 1) * size);
 		queryWrapper.setLimit(size);
@@ -219,8 +226,9 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 		queryWrapper.setStart(start);
 		queryWrapper.setEnd(end);
 		queryWrapper.setStatus((ArticleStatusEnum.NORMAL.getStatus()));  // 文章状态正常的
+		// 查询数据
 		List<ArticleVo> articleVoList = articleMapper.selectArticleVoPage(queryWrapper);
-		// 1. 创建分页对象, 即当前页码数和每页显示的记录数
+		// 创建分页对象, 即当前页码数和每页显示的记录数
 		Page<ArticleVo> page = new Page<>(current, size, count);
 		page.setRecords(articleVoList);
 		return page;
@@ -257,7 +265,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 		if (articleVo == null) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "文章不存在");
 		}
-		// 详情不返回原内容
+		// 详情不返回原内容, 返回的是文章富文本内容
 		articleVo.setContent(null);
 		// 上一篇和下一篇
 		PreArtAndNextArtDTO preAndNext = selectPreAndNext(id);

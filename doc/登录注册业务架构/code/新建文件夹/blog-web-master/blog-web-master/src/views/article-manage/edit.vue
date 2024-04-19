@@ -50,7 +50,8 @@
       width="320px"
       :before-close="coverClose"
       :lock-scroll="false"
-    > <div class="cover-pre" style="text-align: center;overflow: hidden;position: relative;border-radius: 4px;">
+    > <div class="cover-pre" 
+    style="text-align: center;overflow: hidden;position: relative;border-radius: 4px;">
       <img :src="cover" style="height: 100%;width: 100%;">
       <i
         class="el-icon-delete"

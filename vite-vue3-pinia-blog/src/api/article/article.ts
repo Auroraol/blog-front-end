@@ -102,3 +102,12 @@ export function viewArtilce(id) {
 export function interrelated(params) {
   return get(import.meta.env.VITE_APP_BASE_API +   '/article/interrelated/list',  params )
 }
+
+/**
+ * 分页获取归档
+ * @data {Object} data
+ * @returns yearMonth and articleCount
+ */
+export function pageArchives(params) {
+  return get(import.meta.env.VITE_APP_BASE_API +  '/article/archives/page',  params )
+}
