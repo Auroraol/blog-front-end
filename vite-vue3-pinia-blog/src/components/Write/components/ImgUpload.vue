@@ -64,12 +64,13 @@ type Status = {
   message: string;
 };
 const successUpCover = (res) => {
+  // 这里是:action="path" 之后, 自己服务响应结果
   if (res.code !== 200000) {
     ElMessage.error("文件上传失败");
     return;
   }
   // console.error(res.data);
-  emits("uploadSuccess", res.data); // 传父  //element-plus 中el-upload 上传成功返回URL, 然后将这个给自己服务器进行oss存储
+  emits("uploadSuccess", res.data); // 传父  //element-plus 中el-upload 上传成功返回URL
 };
 
 //文件列表移除文件时的钩子

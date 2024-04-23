@@ -63,94 +63,95 @@
   </div>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
-import Breadcrumb from "@/components/Breadcrumb";
-import Hamburger from "@/components/Hamburger";
-import { updatePassword } from "@/api/user.js";
-export default {
-  components: {
-    Breadcrumb,
-    Hamburger,
-  },
-  data() {
-    var validatePass2 = (rule, value, callback) => {
-      if (value !== this.form.newpwd) {
-        callback(new Error("两次输入密码不一致"));
-      } else {
-        callback();
-      }
-    };
-    return {
-      visible: false,
-      btnLoading: false,
-      form: {
-        oldpwd: "",
-        newpwd: "",
-        newpwd2: "",
-      },
-      rules: {
-        oldpwd: [{ required: true, message: "请输入原密码", trigger: "blur" }],
-        newpwd: [{ required: true, message: "请输入新密码", trigger: "blur" }],
-        newpwd2: [
-          { required: true, message: "请输入新密码", trigger: "blur" },
-          { validator: validatePass2, trigger: "blur" },
-        ],
-      },
-    };
-  },
-  computed: {
-    ...mapGetters(["sidebar", "userInfo", "defaultAvatar"]),
-  },
-  methods: {
-    // 切换SideBar
-    toggleSideBar() {
-      this.$store.dispatch("app/toggleSideBar");
-    },
+<script setup lang="ts">
+// import { mapGetters } from "vuex";
+import { ref } from "vue";
+import Breadcrumb from "/@/components/Breadcrumb.vue";
+import Hamburger from "/@/components/Hamburger.vue";
+import { updatePassword } from "/@/api/user/user";
 
-    // 关闭修改密码弹框
-    dialogClose() {
-      this.$refs["form"].resetFields();
-      this.$refs["form"].clearValidate();
-      this.visible = false;
-    },
+const validatePass2 = (rule, value, callback) => {
+  if (value !== form.newpwd) {
+    callback(new Error("两次输入密码不一致"));
+  } else {
+    callback();
+  }
+};
 
-    // 保存提交
-    saveSubmit() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          this.btnLoading = true;
-          const params = {
-            oldPassword: this.form.oldpwd,
-            newPassword: this.form.newpwd2,
+const visible = ref(false);
+const btnLoading = ref(false);
+const form = ref({
+  oldpwd: "",
+  newpwd: "",
+  newpwd2: "",
+});
+const rules = ref({
+  oldpwd: [{ required: true, message: "请输入原密码", trigger: "blur" }],
+  newpwd: [{ required: true, message: "请输入新密码", trigger: "blur" }],
+  newpwd2: [
+    { required: true, message: "请输入新密码", trigger: "blur" },
+    { validator: validatePass2, trigger: "blur" },
+  ],
+});
+
+// const { sidebar, userInfo, defaultAvatar } = mapGetters([
+//   "sidebar",
+//   "userInfo",
+//   "defaultAvatar",
+// ]);
+
+const toggleSideBar = () => {
+  $store.dispatch("app/toggleSideBar");
+};
+
+const dialogClose = () => {
+  form.value = {
+    oldpwd: "",
+    newpwd: "",
+    newpwd2: "",
+  };
+  this.$refs["form"].resetFields();
+  this.$refs["form"].clearValidate();
+  visible.value = false;
+};
+
+const saveSubmit = () => {
+  $refs.form.validate((valid) => {
+    if (valid) {
+      btnLoading.value = true;
+      const params = {
+        oldPassword: form.value.oldpwd,
+        newPassword: form.value.newpwd2,
+      };
+      updatePassword(params).then(
+        (res) => {
+          btnLoading.value = false;
+          this.$message({
+            message: "修改成功",
+            type: "success",
+          });
+          form.value = {
+            oldpwd: "",
+            newpwd: "",
+            newpwd2: "",
           };
-          updatePassword(params).then(
-            (res) => {
-              this.btnLoading = false;
-              this.$message({
-                message: "修改成功",
-                type: "success",
-              });
-              this.$refs["form"].resetFields();
-              this.$refs["form"].clearValidate();
-              this.visible = false;
-            },
-            (error) => {
-              console.error(error);
-              this.btnLoading = false;
-            }
-          );
+          this.$refs["form"].resetFields();
+          this.$refs["form"].clearValidate();
+          visible.value = false;
+        },
+        (error) => {
+          console.error(error);
+          btnLoading.value = false;
         }
-      });
-    },
+      );
+    }
+  });
+};
 
-    // 退出
-    logout() {
-      this.$store.dispatch("user/logout").then((res) => {
-        this.$router.push("/");
-      });
-    },
-  },
+const logout = () => {
+  $store.dispatch("user/logout").then((res) => {
+    $router.push("/");
+  });
 };
 </script>
 

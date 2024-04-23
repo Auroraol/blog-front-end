@@ -2,8 +2,10 @@ package com.lfj.blog.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lfj.blog.common.security.details.vo.UserVo;
+import com.lfj.blog.controller.model.request.UpdateUserRequest;
 import com.lfj.blog.controller.model.request.UserRegisterRequest;
 import com.lfj.blog.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author 16658
@@ -43,7 +45,7 @@ public interface IUserService extends IService<User> {
 	 *
 	 * @param request
 	 */
-//	void update(UpdateUserRequest request);
+	void update(UpdateUserRequest request);
 
 	/**
 	 * 发送邮箱验证链接
@@ -61,15 +63,15 @@ public interface IUserService extends IService<User> {
 	 * @return void
 	 */
 	void bindEmail(String code);
-//
-//	/**
-//	 * 更新头像
-//	 *
-//	 * @param file
-//	 * @return void
-//	 */
-//	void updateAvatar(MultipartFile file);
-//
+
+	/**
+	 * 更新头像
+	 *
+	 * @param file
+	 * @return void
+	 */
+	void updateAvatar(MultipartFile file);
+
 //	/**
 //	 * 修改密码
 //	 *

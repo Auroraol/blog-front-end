@@ -129,12 +129,14 @@ const activeIndex = ref("");
 // 计算属性
 const userInfo = computed(() => {
   const info = useGettersPinia.userInfo;
-  console.error(info);
-
   return Object.keys(info).length === 0 ? null : info;
 });
 
-onMounted(async () => {
+onMounted(() => {
+  checkUserInfo();
+});
+
+const checkUserInfo = async () => {
   // //判断是否是登录状态
   if (getAccessToken()) {
     try {
@@ -143,15 +145,13 @@ onMounted(async () => {
       console.error(error);
     }
   }
-});
+};
 
 const handleSelect = (index: string) => {
   activeIndex.value = index;
   if (index === "info") {
     // 某个页面
   } else {
-    console.error(userInfo.value);
-
     router.push({ path: `${index}` });
   }
 };

@@ -77,25 +77,24 @@ export function register(data) {
     })
 }
 
-// /**
-//  * 更新用户（非空项更新）
-//  * @param {Object} data
-//  */
-// export function updateUser(data) {
-//   return request.post('/user/update', data)
-// }
+/**
+ * 更新用户（非空项更新）
+ * @param {Object} data
+ */
+export function updateUser(data) {
+  return post(import.meta.env.VITE_APP_BASE_API + '/user/update', data, true)
+}
 
-// /**
-//  * 更新密码
-//  * @param {Object} params
-//  */
-// export function updatePassword(params) {
-//   return request({
-//     url: '/user/password/update',
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 更新密码
+ * @param {Object} params
+ */
+export function updatePassword(params) {
+  return request(import.meta.env.VITE_APP_BASE_API +'/user/password/update', {
+    method: 'post',
+    params: params
+  }, true)
+}
 
 
 // 需要手机验证码所以不用携带token, 也安全
@@ -177,17 +176,16 @@ export function rebindMobile(params) {
 //   })
 // }
 
-// /**
-//  * 绑定用户名
-//  * @param {Object}  params
-//  */
-// export function bindUsername(params) {
-//   return request({
-//     url: '/user/username/bind',
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 绑定用户名
+ * @param {Object}  params
+ */
+export function bindUsername(params) {
+  return request(import.meta.env.VITE_APP_BASE_API +'/user/username/bind',{
+    method: 'post',
+    params: params
+  }, true)
+}
 
 // /**
 //  * 绑定手机号

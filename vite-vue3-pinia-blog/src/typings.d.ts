@@ -26,4 +26,21 @@ export type ArticleRequestData = {
 
 }
 
-  
+
+// 用户信息
+export type userInfoResponseData = {
+    id: number;
+    username: string;
+    password: string;
+    mobile: number;
+    nickname: string;
+    gender: number;
+    birthday: string;
+    email?:string;
+    brief?:string;
+    avatar?:string;
+    status: number;
+    admin: number;
+    createTime: string;
+    roles: string[];
+}

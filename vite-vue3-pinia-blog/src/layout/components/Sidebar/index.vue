@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'has-logo':showLogo}">
+  <div :class="{ 'has-logo': showLogo }">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -12,46 +12,51 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in permission_routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item
+          v-for="route in permission_routes"
+          :key="route.path"
+          :item="route"
+          :base-path="route.path"
+        />
       </el-menu>
     </el-scrollbar>
   </div>
 </template>
+<script setup lang="ts">
+// import { mapGetters } from 'vuex';
+import Logo from "./Logo";
+import SidebarItem from "./SidebarItem";
+import variables from "@/styles/variables.scss";
+import { RouteLocationNormalized, useRoute } from "vue-router";
 
-<script>
-import { mapGetters } from 'vuex'
-import Logo from './Logo'
-import SidebarItem from './SidebarItem'
-import variables from '@/styles/variables.scss'
+const route: RouteLocationNormalized = useRoute();
 
-export default {
-  components: { SidebarItem, Logo },
-  computed: {
-    ...mapGetters([
-      'permission_routes',
-      'sidebar'
-    ]),
-    // 活动菜单
-    activeMenu() {
-      const route = this.$route
-      const { meta, path } = route
-      if (meta.activeMenu) {
-        return meta.activeMenu
-      }
-      return path
-    },
-    // 显示logo
-    showLogo() {
-      return this.$store.state.settings.sidebarLogo
-    },
-    // 样式变量
-    variables() {
-      return variables
-    },
-    // 导航栏收缩
-    isCollapse() {
-      return !this.sidebar.opened
-    }
+const activeMenu = () => {
+  const { meta, path } = route.value;
+  if (meta.activeMenu) {
+    return meta.activeMenu;
   }
-}
+  return path;
+};
+
+// const { permission_routes, sidebar } = mapGetters(['permission_routes', 'sidebar']);
+
+const showLogo = () => {
+  return $store.state.settings.sidebarLogo;
+};
+
+const isCollapse = () => {
+  return !$store.state.sidebar.opened;
+};
+
+export {
+  Logo,
+  SidebarItem,
+  activeMenu,
+  permission_routes,
+  sidebar,
+  showLogo,
+  variables,
+  isCollapse,
+};
 </script>

@@ -5,18 +5,20 @@
       class="drawer-bg"
       @click="handleClickOutside"
     />
-    <sidebar class="sidebar-container" />
+    <!-- <sidebar class="sidebar-container" /> -->
     <div class="main-container">
       <div :class="{ 'fixed-header': fixedHeader }">
-        <navbar />
+        <!-- <navbar /> -->
       </div>
-      <app-main />
+      <!-- <app-main /> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Navbar, Sidebar, AppMain } from "./components/index";
+// import { Navbar, Sidebar, AppMain } from "./components/index";
+import { Navbar } from "./components/index";
+
 // import ResizeMixin from "./mixin/ResizeHandler";
 import { useAppStore, useSettingsStore } from "/@/store/index";
 
@@ -25,8 +27,10 @@ const useSettingsStorePinia = useSettingsStore();
 
 const sidebar = computed(() => useAppStorePinia.sidebar);
 const device = computed(() => useAppStorePinia.device);
+
 const fixedHeader = computed(() => useSettingsStorePinia.fixedHeader);
 
+//
 const classObj = computed(() => ({
   hideSidebar: !sidebar.value.opened,
   openSidebar: sidebar.value.opened,
@@ -40,8 +44,8 @@ function handleClickOutside() {
 </script>
 
 <style lang="less" scoped>
-@import "/@/assets/styles/mixin.scss";
-@import "/@/assets/styles/variables.css";
+// @import "/@/assets/styles/mixin.scss";
+// @import "/@/assets/styles/variables.css";
 .app-wrapper {
   @include clearfix;
   position: relative;
@@ -63,14 +67,14 @@ function handleClickOutside() {
   z-index: 999;
 }
 
-.fixed-header {
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 9;
-  width: calc(100% - #{$sideBarWidth});
-  transition: width 0.28s;
-}
+// .fixed-header {
+//   position: fixed;
+//   top: 0;
+//   right: 0;
+//   z-index: 9;
+//   width: calc(100% - #{$sideBarWidth});
+//   transition: width 0.28s;
+// }
 
 .hideSidebar .fixed-header {
   width: calc(100% - 54px);

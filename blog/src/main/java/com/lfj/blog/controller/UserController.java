@@ -2,7 +2,9 @@ package com.lfj.blog.controller;
 
 
 import com.lfj.blog.common.response.ApiResponseResult;
+import com.lfj.blog.common.validator.annotation.IsImage;
 import com.lfj.blog.common.validator.annotation.IsPhone;
+import com.lfj.blog.controller.model.request.UpdateUserRequest;
 import com.lfj.blog.controller.model.request.UserRegisterRequest;
 import com.lfj.blog.service.IUserService;
 import io.swagger.annotations.Api;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -49,13 +52,14 @@ public class UserController {
 	}
 
 	//
-//	@PostMapping("/update")
-//	@ApiOperation(value = "更新用户基本信息", notes = "需要传accessToken，请求的json中id字段必传，更新不为null的项")
-//	public ApiResponseResult update(@Validated @RequestBody UpdateUserRequest request) {
-//		userService.update(request);
-//		return  ApiResponseResult.success();
-//	}
-//
+	@PostMapping("/update")
+	@ApiOperation(value = "更新用户基本信息", notes = "需要传accessToken，请求的json中id字段必传，更新不为null的项")
+	public ApiResponseResult update(@Validated @RequestBody UpdateUserRequest request) {
+		userService.update(request);
+		return ApiResponseResult.success();
+	}
+
+	//
 //	@PostMapping("/password/update")
 //	@ApiOperation(value = "修改密码", notes = "需要传accessToken,密码至少6位数")
 //	public ApiResponseResult updPassword(@ApiParam("原密码") @NotBlank(message = "旧密码不能为空") @RequestParam(value = "oldPassword") String oldPassword,
@@ -74,14 +78,14 @@ public class UserController {
 	}
 
 	//
-//	@PostMapping("/avatar/update")
-//	@ApiOperation(value = "更新用户头像", notes = "文件只限bmp,gif,jpeg,jpeg,png,webp格式")
-//	public ApiResponseResult updAvatar(@ApiParam("头像图片文件") @IsImage @RequestPart(value = "file") MultipartFile file) {
-//		userService.updateAvatar(file);
-//		return  ApiResponseResult.success();
-//	}
-//
-//	@PostMapping("/mobile/validate")
+	@PostMapping("/avatar/update")
+	@ApiOperation(value = "更新用户头像", notes = "文件只限bmp,gif,jpeg,jpeg,png,webp格式")
+	public ApiResponseResult updAvatar(@ApiParam("头像图片文件") @IsImage @RequestPart(value = "file") MultipartFile file) {
+		userService.updateAvatar(file);
+		return ApiResponseResult.success();
+	}
+
+	//	@PostMapping("/mobile/validate")
 //	@ApiOperation(value = "更换手机号步骤一，验证原手机号", notes = "需要传accessToken")
 //	public ApiResponseResult validateMobile(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam("mobile") long mobile,
 //									  @NotBlank(message = "验证码不能为空") @RequestParam("code") String code) {

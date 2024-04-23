@@ -22,4 +22,7 @@ export const useGetters = defineStore('getters', {
   }
 });
 
-/*感觉使用pinia不需要用这个*/
+/*
+这些getter函数都是计算属性，它们会根据store中的状态或其他getter的返回值进行计算，而不是直接存储数据。
+在这种情况下，当您调用这些getter时，它们会根据相应的store状态或getter函数进行计算，并返回相应的值。
+感觉使用pinia不需要用这个*/

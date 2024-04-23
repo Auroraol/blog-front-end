@@ -159,59 +159,6 @@ const routes = [
       title: "归档",
     },
   },
-  // , {
-  //   path: '/articleeditor',
-  //   name: 'articleeditor',
-  //   component: () => import('/@/view/Editor.vue'),
-  //   meta: {
-  //       title: '编辑文章'
-  //   }
-  // }
-  {
-    path: "/personalcenter",
-    name: "personalcenter",
-    component: () => import("/@/views/personal-center/index.vue"),
-    meta: {
-      title: "个人中心",
-    },
-    children: [
-      {
-        path: "write",
-        name: "write",
-        // component: () => import("/@/views/write/index.vue"),
-        meta: {
-          title: "写作",
-        },
-      },
-      //TODO
-      // {
-      //   path: 'a',
-      //   component: () => import('@/components/me/a.vue'),
-      // },
-      // {
-      //   path: 'b',
-      //   component: () => import('@/components/me/b.vue'),
-      // },
-      // {
-      //   path: 'c',
-      //   component: () => import('@/components/me/c.vue'),
-      // },
-    ],
-  },
-  // {
-  //   path: '/user',
-  //   component: Layout,
-  //   redirect: '/user/info',
-  //   children: [{
-  //     path: 'info',
-  //     name: 'Info',
-  //     component: () => import('/@/views/user/index.vue'),
-  //     meta: {
-  //       title: '基本信息',
-  //       icon: 'user'
-  //     }
-  //   }]
-  // },
   {
     path: "/terms",
     name: "terms",
@@ -261,161 +208,61 @@ const routes = [
       title: "浏览文章",
     }
   },
+  {
+    path: "/personalcenter",
+    name: "personalcenter",
+    component: () => import("/@/views/personal-center/index.vue"),
+    meta: {
+      title: "个人中心",
+    },
+    children: [
+      {
+        path: "write",
+        name: "write",
+        // component: () => import("/@/views/write/index.vue"),
+        meta: {
+          title: "写作",
+        },
+      },
+      //TODO
+      // {
+      //   path: 'a',
+      //   component: () => import('@/components/me/a.vue'),
+      // },
+      // {
+      //   path: 'b',
+      //   component: () => import('@/components/me/b.vue'),
+      // },
+      // {
+      //   path: 'c',
+      //   component: () => import('@/components/me/c.vue'),
+      // },
+    ],
+  },
+  // 后台-公用
+  {
+    path: '/user',
+    // component: Layout,
+    redirect: '/user/info',
+    children: [{
+      path: 'info',
+      name: 'Info',
+      component: () => import('/@/views/user/index.vue'),
+      meta: {
+        title: '基本信息',
+        icon: 'user'
+      }
+    }]
+  },
 
-  // {
-  //   path: '/archives',
-  //   component: () => import('/@/view/archives/index'),
-  //   hidden: true
-  // },
-  //  {
-  //   path: '/otherspersonalcenter',
-  //   name: 'otherspersonalcenter',
-  //   component: () => import('/@/view/OthersPersonalCenter.vue'),
-  //   meta: {
-  //       title: '个人中心'
-  //   }
-  // }, {
-  //   path: '/userfocus',
-  //   name: 'userfocus',
-  //   component: () => import('@/view/UserFocus.vue'),
-  //   meta: {
-  //       title: '关注列表'
-  //   },
-  //   children: [
-  //       {
-  //           path: "allfocus",
-  //           name: 'allfocus',
-  //           component: () => import('@/components/personalCenter/userfocus/userfocusShow.vue')
-  //       },
-  //       {
-  //           path: "fans",
-  //           name: 'fans',
-  //           component: () => import('@/components/personalCenter/userfocus/userfocusShow.vue')
-  //       }
-  //   ]
-  // }, {
-  //   path: '/search',
-  //   name: 'search',
-  //   component: () => import('@/view/Search.vue'),
-  //   meta: {
-  //       title: '搜索'
-  //   }
-  // }, {
-  //   path: '/chat',
-  //   name: 'chat',
-  //   component: () => import('@/view/Chat.vue'),
-  //   meta: {
-  //       title: '聊天室'
-  //   },
-  // }
-
-  // {
-  //   path: "/home",
-  //   name: "home",
-  //   component: () => import("/@/pages/home/home.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "首页",
-  //   },
-  // },
-  // {
-  //   path: "/vaxiso",
-  //   component: () => import("/@/pages/vaxiso/vaxiso.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "vaxiso",
-  //   },
-  // },
-  // {
-  //   path: "/editTable",
-  //   component: () => import("/@/pages/edit-table/index.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "editTable",
-  //   },
-  // },
-  // {
-  //   path: "/test",
-  //   component: () => import("/@/pages/vue-hook-test/test.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "test",
-  //   },
-  // },
-  // {
-  //   path: "/test2",
-  //   component: () => import("/@/pages/vue-hook-test2/test.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "test2",
-  //   },
-  // },
-  // {
-  //   path: "/test3",
-  //   component: () => import("/@/pages/vue-hook-test3/test.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "test3",
-  //   },
-  // },
-  // // Pinia
-  // {
-  //   path: "/storeTest1",
-  //   component: () => import("../pages/store-test/test.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "storeTest1",
-  //   },
-  // },
-  // // 测试$route使用
-  // {
-  //   // url http://localhost:8080/routeTest1/20
-  //   path: "/routeTest1/:id",
-  //   component: () => import("../pages/route-test/test1.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "routeTest1",
-  //   },
-  // },
-  // {
-  //   // url http://localhost:8080/routeTest2/20
-  //   path: "/routeTest2/:id",
-  //   component: () => import("../pages/route-test/test2.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "routeTest2",
-  //   },
-  // },
-  // // 路由参数
-  // {
-  //   // url http://localhost:3000/routeTest3/20/定积分
-  //   path: "/routeTest3/:id/:title",
-  //   component: () => import("../pages/route-test/test3.vue"),
-  //   meta: {
-  //     loading: true,
-  //     title: "routeTest3",
-  //   },
-  // },
-  // {
-  //   // url http://localhost:3000/routeTest4?id=20&title=定积分
-  //   path: "/routeTest4",
-  //   component: () => import("../pages/route-test/test4.vue"),
-  //   props($route){
-  //     return {
-  //       id:$route.query.id,
-  //       title:$route.query.title,
-  //       // 可以携带默认值
-  //       default: '我是默认参数'
-  //     }
-  //   },
-  //   meta: {
-  //     loading: true,
-  //     title: "routeTest4",
-  //   }
-  // },
   // 路由分模块
   NoFond,
 ];
+
+/**
+ * 后台-根据用户角色动态加载路由 
+ */
+
 
 // 导出路由
 const router = createRouter({
@@ -462,19 +309,6 @@ router.beforeEach((to, from, next) => {
 //   // }
 // });
 
-// const createRouter = () => new Router({
-//   // mode: 'history', // require service support
-//   // 路由滚动位置
-//   scrollBehavior(to, from, savedPosition) {
-//     if (savedPosition) {
-//       return savedPosition
-//     } else {
-//       return { x: 0, y: 0 }
-//     }
-//   },
-//   mode: 'history',
-//   routes: routes
-// })
 
 /**
  * 重置路由

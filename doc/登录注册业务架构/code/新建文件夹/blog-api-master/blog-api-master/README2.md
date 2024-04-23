@@ -788,6 +788,8 @@ newPassword：新密码，必传
 
 #### Postman
 
+
+
 ### 更换头像
 
 请求方法：POST

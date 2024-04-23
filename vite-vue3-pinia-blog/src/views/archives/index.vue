@@ -169,7 +169,6 @@ const changeImage = () => {
   // 生成一个随机的索引值
   const newIndex = Math.floor(Math.random() * images.value.length);
   currentImageIndex.value = newIndex;
-  console.error(currentImageIndex.value);
 };
 
 // Methods

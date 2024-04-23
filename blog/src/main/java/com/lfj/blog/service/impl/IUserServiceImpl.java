@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lfj.blog.common.constant.RoleConstant;
 import com.lfj.blog.common.constant.UserConstant;
+import com.lfj.blog.common.oss.Storage;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
 import com.lfj.blog.common.security.ServerSecurityContext;
 import com.lfj.blog.common.security.details.CustomUserDetails;
@@ -12,6 +13,7 @@ import com.lfj.blog.common.security.details.vo.UserVo;
 import com.lfj.blog.common.security.token.AuthenticationToken;
 import com.lfj.blog.common.security.token.RedisTokenStore;
 import com.lfj.blog.common.sms.service.SmsCodeService;
+import com.lfj.blog.controller.model.request.UpdateUserRequest;
 import com.lfj.blog.controller.model.request.UserRegisterRequest;
 import com.lfj.blog.entity.User;
 import com.lfj.blog.exception.ApiException;
@@ -27,7 +29,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -58,18 +62,19 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 	private String prefix;
 
 	@Autowired
+	private EmailService emailService;
+
+	@Autowired
 	private UserMapper userMapper;
 	@Autowired
 	private SmsCodeService smsCodeService;
 
 	@Autowired
 	private RedisTokenStore tokenStore;  // 处理token
-	//	@Autowired
-//	private Storage storage;
-//	@Value("${mail.check}")
-//	private String prefix;
+
 	@Autowired
-	private EmailService emailService;
+	private Storage storage;   // oss服务
+
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
 
@@ -221,58 +226,59 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 		// 清空用户缓存
 		tokenStore.clearUserCacheById(userId);
 	}
-//	/**
-//	 * 更新用户信息
-//	 *
-//	 * @param request
-//	 */
-//	@Override
-//	public void update(UpdateUserRequest request) {
-//		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
-//		if (!request.getUserId().equals(userDetail.getId())) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "用户id跟当前用户id不匹配");
-//		}
-//		User user = new User();
-//		BeanUtils.copyProperties(request, user);
-//		Integer userId = request.getUserId();
-//		user.setId(userId);
-//		updateById(user);
-//
-//		tokenStore.clearUserCacheById(userId);
-//	}
+
+	/**
+	 * 更新用户信息
+	 *
+	 * @param request
+	 */
+	@Override
+	public void update(UpdateUserRequest request) {
+		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
+		if (!request.getUserId().equals(userDetail.getId())) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "用户id跟当前用户id不匹配");
+		}
+		User user = new User();
+		BeanUtils.copyProperties(request, user);
+		Integer userId = request.getUserId();
+		user.setId(userId);
+		updateById(user);
+
+		tokenStore.clearUserCacheById(userId);
+	}
 
 
-//	/**
-//	 * 更新头像
-//	 *
-//	 * @param file
-//	 * @return void
-//	 */
-//	@Override
-//	public void updateAvatar(MultipartFile file) {
-//		String filename = file.getOriginalFilename();
-//		String contentType = file.getContentType();
-//		String extension = filename.substring(filename.lastIndexOf(".") + 1);
-//		String name = System.currentTimeMillis() + "." + extension;
-//		try {
-//			// 上传头像
-//			String fullPath = storage.upload(file.getInputStream(), name, contentType);
-//			CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
-//			User user = new User();
-//			Integer userId = userDetail.getId();
-//			user.setId(userId);
-//			user.setAvatar(fullPath);
-//			updateById(user);
-//			// 删除原头像文件
-//			storage.delete(userDetail.getAvatar());
-//
-//			// 清空用户缓存
-//			tokenStore.clearUserCacheById(userId);
-//		} catch (IOException e) {
-//			log.error("上传文件失败:{0}", e);
-//			throw new ApiException(ResponseCodeEnum.SYSTEM_ERROR.getErrorCode(), ResponseCodeEnum.SYSTEM_ERROR.getErrorMsg());
-//		}
-//	}
+	/**
+	 * 更新头像
+	 *
+	 * @param file
+	 * @return void
+	 */
+	@Override
+	public void updateAvatar(MultipartFile file) {
+		String filename = file.getOriginalFilename();
+		String contentType = file.getContentType();
+		String extension = filename.substring(filename.lastIndexOf(".") + 1);
+		String name = System.currentTimeMillis() + "." + extension;
+		try {
+			// 调用上传头像服务
+			String fullPath = storage.upload(file.getInputStream(), name, contentType);
+			CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
+			User user = new User();
+			Integer userId = userDetail.getId();
+			user.setId(userId);
+			user.setAvatar(fullPath);
+			updateById(user);
+			// 删除原头像文件
+			storage.delete(userDetail.getAvatar());
+
+			// 清空用户缓存
+			tokenStore.clearUserCacheById(userId);
+		} catch (IOException e) {
+			log.error("上传文件失败:{0}", e);
+			throw new ApiException(ResponseCodeEnum.SYSTEM_ERROR.getCode(), ResponseCodeEnum.SYSTEM_ERROR.getMessage());
+		}
+	}
 //
 //	/**
 //	 * 修改密码

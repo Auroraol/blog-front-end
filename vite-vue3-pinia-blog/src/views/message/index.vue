@@ -289,7 +289,7 @@ const isReady = ref(false);
 
 const router = useRouter();
 // 通过 useGetters() 获取 getters store 的实例
-const gettersStore = useGetters();
+const useGettersPinia = useGetters();
 
 const device = ref("desktop");
 const content = ref("");
@@ -324,7 +324,6 @@ const emojis = ref([
   "🤩",
   "😘",
   "😗",
-  "☺️",
   "😚",
   "😙",
   "😏",
@@ -335,18 +334,13 @@ const emojis = ref([
   "😝",
   "🤗",
   "🤭",
-  "🤫",
   "🤔",
   "🤤",
-  "🤠",
   "🥳",
   "😎",
-  "🤓",
-  "🧐",
   "🙃",
   "🤐",
   "🤨",
-  "😐",
   "😑",
   "😶",
   "😶‍🌫️",
@@ -359,7 +353,6 @@ const emojis = ref([
   "😔",
   "😪",
   "😴",
-  "😷",
   "🤒",
   "🤕",
   "🤢",
@@ -369,7 +362,6 @@ const emojis = ref([
   "🥶",
   "🥴",
   "😵",
-  "😵‍💫",
   "🤯",
   "🥱",
   "😕",
@@ -383,53 +375,25 @@ const emojis = ref([
   "🥺",
   "😦",
   "😧",
-  "😨",
   "😰",
   "😥",
-  "😢",
   "😭",
   "😱",
   "😖",
   "😣",
   "😞",
   "😓",
-  "😩",
-  "😫",
-  "😤",
   "😡",
-  "😠",
-  "🤬",
-  "👿",
-  "😈",
-  "👿",
-  "💀",
-  "☠️",
-  "💩",
-  "🤡",
-  "👹",
-  "👺",
-  "👻",
-  "👽",
-  "👾",
-  "🤖",
-  "😺",
-  "😸",
-  "😹",
-  "😻",
-  "😼",
-  "😽",
-  "🙀",
-  "😿",
-  "😾",
-  "🙈",
-  "🙉",
-  "🙊",
 ]);
 
 const useSettingsStorePinia = useSettingsStore();
 
-//计算属性
-const userInfo = computed(() => gettersStore.userInfo);
+// 计算属性
+const userInfo = computed(() => {
+  const info = useGettersPinia.userInfo;
+  return Object.keys(info).length === 0 ? null : info;
+});
+
 const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
 
 // 在组件挂载后执行获取数据的操作
@@ -663,7 +627,7 @@ const reSubmit = () => {
     margin: 0 auto;
     width: 90%;
     .editor {
-      height: 150px;
+      height: 180px;
       border: 1px solid #e74851;
       border-radius: 5px;
       min-height: 120px;
@@ -709,7 +673,7 @@ const reSubmit = () => {
         }
 
         .editor {
-          height: 180px;
+          height: 195px;
           border: 1px solid #e74851;
           border-radius: 5px;
           min-height: 120px;

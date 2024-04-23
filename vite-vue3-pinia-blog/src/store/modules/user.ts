@@ -22,7 +22,7 @@ export const useUserStore = defineStore("user", {
     nickname: "",
     avatar: "",
     roles: [],
-    userInfo: {},
+    userInfo:{}
   }),
   getters: {
     isLoggedIn: (state) => !!state.token,
