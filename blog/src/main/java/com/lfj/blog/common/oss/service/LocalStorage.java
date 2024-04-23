@@ -24,13 +24,14 @@ import java.io.InputStream;
 @Log4j2
 public class LocalStorage extends AbstractStorage {
 
-	private String path;
-
-	private String proxy;
+	private String path;  //  文件保存根路径
+	private String proxy; // 公网url
+	private String virtualPath;   // 虚拟路径, 这个虚拟路径需要于文件保存根路径映射
 
 	public LocalStorage(StorageProperties.Local local) {
 		this.path = local.getPath();
 		this.proxy = local.getProxy();
+		this.virtualPath = local.getVirtualPath();
 		init();
 	}
 
@@ -73,7 +74,7 @@ public class LocalStorage extends AbstractStorage {
 			log.error("本地文件存储失败:{0}", ex);
 			throw new ApiException(ResponseCodeEnum.SYSTEM_ERROR.getCode(), "上传文件失败");
 		}
-		return proxy + name;
+		return proxy + virtualPath + name;
 	}
 
 	/**
@@ -93,7 +94,7 @@ public class LocalStorage extends AbstractStorage {
 	/**
 	 * 分页获取文件对象列表
 	 *
-	 * @param nextMarker
+	 * @param nextMarker 下一个marker
 	 * @param size
 	 * @return
 	 */

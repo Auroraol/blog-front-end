@@ -42,7 +42,7 @@ public class ArticleController {
 	@ApiOperation(value = "保存文章", notes = "需要accessToken，需要管理员权限")
 	public ApiResponseResult save(@Validated @RequestBody ArticleRequest request) {
 		Integer id = articleService.saveOrUpdate(request);
-//		articleRecommendService.remove(id);
+		articleRecommendService.remove(id);        //从推荐中移除
 		return ApiResponseResult.success(id);
 	}
 
@@ -113,7 +113,7 @@ public class ArticleController {
 	public ApiResponseResult incrementView(@ApiParam("文章id") @PathVariable("id") int id) {
 		boolean viewed = articleService.incrementView(id);
 		if (viewed) {
-//			articleRecommendService.asyncRefresh(id);
+			articleRecommendService.asyncRefresh(id); // 异步刷新
 		}
 		return ApiResponseResult.success(viewed);
 	}

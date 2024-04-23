@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lfj.blog.common.constant.ArticleStatusEnum;
+import com.lfj.blog.common.constant.RedisPrefixConstant;
 import com.lfj.blog.common.response.enums.ResponseCodeEnum;
 import com.lfj.blog.common.security.ServerSecurityContext;
 import com.lfj.blog.common.security.details.CustomUserDetails;
@@ -23,10 +24,12 @@ import com.lfj.blog.service.ITagService;
 import com.lfj.blog.service.vo.ArticleArchivesVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import com.lfj.blog.service.wrapper.ArticlePageQueryWrapper;
+import com.lfj.blog.utils.IpUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -34,6 +37,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +61,9 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 
 	@Autowired
 	private IArticleTagService articleTagService;
+
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
 
 	/**
 	 * 新增或更新文章
@@ -148,7 +155,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 
 
 	/**
-	 * 分页查询文章
+	 * 分页查询文章(管理员)
 	 *
 	 * @param current
 	 * @param size
@@ -186,7 +193,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	}
 
 	/**
-	 * 分页查询已发布文章
+	 * 分页查询已发布文章(普通用户)
 	 *
 	 * @param current
 	 * @param size
@@ -281,21 +288,24 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 */
 	@Override
 	public boolean incrementView(int id) {
-//		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(false);
-//		String key = userDetail != null ? RedisConstant.ART_VIEW + userDetail.getId() + ":" + id
-//				: RedisConstant.ART_VIEW + IpUtil.getIpAddress() + ":" + id;
-//		Boolean notViewed = stringRedisTemplate.opsForValue().setIfAbsent(key, "viewed", 120L, TimeUnit.MINUTES);
-//		if (notViewed != null && notViewed) {
-//			// 浏览次数自增
-//			Article article = getById(id);
-//			if (article != null) {
-//				Article newArticle = new Article();
-//				newArticle.setId(id);
-//				newArticle.setViewCount(article.getViewCount() + 1);
-//				updateById(newArticle);
-//				return true;
-//			}
-//		}
+		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(false);
+		// redis
+		String key = userDetail != null ? RedisPrefixConstant.ART_VIEW + userDetail.getId() + ":" + id
+				: RedisPrefixConstant.ART_VIEW + IpUtil.getIpAddress() + ":" + id;
+		Boolean notViewed = stringRedisTemplate.opsForValue().
+				setIfAbsent(key, "viewed", 120L, TimeUnit.MINUTES); //如果键不存在，它会返回true；如果键已存在，它会返回false。
+		//
+		if (notViewed != null && notViewed) {
+			// 浏览次数自增
+			Article article = getById(id);
+			if (article != null) {
+				Article newArticle = new Article();
+				newArticle.setId(id);
+				newArticle.setViewCount(article.getViewCount() + 1);
+				updateById(newArticle);
+				return true;
+			}
+		}
 		return false;
 	}
 

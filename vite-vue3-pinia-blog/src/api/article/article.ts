@@ -1,11 +1,11 @@
 import {request, get, post} from '/@/utils/network/axios'
-// /**
-//  * 保存文章
-//  * @data {Object} data
-//  */
-// export function saveArticle(data) {
-//   return request.post('/article/save', data)
-// }
+/**
+ * 保存文章
+ * @data {Object} data
+ */
+export function saveArticle(data) {
+  return post(import.meta.env.VITE_APP_BASE_API + '/article/save', data, true)
+}
 
 // /**
 //  * 文章详情（后台）
@@ -87,13 +87,14 @@ export function viewArtilce(id) {
   return get(import.meta.env.VITE_APP_BASE_API +  '/article/view/' + id)
 }
 
-// /**
-//  * 自增浏览次数
-//  * @param {Object} id
-//  */
-// export function incrementView(id) {
-//   return request.put('/article/increment_view/' + id)
-// }
+/**
+ * 自增浏览次数
+ * @param {Object} id
+ */
+export function incrementView(id) {
+  return request(import.meta.env.VITE_APP_BASE_API +'/article/increment_view/' + id,{
+    method:"put"})
+}
 
 /**
  * @description 相关文章

@@ -4,7 +4,9 @@
     <el-config-provider :locale="zhCn">
       <!-- 路由视图 -->
       <div id="v-content" v-bind:style="{ minHeight: Height + 'px' }">
-        <router-view></router-view>
+        <transition name="fade" mode="in-out">
+          <router-view></router-view>
+        </transition>
       </div>
     </el-config-provider>
     <foot></foot>
@@ -64,6 +66,16 @@ onMounted(() => {
 </script>
 
 <style lang="less">
+// 淡出淡入
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
 //滚动条样式
 ::-webkit-scrollbar {
   width: 0.5rem;

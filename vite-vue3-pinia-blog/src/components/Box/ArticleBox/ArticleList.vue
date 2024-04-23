@@ -8,7 +8,7 @@
   >
     <transition-group name="fade-list">
       <li v-for="(item, index) in list" :key="index" class="list-item">
-         <!-- 封面 -->
+        <!-- 封面 -->
         <div class="wrap-img">
           <img :src="item.cover" />
         </div>
@@ -53,7 +53,7 @@
     </transition-group>
     <div v-show="list.length === 0 && !loading" class="list-empty">
       <!-- 列表为空 -->
-      <el-empty description="列表为空" /> 
+      <el-empty description="列表为空" />
     </div>
   </ul>
 </template>
@@ -116,8 +116,9 @@ const tagClick = (id: string) => {
   box-sizing: border-box;
   min-height: 50px;
   background-color: #fff;
-  border-radius: 1rem;
-
+  // border-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
   .list-item {
     //   &:hover {
     //     cursor: pointer;
@@ -125,12 +126,12 @@ const tagClick = (id: string) => {
 
     // }
 
-    position: relative;  /*相对定位*/
+    position: relative; /*相对定位*/
     min-height: 200px;
     width: 100%;
     border-bottom: 1px solid #1413132f;
     padding: 15px 2px 15px 30px;
-    margin-top: 5px;
+    // margin-top: 5px;
 
     @media screen and (max-width: 922px) {
       padding-left: 15px;
@@ -143,7 +144,7 @@ const tagClick = (id: string) => {
         color: #007fff;
       }
     }
-    
+
     // 封面
     .wrap-img {
       position: absolute; /*绝对定位 根据父类偏移距离 left right top bottom*/

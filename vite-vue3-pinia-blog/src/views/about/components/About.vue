@@ -39,7 +39,9 @@
       </div>
     </div>
   </div>
+  
 </template>
+
 
 <script setup lang="ts">
 import { onMounted } from "vue";
@@ -80,16 +82,19 @@ const gsapAnimation = () => {
 };
 
 //网页彩蛋
-const easterKey = ["w", "z", "f"]; //彩蛋秘籍
+const easterKey = ["l", "f", "j"]; //彩蛋秘籍
 let easterArr = new Array<string>(); //存放按键记录
 window.addEventListener("keyup", (key) => {
+
   if (easterKey.includes(key.key)) {
+
+          console.error(key);
     //按键属于目标字母
     easterArr.push(key.key); //存放
     if (easterArr.length === easterKey.length) {
       //字母到目标秘籍长度
       let str = easterArr.join(""); // 转为字符串
-      if (str === "wzf") {
+      if (str === "lfj") {
         //召唤彩蛋！
         alert("我超，丰😨");
         easterArr = []; //清空
@@ -99,6 +104,9 @@ window.addEventListener("keyup", (key) => {
     easterArr = []; //清空
   }
 });
+
+
+
 </script>
 
 <style scoped lang="less">

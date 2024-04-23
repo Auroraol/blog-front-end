@@ -4,7 +4,7 @@ import {request, get, post} from '/@/utils/network/axios'
  * @description 分页获取评论回复列表
  */
 export function pageComment(params) {
-  return get(import.meta.env.VITE_APP_BASE_API +'/article/comment/page',  params, true )
+  return get(import.meta.env.VITE_APP_BASE_API +'/article/comment/page',  params)
 }
 
 /**

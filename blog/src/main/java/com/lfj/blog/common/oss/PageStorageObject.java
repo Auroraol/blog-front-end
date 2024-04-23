@@ -7,9 +7,6 @@ import java.util.List;
 
 /**
  * 文件分页page
- *
- * @author: yaohw
- * @create: 2020-05-06 15:58
  **/
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

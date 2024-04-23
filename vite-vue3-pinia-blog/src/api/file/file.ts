@@ -1,11 +1,18 @@
-import {request, post} from '/@/utils/network/axios'
+import { request, post, get } from "/@/utils/network/axios";
 
 /**
  * @param {Object} params
  * @description 删除文件
  */
 export function deleteFile(params) {
-  return request.delete('/file/delete', { params })
+  return request(
+    import.meta.env.VITE_APP_BASE_API +    "/file/delete",
+    {
+      method: "delete",
+      params: params,
+    },
+    true
+  );
 }
 
 /**
@@ -13,12 +20,9 @@ export function deleteFile(params) {
  * @param {Object} params
  */
 export function pageFile(params) {
-  return request.get('/file/page', { params })
+  return get(import.meta.env.VITE_APP_BASE_API +"/file/page", params, true);
 }
 
-
 /**
- * 上传文件 请求数据格式：multipart/form-data, 用axios分钟后不好弄,直接使用表单默认方式进行  
- *
+ * 上传文件 请求数据格式：multipart/form-data, 用axios分钟后不好弄,直接使用表单默认方式进行
  */
-

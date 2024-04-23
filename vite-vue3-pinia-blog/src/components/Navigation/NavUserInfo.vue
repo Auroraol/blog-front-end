@@ -3,12 +3,13 @@
     <router-link to="/personalcenter">个人中心</router-link>
   </div>
   <el-dropdown class="infoBox" size="large">
-    <el-avatar :size="45" :src="props.userInfo.avatar" @error="errorHandler"/>
+    <el-avatar
+      style="cursor: pointer"
+      :size="45"
+      :src="props.userInfo.avatar || defaultAvatar"
+    />
     <template #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item @click="dialogFormVisible = true"
-          >更换昵称
-        </el-dropdown-item>
+      <el-dropdown-menu class="content">
         <router-link v-if="!props.userInfo.mobile" to="/bind-mobile">
           <el-dropdown-item>绑定手机号</el-dropdown-item>
         </router-link>
@@ -16,11 +17,8 @@
           <el-dropdown-item>绑定邮箱</el-dropdown-item>
         </router-link>
         <el-dropdown-item @click="logout">
-          <span style="display: block" 
-            >退 出</span
-          >
-          </el-dropdown-item
-        >
+          <span style="display: block">退 出</span>
+        </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
@@ -50,12 +48,15 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getUpdateNickName, getUserInfo } from "/@/components/Login/services";
 // import { removeUserAccountInfo  } from '/@/utils/network/auth.js'
-import { useUserStore } from "/@/store/index";
+import { useUserStore, useSettingsStore } from "/@/store/index";
 
 const router = useRouter();
 
 // pinia
 const useUserPinia = useUserStore();
+const useSettingsStorePinia = useSettingsStore();
+
+const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
 
 // 更改昵称对话框
 const dialogFormVisible = ref(false);
@@ -63,31 +64,10 @@ const form = reactive({
   newNickName: "",
 });
 
-onMounted(async () => {});
-
-// // 更改昵称
-// const submitForm = async () => {
-//   if (form.newNickName === "") {
-//     alert("昵称不能为空");
-//   } else {
-//     const { data, run } = useRequest(getUpdateNickName, {
-//       manual: true, // 手动触发请求
-//       onSuccess: (data) => {
-//         if (data.code === 200000) {
-//           userInfo.value.nickname = form.newNickName;
-//           router.go(0);
-//         } else if (data.code === 400006) {
-//           alert("昵称更新失败");
-//         }
-//       },
-//       onError: (error) => {
-//         alert(error);
-//       },
-//     });
-
-//     run(userInfo.value.username, form.newNickName);
-//   }
-// };
+onMounted(async () => {
+  // console.error(props.userInfo.avatar);
+  // console.error(defaultAvatar.value);
+});
 
 interface userInfoType {
   // 自定义数据类型的属性
@@ -111,13 +91,12 @@ const props = defineProps<{
   userInfo: userInfoType;
 }>();
 
-const errorHandler = () => true
-
 // 退出
 const logout = async () => {
   try {
     await useUserPinia.logout();
-    // router.push("/index");
+    sessionStorage.setItem("articleDraft", ""); // 清空草稿
+    router.go(0);
   } catch (error) {
     ElMessage.error("退出失败");
   }
@@ -125,9 +104,14 @@ const logout = async () => {
 </script>
 
 <style scoped lang="less">
-.infoBox {
-  margin-left: 10px;
-  border: none;
+// css
+.el-dropdown {
+  positive: relative;
+  .el-dropdown__popper {
+    position: absolute !important; // 这句可能会因为组件bug丢失，没有的话就自己加下
+    top: -20px; // top和left的值可以根据自己的页面效果去做调整
+    left: 20px;
+  }
 }
 
 .el-dropdown-link,
@@ -139,12 +123,20 @@ const logout = async () => {
   font-weight: bold;
   font-size: 15px;
   color: #fff;
-  cursor: pointer;
   border: none;
+  padding: 0 8px;
+  margin-right: 8px;
+}
+
+.infoBox {
+  margin-left: 10px;
+  .content {
+    color: #fff;
+    font-weight: normal;
+  }
 }
 
 .example-showcase {
-  cursor: pointer;
   color: var(--el-color-primary);
   display: flex;
   align-items: center;
@@ -157,10 +149,5 @@ const logout = async () => {
 
 :deep(:focus-visible) {
   outline: none;
-}
-
-.console {
-  padding: 0 8px;
-  margin-right: 8px;
 }
 </style>

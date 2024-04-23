@@ -1,29 +1,29 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-main  width="80%;">
-         <MdPreview
-            :editorId="id"
-            :modelValue="text"
-            previewTheme="vuepress"
-            codeTheme="a11y"
-          />
+      <el-main width="80%;">
+        <MdPreview
+          :editorId="id"
+          :modelValue="text"
+          previewTheme="vuepress"
+          codeTheme="a11y"
+        />
       </el-main>
-       <el-aside width="20%">
-         <el-affix :offset="120">
-            <el-card style="max-width: 300px">
-              <template #header>
-                <div class="card-header">
-                  <span>目录</span>
-                </div>
-              </template>
-              <MdCatalog :editorId="id" :scrollElement="scrollElement" />
-            </el-card>
-          </el-affix>
-       </el-aside>
+      <el-aside width="20%">
+        <el-affix :offset="120">
+          <el-card style="max-width: 300px">
+            <template #header>
+              <div class="card-header">
+                <span>目录</span>
+              </div>
+            </template>
+            <MdCatalog :editorId="id" :scrollElement="scrollElement" />
+          </el-card>
+        </el-affix>
+      </el-aside>
     </el-container>
   </div>
-<!-- 
+  <!-- 
   <div class="docs-page">
     <div class="container">
       <div class="doc">
@@ -110,7 +110,7 @@ Enjoy writing in Markdown!
 //   // author: tokenInfo.account
 // });
 
-// // 防抖动
+// 防抖动
 // function getArticleTitle(): Promise<string> {
 //   return new Promise((resolve, reject) => {
 //     setTimeout(() => {

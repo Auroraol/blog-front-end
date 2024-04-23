@@ -7,9 +7,6 @@ import java.util.Date;
 
 /**
  * 存储对象
- *
- * @author: yaohw
- * @create: 2020-05-06 14:44
  **/
 @Data
 public class StorageObject {

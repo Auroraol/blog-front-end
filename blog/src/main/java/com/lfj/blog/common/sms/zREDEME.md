@@ -1,5 +1,9 @@
 # 手机短信
 
+**阿里云短信配置见**
+
+<img src="zREDEME.assets/image-20240423155247940.png" alt="image-20240423155247940" style="zoom: 80%;" />
+
 # 整合
 
 具体代码见:

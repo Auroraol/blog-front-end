@@ -26,7 +26,6 @@
             <el-form-item label="" prop="password">
               <el-input
                 size="large"
-               
                 placeholder="密码"
                 show-password
                 v-model="loginForm.password"
@@ -62,10 +61,7 @@
         </el-tab-pane>
         <el-tab-pane label="手机号码登录" class="toLogin">
           <!-- loginForm: 表单数据对象-->
-          <el-form
-            :model="loginFormPhone"
-            :rules="loginFormPhoneRules"
-          >
+          <el-form :model="loginFormPhone" :rules="loginFormPhoneRules">
             <el-form-item label="" prop="mobile">
               <el-input
                 placeholder="请输入手机号"
@@ -162,8 +158,8 @@ import { ref } from "vue";
 import { useUserStore, useLoginStore } from "/@/store/index";
 import { setRemember, getRemember } from "/@/utils/auth";
 
-import { useSmsCodeMixin } from '/@/mixins/smsMixin'
-import { useRouterMixin } from '/@/mixins/routerMixin'
+import { useSmsCodeMixin } from "/@/mixins/smsMixin";
+import { useRouterMixin } from "/@/mixins/routerMixin";
 
 // 在 setup 中引入 mixin
 const { getCode, codeCount } = useSmsCodeMixin();
@@ -176,7 +172,6 @@ const useLoginPinia = useLoginStore();
 //
 const loading = ref(false);
 const checked = ref(false);
-
 
 // 表单数据
 const loginForm = reactive({
@@ -215,7 +210,7 @@ const forgetClick = () => {
 
 // 发送验证码
 const sendCode = () => {
-  getCode(loginFormPhone.mobile)
+  getCode(loginFormPhone.mobile);
 };
 
 // 点击密码登录按钮
@@ -227,7 +222,8 @@ const passwordLogin = async () => {
     await useUserPinia.accountLogin(params);
     // TODO获得用户信息, 确定roles, 实现动态路由
     let { roles } = await useUserPinia.getUserInfo();
-
+    //  const accessRoutes = await this.$store.dispatch('permission/generateRoutes', roles)
+    // this.$router.addRoutes(accessRoutes)
     // 是否记住密码
     let checkedValue = checked.value;
     setRemember(checkedValue ? "1" : "0"); // 浏览器
@@ -238,6 +234,7 @@ const passwordLogin = async () => {
     }
 
     loading.value = false;
+    ElMessage.success("登录成功");
     // 跳转到首页
     toPage("/index");
   } catch (error) {
@@ -258,6 +255,7 @@ const codeLogin = async () => {
 
     loading.value = false;
     // 跳转到首页
+    ElMessage.success("登录成功");
     toPage("/index");
   } catch (error) {
     loading.value = false;

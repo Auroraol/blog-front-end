@@ -1,4 +1,6 @@
 package com.lfj.blog.mapper;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lfj.blog.entity.Tag;
@@ -12,7 +14,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface TagMapper extends BaseMapper<Tag> {
-
+	List<Tag> selectIdByName(@Param("name") String name);
 }
 
 

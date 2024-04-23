@@ -20,6 +20,15 @@ public interface ITagService extends IService<Tag> {
 	 */
 	void addTag(String tagName);
 
+
+	/**
+	 * 查询标签id
+	 *
+	 * @param name
+	 * @return
+	 */
+	int selectIdByName(String name);
+
 	/**
 	 * 分页查询标签
 	 *

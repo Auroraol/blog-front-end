@@ -47,7 +47,7 @@ class TemplateApplicationTests {
 
 	@Test
 	void encryptTest() {
-		String content = "KXPxn37uUMJ1zrWhZ6QlMqCyPC6LcL";
+		String content = "LTAI5tRn3SLwXcQWqcTNHr4r";
 		String encryptStr = stringEncryptor.encrypt(content);
 		String decryptStr = stringEncryptor.decrypt(encryptStr);
 		System.out.println("加密后的内容：" + encryptStr);

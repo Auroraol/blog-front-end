@@ -56,7 +56,7 @@
             >
               <div class="cmt-li-title">
                 <div class="headimg">
-                  <img :src="comment.fromUser.avatar" />
+                  <img :src="comment.fromUser.avatar || defaultAvatar" />
                 </div>
               </div>
               <div class="cmt-li-r">
@@ -276,6 +276,7 @@ import "@vavt/v3-extension/lib/asset/Emoji.css";
 // import "@vavt/v3-extension/lib/asset/style.css";
 import { useRouter } from "vue-router";
 import { useGetters } from "/@/store/getters";
+import { useSettingsStore } from "/@/store/index";
 import {
   pageMessage as apiPageMessage,
   addMessage,
@@ -425,8 +426,11 @@ const emojis = ref([
   "🙊",
 ]);
 
+const useSettingsStorePinia = useSettingsStore();
+
 //计算属性
 const userInfo = computed(() => gettersStore.userInfo);
+const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
 
 // 在组件挂载后执行获取数据的操作
 onMounted(async () => {
@@ -470,7 +474,6 @@ const pageMessage = async () => {
 
     commentList.value = commentList1;
     loading.value = true;
-    // $refs.container.scrollTop = 0
   } catch (error) {
     console.error(error);
     loading.value = false;
@@ -517,7 +520,7 @@ const messageSubmit = () => {
       })
       .catch(() => {
         // 用户点击取消按钮时的逻辑
-        cloading.value = true;  //显示加载
+        cloading.value = true; //显示加载
         addMessage(params).then(
           (res) => {
             cloading.value = false;

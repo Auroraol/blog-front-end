@@ -1342,6 +1342,8 @@ name：标签名，必传
 }
 ```
 
+![image-20240421153452952](README2.assets/image-20240421153452952.png)
+
 ## 文件存储
 
 文件存储主要用于存储文章封面，文章内容富文本中的图片等。
@@ -1352,7 +1354,7 @@ name：标签名，必传
 
 请求地址：/file/upload
 
-请求数据格式：multipart/form-data  (默认表单)
+**请求数据格式：multipart/form-data  (默认表单)**
 
 请求参数：file：文件，必传
 
@@ -1360,7 +1362,7 @@ name：标签名，必传
 
 需要管理员权限： 是
 
-接口说明：文件大小不能超过5MB，上传成功后返回文件url。
+**接口说明：文件大小不能超过5MB，上传成功后返回文件url。**
 
 上传成功：
 
@@ -1372,13 +1374,17 @@ name：标签名，必传
 }
 ```
 
+使用本地存储
+
+![image-20240422154945800](README2.assets/image-20240422154945800.png)
+
 ### 删除文件
 
 请求方法：DELETE
 
 请求地址：/file/delete
 
-请求参数：fullPath ：文件url
+**请求参数：fullPath ：文件url**
 
 需要access_token： 是
 
@@ -1395,7 +1401,21 @@ name：标签名，必传
 }
 ```
 
+![image-20240422182146286](README2.assets/image-20240422182146286.png)
 
+### 读取-本地储存
+
+请求方法：GET
+
+请求地址：文件url
+
+需要access_token： 否
+
+需要管理员权限： 否
+
+接口说明：删除已上传的文件
+
+![image-20240422225903810](README2.assets/image-20240422225903810.png)
 
 ## 分类
 
@@ -1837,6 +1857,8 @@ name：分类名，必传
 + **`文章为转载时，需标出转载地址；`**
 + **`接口将文章状态置为待发布状态;`**
 + **`保存成功返回文章id；`**
++ `content` 原始文本内容
++ `htmlContent` 编辑器将 `content` 渲染为 HTML 后的结果
 
 请求方法：POST
 
@@ -1984,7 +2006,7 @@ title：标题关键字，非必传
 
 需要管理员权限： 否
 
-**接口说明：用于前台查看详情时调用；返回文章内容；返回上一篇和下一篇。**
+**接口说明：用于前台查看详情时调用；返回文章内容htmlContent；返回上一篇和下一篇。**
 
 获取成功：
 
@@ -2172,7 +2194,7 @@ title：标题关键字，非必传
 
 需要管理员权限： 否
 
-接口说明：20分钟内ip或用户文章浏览计数，data返回true则表示此次成功自增
+**接口说明：20分钟内ip或用户文章浏览计数，data返回true则表示此次成功自增**
 
 调用成功：
 
@@ -2429,8 +2451,6 @@ size：每页数量，非必传，默认12
 需要管理员权限： 否
 
 接口说明：按分类计数文章数。
-
-
 
 获取成功：
 
@@ -3096,110 +3116,6 @@ content：回复内容，必传
 {
   "code": 0,
   "message": "成功"
-}
-```
-
-## 分页获取评论与回复
-
-请求方法：GET
-
-请求地址：/article/comment/page
-
-请求参数：
-current：当前页，非必传，默认1
-size：每页数量，非必传，默认5
-articleId：文章id，必传
-
-需要access_token： 否
-
-需要管理员权限： 否
-
-接口说明：评论下挂回复列表；按时间降序排序。
-
-获取成功：
-
-```json
-{
-  "code": 0,
-  "message": "成功",
-  "data": {
-    "records": [
-      {
-        "id": 1,
-        "content": "测试",
-        "commentTime": "2020-01-05 12:52:16",
-        "fromUser": {
-          "id": 1,
-          "nickname": "小管家",
-          "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
-          "admin": 1
-        },
-        "replyList": [
-          {
-            "id": 1,
-            "content": "自己回复自己可还行。",
-            "replyTime": "2020-01-05 13:23:55",
-            "fromUser": {
-              "id": 1,
-              "nickname": "小管家",
-              "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
-              "admin": 1
-            },
-            "toUser": {
-              "id": 1,
-              "nickname": "小管家",
-              "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
-              "admin": 1
-            }
-          }
-        ]
-      }
-    ],
-    "total": 1,
-    "size": 5,
-    "current": 1,
-    "searchCount": true,
-    "pages": 1
-  }
-}
-```
-
-## 最新评论列表
-
-请求方法：GET
-
-请求地址：/article/comment/latest
-
-请求参数：limit：数量，非必传，默认5
-
-需要access_token： 否
-
-需要管理员权限： 否
-
-获取成功：
-
-```json
-{
-  "code": 0,
-  "message": "成功",
-  "data": [
-    {
-      "id": 1,
-      "content": "测试",
-      "commentTime": "2020-01-05 12:52:16",
-      "article": {
-        "id": 1,
-        "title": "标题"
-      },
-      "fromUser": {
-        "id": 1,
-        "nickname": "小管家",
-        "avatar": "https://poile-img.nos-eastchina1.126.net/me.png",
-        "admin": 1
-      },
-      "replyList": []
-    }
-  ]
 }
 ```
 

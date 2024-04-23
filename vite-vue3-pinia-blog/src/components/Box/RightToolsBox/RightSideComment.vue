@@ -47,7 +47,12 @@
 import { ref, onMounted } from "vue";
 import { formatPast } from "/@/utils/format/format-time";
 import { latestCommentList } from "/@/api/comment/comment";
+import { useSettingsStore } from "/@/store/index";
 
+const useSettingsStorePinia = useSettingsStore();
+const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
+
+//
 const loading = ref(true);
 const list = ref([]);
 
@@ -58,7 +63,6 @@ const init = async () => {
     const res = await latestCommentList(params); // 获取评论,需要token
     list.value = res;
     loading.value = false;
-    console.error(res);
   } catch (error) {
     console.error(error);
   }

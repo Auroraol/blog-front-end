@@ -11,6 +11,7 @@ import com.lfj.blog.exception.ApiException;
 import com.lfj.blog.mapper.TagMapper;
 import com.lfj.blog.service.ITagService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,10 @@ import java.util.List;
 @Service
 public class ITagServiceImpl extends ServiceImpl<TagMapper, Tag>
 		implements ITagService {
+
+	@Autowired
+	TagMapper tagMapper;
+
 	/**
 	 * 新增标签
 	 *
@@ -41,6 +46,10 @@ public class ITagServiceImpl extends ServiceImpl<TagMapper, Tag>
 		tag.setName(tagName);
 		tag.setDeleted(CommonConstant.NOT_DELETED);
 		save(tag);
+	}
+
+	public int selectIdByName(String name) {
+		return tagMapper.selectIdByName(name).get(0).getId();
 	}
 
 	/**

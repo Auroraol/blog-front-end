@@ -16,7 +16,7 @@
 import { defineAsyncComponent } from "vue";
 //Suspense要异步引入组件
 const AsyncWrite = defineAsyncComponent(
-  () => import("/@/components/Write/Write.vue")
+  () => import("/@/views/write/components/Write.vue")
 );
 </script>
 

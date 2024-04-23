@@ -21,3 +21,5 @@ export const useGetters = defineStore('getters', {
     loginPassword: (state) => useLoginStore().password
   }
 });
+
+/*感觉使用pinia不需要用这个*/

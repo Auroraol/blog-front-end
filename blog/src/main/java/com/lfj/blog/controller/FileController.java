@@ -35,7 +35,7 @@ public class FileController {
 		String filename = file.getOriginalFilename();
 		String contentType = file.getContentType();
 		String extension = filename.substring(filename.lastIndexOf(".") + 1);
-		String name = System.currentTimeMillis() + "." + extension;
+		String name = System.currentTimeMillis() + "." + extension; // 生成唯一文件名
 		String fullPath = storage.upload(file.getInputStream(), name, contentType);
 		return ApiResponseResult.success(fullPath);
 	}

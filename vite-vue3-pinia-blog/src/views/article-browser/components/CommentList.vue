@@ -273,9 +273,8 @@ import { Emoji } from "@vavt/v3-extension";
 import "@vavt/v3-extension/lib/asset/Emoji.css";
 
 import { useRouter } from "vue-router";
-import { useUserStore } from "/@/store/index";
 import { useGetters } from "/@/store/getters";
-
+import { useUserStore, useSettingsStore } from "/@/store/index";
 import {
   pageComment as apipageComment,
   addComment,
@@ -289,6 +288,7 @@ const isReady = ref(false);
 
 const router = useRouter();
 const gettersStore = useGetters(); // 通过 useGetters() 获取 getters store 的实例
+const useSettingsStorePinia = useSettingsStore();
 
 // 参数
 const props = defineProps({
@@ -313,13 +313,15 @@ const cloading = ref(false);
 const rloading = ref(false);
 
 //计算属性
-const userInfo = computed(() => gettersStore.userInfo);
-const authorId = computed(() => userInfo.id);
+const userInfo = computed(() => {
+  const info = gettersStore.userInfo; //没有登录账号是useGettersPinia.userInfo数据类型是{}
+  // 手动检查对象是否为空
+  return Object.keys(info).length === 0 ? null : info;
+});
 
-
-// const userInfo = computed(() => mapGetters('userInfo'));
-// const defaultAvatar = computed(() => mapGetters('defaultAvatar'));
-// const device = computed(() => mapGetters('device'));
+// pinia
+const authorId = userInfo.id;
+const defaultAvatar = useSettingsStorePinia.defaultAvatar;
 
 // 监听 props.articleId 的变化
 watch(
@@ -374,29 +376,18 @@ const pageComment = () => {
   apipageComment(params).then(
     (res) => {
       loading.value = false;
- total.value = res.total;
-    const commentList1 = res.records;
-    const clen = commentList1.length; //获取评论列表的长度，即评论数量。
+      total.value = res.total;
+      const commentList1 = res.records;
+      const clen = commentList1.length; //获取评论列表的长度，即评论数量。
 
-    for (let i = 0; i < clen; i++) {
-      commentList1[i].del_visible = false; //用来控制评论是否可见或是否可以被删除等功能的标识。
-      const replyList = commentList1[i].replyList; //获取当前评论的回复列表。
-      const rlen = replyList.length;
-      for (let j = 0; j < rlen; j++) {
-        replyList[j].del_visible = false; //用来控制回复是否可见或是否可以被删除等功能的标识。
+      for (let i = 0; i < clen; i++) {
+        commentList1[i].del_visible = false; //用来控制评论是否可见或是否可以被删除等功能的标识。
+        const replyList = commentList1[i].replyList; //获取当前评论的回复列表。
+        const rlen = replyList.length;
+        for (let j = 0; j < rlen; j++) {
+          replyList[j].del_visible = false; //用来控制回复是否可见或是否可以被删除等功能的标识。
+        }
       }
-    }
-
-
-
-      // const commentListData1 = res.records;
-      // commentListData1.forEach((comment) => {
-      //   comment.del_visible = false;
-      //   comment.replyList.forEach((reply) => {
-      //     reply.del_visible = false;
-      //   });
-      // });
- 
       commentList.value = commentList1;
     },
     (error) => {
@@ -542,7 +533,7 @@ const reSubmit = () => {
         addReply(params).then(
           (res) => {
             console.error(res);
-            
+
             rloading.value = false;
             reEditVisible.value = false;
             recontent.value = "";

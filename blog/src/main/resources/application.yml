@@ -64,4 +64,5 @@ ignore:
     - /leave/message/page
     - /leave/message/latest
     - /oauth
-#    - /client/**
+    - /files/**
+    #    - /client/**

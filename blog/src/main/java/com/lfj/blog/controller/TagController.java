@@ -35,6 +35,12 @@ public class TagController {
 		tagService.addTag(tagName);
 		return ApiResponseResult.success();
 	}
+	
+	@GetMapping("/id")
+	@ApiOperation(value = "查询标签id")
+	public ApiResponseResult getTagId(@NotBlank(message = "标签名不能为空") @RequestParam("tagName") String tagName) {
+		return ApiResponseResult.success(tagService.selectIdByName(tagName));
+	}
 
 
 	@GetMapping("/page")

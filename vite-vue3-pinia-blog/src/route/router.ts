@@ -6,10 +6,11 @@ import {
 
 // 导入路由404分模块
 import NoFond from "./no-fond";
-
+/* Layout */
+import Layout from '/@/layout/index.vue'
 //引入main.ts
 import app from "../main";
-import { useStore } from "../store2";
+import { useUserStore } from '/@/store/index'
 
 /**
  *
@@ -17,7 +18,7 @@ import { useStore } from "../store2";
  * name:'router-name'             名称在 <keep-alive> 用到，后台管理必须设置！！！
  * meta : {
     roles: ['admin','test']      页面角色控制，可多角色
-    title: 'title'               标题
+    title: 'title'               标题   使用window.document.title = to.meta.title as string
     icon: 'svg-name'             导航栏图标
     breadcrumb: false            false，将不显示面包屑
     activeMenu: '/example/list'  如果设置，则导航栏将高亮显示
@@ -67,14 +68,13 @@ const routes = [
       };
     },
   },
-  //{
-  //   path: '/leavemsg',
-  //   name: 'leavemsg',
-  //   component: () => import('/@/view/LeaveMsg.vue'),
-  //   meta: {
-  //       title: '留言板'
-  //   }
-  // },
+  {
+    path: '/write',
+    component: () => import('/@/views/write/index.vue'),
+    meta: {
+        title: '写作'
+    }
+  },
   {
     path: "/login-register",
     name: "login-register",
@@ -178,7 +178,7 @@ const routes = [
       {
         path: "write",
         name: "write",
-        component: () => import("/@/views/Write.vue"),
+        // component: () => import("/@/views/write/index.vue"),
         meta: {
           title: "写作",
         },
@@ -198,6 +198,20 @@ const routes = [
       // },
     ],
   },
+  // {
+  //   path: '/user',
+  //   component: Layout,
+  //   redirect: '/user/info',
+  //   children: [{
+  //     path: 'info',
+  //     name: 'Info',
+  //     component: () => import('/@/views/user/index.vue'),
+  //     meta: {
+  //       title: '基本信息',
+  //       icon: 'user'
+  //     }
+  //   }]
+  // },
   {
     path: "/terms",
     name: "terms",
@@ -408,49 +422,39 @@ const router = createRouter({
   history: createWebHistory(), //开启history模式
   // history: createWebHashHistory(), //开启hash模式
   routes,
-  // 路由滚动位置
+  // 路由滚动位置 解决vue页面之间跳转，页面不是在顶部的问题
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition;
+      return Promise.resolve(savedPosition);
     } else {
-      return { x: 0, y: 0 };
+      return Promise.resolve({ left: 0, top: 0 });
     }
   },
 });
 
+
 // 在路由元信息配置守卫 requiredPath为true, 适合守卫多个页面 vue3next() 变成return true
-// router.beforeEach((to, from, next) => {
-//   // //判断是否是登录状态
-//   // // const sessionAccount = localStorage.getItem('userAccount')
-//   // const sessionAccount = getUserAccountInfo();
-//   // if (sessionAccount) {
-//   //     const pinia = useStore()
-//   //     pinia.userInfo = sessionAccount
-//   // }
+router.beforeEach((to, from, next) => {
+  // 进入写文页面，判断是否有权限
+  if (to.path === '/write') {
+    const useUserStorePinia = useUserStore()
+      if (Object.keys(useUserStorePinia.userInfo).length === 0) {
+          alert('还没有登录，去登录吧')
+          router.push('/login-register/login')
+      }
+  }
 
-//   // // 进入写文页面，判断是否有权限
-//   // if (to.path === '/write') {
-//   //     if (!sessionAccount) {
-//   //         alert('还没有登录，去登录吧')
-//   //         router.push('/login')
-//   //     }
-//   // }
+  window.document.title = to.meta.title as string
+  next()
 
-//   // window.document.title = to.meta.title as string
-//   // //到新页面要把页面滚动到最顶
-//   // window.scrollTo({
-//   //     top: 0,
-//   // })
-//   next()
+  // if (to.meta.loading) {
+  //   app.config.globalProperties.$loading.showLoading();
+  //   next();
+  // } else {
+  //   next();
+  // }
 
-//   // if (to.meta.loading) {
-//   //   app.config.globalProperties.$loading.showLoading();
-//   //   next();
-//   // } else {
-//   //   next();
-//   // }
-
-// });
+});
 
 // router.afterEach((to, from) => {
 //   // if (to.meta.loading) {

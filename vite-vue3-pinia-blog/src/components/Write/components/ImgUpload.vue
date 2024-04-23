@@ -28,7 +28,12 @@
         <!-- <div class="el-upload__tip">大小小于500kb的Jpg /png文件</div> -->
       </template>
     </el-upload>
-    <el-button type="success" @click="coverSubmit">上传文件</el-button>
+    <el-button
+      style="margin-left: 10px; margin-right: 10px; margin-bottom: 1rem"
+      type="success"
+      @click="coverSubmit"
+      >上传文件</el-button
+    >
   </div>
 </template>
 
@@ -37,16 +42,20 @@ import Vue from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import type { UploadInstance } from "element-plus";
 import { getAccessToken } from "/@/utils/auth";
+import type { UploadProps } from "element-plus";
 
 //提交文章
 const uploadCover = ref<UploadInstance>(); //绑定<el-upload></el-upload>
-const path = ref(import.meta.env.VITE_APP_BASE_API + "/file/upload");
+const path = ref(import.meta.env.VITE_APP_BASE_API + "/file/upload"); // 上传图片接口
 const limitSize = 500 * 1024; //封面大小限制500kb   3 * 1024 * 1024; 限制3MB
 const coverTypeArr = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const headers = computed(() => {
   return { Authorization: "Bearer " + getAccessToken() }; //上传文件请求头
 });
+
+// 子->父
+const emits = defineEmits(["uploadSuccess"]);
 
 //封面上传成功的钩子
 type Status = {
@@ -56,12 +65,15 @@ type Status = {
 };
 const successUpCover = (res) => {
   if (res.code !== 200000) {
-    console.error(res.message);
     ElMessage.error("文件上传失败");
     return;
   }
-  ElMessage.success("文件上传成功");
+  // console.error(res.data);
+  emits("uploadSuccess", res.data); // 传父  //element-plus 中el-upload 上传成功返回URL, 然后将这个给自己服务器进行oss存储
 };
+
+//文件列表移除文件时的钩子
+const onRemove = (e: any) => {};
 
 //封面上传失败的钩子
 const errorUpCover = () => {
@@ -73,7 +85,7 @@ const onExceed = (e: any) => {
   ElMessage.error("封面超出上传限制，上传失败");
 };
 
-//文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
+// //文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
 const onChangeCover = (e: any) => {
   //文件格式校验
   if (!coverTypeArr.includes(e.raw.type)) {
@@ -82,19 +94,36 @@ const onChangeCover = (e: any) => {
       message: "选择的文件格式错误，错误的格式将不会被上传",
       type: "error",
     });
-    return;
+    return false;
   }
   // 文件大小效验
   const isLtSize = e.size > limitSize;
   if (isLtSize) {
-    ElMessage.error("文件大小不能大于" + limitSize);
+    ElMessage.error("文件大小不能大于500kb");
+    return false;
   }
+  return true;
 };
-//文件列表移除文件时的钩子
-const onRemove = (e: any) => {};
 
-//上传前钩子
-const beforeUpload = (e: any) => {};
+//上传前钩子  在 before-upload 钩子中限制用户上传文件的格式和大小。
+const beforeUpload: UploadProps["beforeUpload"] = (rawFile) => {
+  //文件格式校验
+  if (!coverTypeArr.includes(rawFile.type)) {
+    ElMessage({
+      showClose: true,
+      message: "选择的文件格式错误，错误的格式将不会被上传",
+      type: "error",
+    });
+    return false;
+  }
+  // 文件大小效验
+  const isLtSize = rawFile.size > limitSize;
+  if (isLtSize) {
+    ElMessage.error("文件大小不能大于500kb");
+    return false;
+  }
+  return true;
+};
 
 const coverSubmit = () => {
   uploadCover.value!.submit();

@@ -1,24 +1,32 @@
 import {request, get, post} from '/@/utils/network/axios'
 import { tagListResponseType} from './data'
 
-// /**
-//  * 新增标签
-//  * @params {Object} params
-//  */
-// export function addTag(params) {
-//   return request({
-//     url: '/tag/add',
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 新增标签
+ * @params {Object} params
+ */
+export function addTag(params) {
+  return request(import.meta.env.VITE_APP_BASE_API + '/tag/add',{
+    method: 'post',
+    params: params
+  }, true)
+}
+
+/**
+ * 获取标签id
+ * @params {Object} params
+ */
+export function getTagId(params) {
+  return get(import.meta.env.VITE_APP_BASE_API + '/tag/id',params, true)
+}
+
 
 /**
  * 分页获取标签列表
  * @param {Object} params
  */
 export function pageTag(params) {
-  return get('/tag/page', { params }, true)
+  return get(import.meta.env.VITE_APP_BASE_API + '/tag/page', params , true)
 }
 
 /**

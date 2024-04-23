@@ -99,7 +99,7 @@ sms:
   # 阿里短信配置
   ali:
     regionId: cn-hangzhou         # 地区编号
-    accessKeyId: LTAI5tRn3SLwXcQWqcTNHr4r            # 子用户的访问键
+    accessKeyId: CODE(gVhIxdO2/l2vGJFNsywZvTWsR3tJVPrmtGGQ4kjvU6WoU5UjOFmVqA==)            # 子用户的访问键
     accessKeySecret: CODE(DonDv1E1bt18WPvlxngorolpvxeJnfoUNk8X94+42sqEeBAmzAaaIg==)  # 子用户的访问密钥
     signName: 悦读博客              # 签名名称
     templateCode: SMS_465388108    # 登录短信模板的code
@@ -115,14 +115,15 @@ sms:
 # 存储配置，配置其一即可，类型需要严格匹配
 oss:
   ## 存储类型, 1: 本地  2：七牛  3：网易云 4: 阿里云
-  type: 1
+  type: 4
   local:
-    path: /var/blog/
-    proxy: http://resource.poile.cn/
+    path: D:/blog/        #文件保存根路径
+    proxy: http://localhost:9000/ #公网url + 虚拟路径, 这个虚拟路径需要于文件保存根路径映射 #通过WebMvcConfig.java
+    virtualPath: files
   # 网易云存储配置
   netease:
-    accessKey: 2bec4d8797e64f99b967c88f
-    secretKey: ca8bb777179949a4b07671
+    accessKey: CODE(gVhIxdO2/l2vGJFNsywZvTWsR3tJVPrmtGGQ4kjvU6WoU5UjOFmVqA==)
+    secretKey: CODE(DonDv1E1bt18WPvlxngorolpvxeJnfoUNk8X94+42sqEeBAmzAaaIg==)
     endpoint: nos-eastchina1.126.net
     bucket: poile-img
   # 七牛云存储配置
@@ -134,10 +135,10 @@ oss:
     domain: http://qiniu.poile.cn/
   # 阿里云存储配置
   ali:
-    accessKeyId: LTAIaEe
-    accessKeyIdSecret: bU54eGKPugUj03
-    bucket: poile
-    endpoint: oss-cn-shenzhen.aliyuncs.com
+    accessKeyId: CODE(gVhIxdO2/l2vGJFNsywZvTWsR3tJVPrmtGGQ4kjvU6WoU5UjOFmVqA==)
+    accessKeyIdSecret: CODE(DonDv1E1bt18WPvlxngorolpvxeJnfoUNk8X94+42sqEeBAmzAaaIg==)
+    bucket: read-blog-1
+    endpoint: oss-cn-beijing.aliyuncs.com
 
 # 开发环境，为调试方便，降低日志级别
 logging:

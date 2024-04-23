@@ -216,11 +216,6 @@ const pageArticle = async () => {
     artList.value = records;
     total.value = res.total;
     loading.value = false;
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
   } catch (error) {
     console.error(error);
     loading.value = false;
@@ -291,7 +286,7 @@ const tabClick = (index, tab) => {
         font-size: 15px;
         text-align: center;
         color: #909090;
-        min-height: 370px;
+        // min-height: 370px;
         .list-tab {
           list-style: none;
           position: relative;

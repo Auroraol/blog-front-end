@@ -98,11 +98,16 @@ public final class StorageFactory {
 			return null;
 		}
 		local.setPath(addSuffix(path));
+
 		String proxy = local.getProxy();
 		if (StringUtils.isEmpty(proxy)) {
 			log.error("本地存储代理未配置，请检查配置信息");
 		}
 		local.setProxy(addSuffix(proxy));
+
+		String virtualPath = local.getVirtualPath();
+		local.setVirtualPath(addSuffix(virtualPath));
+
 		return new LocalStorage(local);
 	}
 

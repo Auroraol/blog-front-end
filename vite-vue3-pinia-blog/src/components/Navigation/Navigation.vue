@@ -49,7 +49,9 @@
               style="width: 100px; height: 50px"
               src="https://poile-img.nos-eastchina1.126.net/logo.png"
             />
-            <el-text class="logo-title" style="font-size: 1.4rem;" type="primary">悦读博客</el-text>
+            <el-text class="logo-title" style="font-size: 1.4rem" type="primary"
+              >悦读博客</el-text
+            >
 
             <el-menu-item index="/index" style="margin-left: 110px">
               <el-icon><House /></el-icon> 首页
@@ -58,12 +60,12 @@
               <el-icon><document /></el-icon>
               分类
             </el-menu-item>
-            <el-menu-item index="/article">
+            <el-menu-item index="/write">
               <el-icon><Reading /></el-icon>
               文章
             </el-menu-item>
             <el-menu-item index="/archives">
-            <el-icon><Files /></el-icon>
+              <el-icon><Files /></el-icon>
               归档
             </el-menu-item>
 
@@ -97,7 +99,7 @@
               class="search"
               suffix-icon="el-icon-search"
             ></el-autocomplete>
-            <el-menu-item index="info">
+            <el-menu-item index="info" style="cursor: default">
               <el-button-group v-if="!userInfo">
                 <el-button @click="toLogin">登录</el-button>
                 <el-button @click="toRegister" color="#79BBDC">注册</el-button>
@@ -113,21 +115,43 @@
 </template>
 
 <script setup lang="ts">
-// import { SortUp } from "@element-plus/icons-vue/dist/types";
 import { useRouter } from "vue-router";
-// import { useStore } from "/@/store";
-// import { getAccessToken, getRefreshToken, getUserAccountInfo, removeUserAccountInfo  } from '/@/utils/network/auth.js'
 import { mapState } from "pinia";
 import { useGetters } from "/@/store/getters";
+import { useUserStore } from "/@/store/index";
+import { getAccessToken } from "/@/utils/auth";
 
+const useUserPinia = useUserStore();
+const useGettersPinia = useGetters();
 const router = useRouter();
-const activeIndex = ref("1");
+const activeIndex = ref("");
+
+// 计算属性
+const userInfo = computed(() => {
+  const info = useGettersPinia.userInfo;
+  console.error(info);
+
+  return Object.keys(info).length === 0 ? null : info;
+});
+
+onMounted(async () => {
+  // //判断是否是登录状态
+  if (getAccessToken()) {
+    try {
+      await useUserPinia.getUserInfo();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+});
 
 const handleSelect = (index: string) => {
   activeIndex.value = index;
   if (index === "info") {
     // 某个页面
   } else {
+    console.error(userInfo.value);
+
     router.push({ path: `${index}` });
   }
 };
@@ -159,36 +183,9 @@ const listenScreen = () => {
   });
 };
 
-// 在页面加载时从本地存储中获取用户信息并设置到 Pinia 中
-const initializeUserInfo = () => {
-  // const storedUserInfo = localStorage.getItem("userAccount");
-  // const storedUserInfo = getUserAccountInfo();
-  // if (storedUserInfo) {
-  //   pinia.setUserInfo(storedUserInfo);
-  // }
-};
-
 // 监听
 watchEffect(async () => {
   listenScreen();
-  // 登录了!修改状态
-  // if (pinia.getUserInfo()) {
-  //   ifLog.value = false;
-  // } else {
-  //   ifLog.value = true;
-  // }
-});
-
-onMounted(() => {
-  // 页面加载时初始化用户信息
-  initializeUserInfo();
-});
-
-// 创建计算属性
-const userInfo = computed<string>(() => {
-  // 通过mapState获取userInfo
-  return useGetters().userInfo;
-  //  ...mapState(useGetters, ['userInfo', 'loginUsername']);
 });
 </script>
 <style scoped lang="less">

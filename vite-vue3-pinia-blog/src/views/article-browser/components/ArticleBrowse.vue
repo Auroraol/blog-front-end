@@ -20,7 +20,10 @@
             <!-- 用户 -->
             <div class="author-info-block">
               <div class="avatar-wrapper">
-                <el-avatar size="large" :src="article.user.avatar"></el-avatar>
+                <el-avatar
+                  size="large"
+                  :src="article.user.avatar || defaultAvatar"
+                ></el-avatar>
               </div>
               <div class="author-info-box">
                 <p class="nick-name">{{ article.user.nickname }}</p>
@@ -71,7 +74,7 @@
           </div>
         </div>
         <!-- 评论组件 -->
-        <comment-list :articleId="id"/>
+        <comment-list :articleId="id" />
       </div>
     </el-col>
 
@@ -80,7 +83,7 @@
       <el-affix offset="60">
         <!-- 相关阅读 -->
         <div v-if="device === 'desktop' && !loading" class="related-articles">
-          <interrelated-list :article-id="id" :authorId="authorId"/>
+          <interrelated-list :article-id="id" :authorId="authorId" />
         </div>
         <!--文章目录-->
         <div class="catalog">
@@ -101,56 +104,46 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute, onBeforeRouteUpdate } from "vue-router";
-// import { initAudio } from '@/assets/audio/index.js'
-// import '@/assets/audio/index.css'
-// import '@/styles/heilingt.css'
-// import { mapGetters } from 'vuex'
-// import { formatDate } from '@/utils/index.js'
-// import AppHeader from '@/components/Header/index'
-import { viewArtilce } from "/@/api/article/article";
+import { viewArtilce, incrementView } from "/@/api/article/article";
 import CopyRight from "./CopyRight.vue";
 import ArtTags from "./ArtTags.vue";
 import BrowserSidePanel from "./BrowserSidePanel.vue";
-import InterrelatedList from "./InterrelatedList.vue";
-import CommentList from "./CommentList.vue";
+import InterrelatedList from "/@/views/article-browser/components/InterrelatedList.vue";
+import CommentList from "/@/views/article-browser/components/CommentList.vue";
 import { MdPreview, MdCatalog } from "md-editor-v3";
 // preview.css相比style.css少了编辑器那部分样式
 import "md-editor-v3/lib/preview.css";
 import gsap from "gsap";
 import { formatDate } from "/@/utils/format/format-time";
+import { useSettingsStore } from "/@/store/index";
+
+//
+const useSettingsStorePinia = useSettingsStore();
+const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
 
 //md-catalog目录的监听设置
 const scrollElement = document.documentElement;
 
-
-const article = ref("");
+const article = ref({});
 const loading = ref(true);
 const id = ref(0);
 const url = ref("");
 const device = ref("desktop");
 
-
 const router = useRouter();
 
-// 监听路由变化，处理滚动位置
-router.afterEach(() => {
-  // 将滚动位置重置为页面顶部
-  window.scrollTo(0, 0);
-});
-
 // 初始化
-onMounted(async() => {
-    try {
-  containerGsap();
-  containerGsap1();
-  //   id.value = route.params?.id
-  //在Vue Router中，无论路由参数在URL中的形式是什么，都会以字符串的形式传递到路由组件中
-  id.value = Number(router.currentRoute.value.params.id); // 当前路由的 id 参数
-  initArticle(); //加载文章
-  url.value = window.location.href;
-
-   } catch (error) {
-    console.error('Error fetching data:', error);
+onMounted(async () => {
+  try {
+    containerGsap();
+    containerGsap1();
+    //   id.value = route.params?.id
+    //在Vue Router中，无论路由参数在URL中的形式是什么，都会以字符串的形式传递到路由组件中
+    id.value = Number(router.currentRoute.value.params.id); // 当前路由的 id 参数
+    initArticle(); //加载文章
+    url.value = window.location.href;
+  } catch (error) {
+    console.error("Error fetching data:", error);
   }
 });
 
@@ -193,38 +186,18 @@ const containerGsap1 = () => {
   });
 };
 
-
-// 
-
+//
 const catalogList = ref([]);
 const getCatalog = (list) => {
   console.log(list);
   catalogList.value = list;
 };
-// 路由变化，用于当前页进当前页
-// beforeRouteUpdate(to, from, next) {
-//     next();
-// },
-
-// onBeforeRouteUpdate((to, from, next) => {
-//   id.value = to.params?.id
-//   loading.value = true
-//   if (device.value === 'desktop') {
-//     spanelRef.value.changeUrl(url.value)
-//     spanelRef.value.changeId(id.value)
-//     spanelRef.value.isLiked()
-//     spanelRef.value.isCollected()
-//   }
-//   url.value = 'http://www.poile.cn/article/' + id.value
-//   initArticle()
-//   next()
-// })
 
 // 加载文章数据
 const initArticle = async () => {
   try {
     const data = await viewArtilce(id.value);
-    article.value = data;    
+    article.value = data;
     loading.value = false;
     // 初始化音频
     //   import('@/assets/audio/index.js').then(({ initAudio }) => {
@@ -242,20 +215,15 @@ const formatDateStr = (str: string) => {
   return formatDate(new Date(str), "YYYY年mm月dd日");
 };
 
-const incrementViewCount = () => {
-  //   incrementView(id.value).then(res => {
-  //     if (res.data) {
-  //       article.value.viewCount++
-  //     }
-  //   })
-};
-
-const likeCountChanges = (val: number) => {
-  //   article.value.likeCount += val
-};
-
-const collectCountChanges = (val: number) => {
-  //   article.value.collectCount += val
+const incrementViewCount = async () => {
+  try {
+    const res = await incrementView(id.value);
+    if (res) {
+      article.value.viewCount++;
+    }
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const spanelRef = ref(null);
