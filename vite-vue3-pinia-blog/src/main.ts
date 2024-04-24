@@ -9,13 +9,13 @@ import "./assets/styles/common.css";
 import 'virtual:svg-icons-register'; // 使用svg 需要引入svg-icons-register 配置
 
 
-
 //引入 Pinia (必须)
 import { createPinia } from 'pinia';
 const state = createPinia()
 
 //导入router配置文件
 import route from "/@/route/router";
+import '/@/permission' // 权限控制
 
 // 引入element-icon集合
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
@@ -25,6 +25,7 @@ import Loading from "./plugins/Loading/index";
 
 // 自定义回到顶部组件
 import BackTop from "./plugins/BackTop/index";
+
 
 const app = createApp(App);
 

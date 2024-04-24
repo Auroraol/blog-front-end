@@ -98,6 +98,8 @@ const logout = async () => {
     sessionStorage.setItem("articleDraft", ""); // 清空草稿
     router.go(0);
   } catch (error) {
+    console.error(error);
+
     ElMessage.error("退出失败");
   }
 };

@@ -10,7 +10,7 @@ import NoFond from "./no-fond";
 import Layout from '/@/layout/index.vue'
 //引入main.ts
 import app from "../main";
-import { useUserStore } from '/@/store/index'
+
 
 /**
  *
@@ -33,7 +33,7 @@ import { useUserStore } from '/@/store/index'
 /**
  * 常量路由，所有用户可见
  */
-const routes = [
+export const constantRoutes = [
   // 重定向
   {
     path: "/",
@@ -242,7 +242,7 @@ const routes = [
   // 后台-公用
   {
     path: '/user',
-    // component: Layout,
+    component: Layout,
     redirect: '/user/info',
     children: [{
       path: 'info',
@@ -255,20 +255,25 @@ const routes = [
     }]
   },
 
-  // 路由分模块
+  // 路由分模块 404
   NoFond,
 ];
 
 /**
  * 后台-根据用户角色动态加载路由 
  */
+export const asyncRoutes   = [
+
+]
+
+
 
 
 // 导出路由
 const router = createRouter({
   history: createWebHistory(), //开启history模式
   // history: createWebHashHistory(), //开启hash模式
-  routes,
+  routes: constantRoutes,
   // 路由滚动位置 解决vue页面之间跳转，页面不是在顶部的问题
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -279,35 +284,7 @@ const router = createRouter({
   },
 });
 
-
-// 在路由元信息配置守卫 requiredPath为true, 适合守卫多个页面 vue3next() 变成return true
-router.beforeEach((to, from, next) => {
-  // 进入写文页面，判断是否有权限
-  if (to.path === '/write') {
-    const useUserStorePinia = useUserStore()
-      if (Object.keys(useUserStorePinia.userInfo).length === 0) {
-          alert('还没有登录，去登录吧')
-          router.push('/login-register/login')
-      }
-  }
-
-  window.document.title = to.meta.title as string
-  next()
-
-  // if (to.meta.loading) {
-  //   app.config.globalProperties.$loading.showLoading();
-  //   next();
-  // } else {
-  //   next();
-  // }
-
-});
-
-// router.afterEach((to, from) => {
-//   // if (to.meta.loading) {
-//   //   app.config.globalProperties.$loading.hideLoading();
-//   // }
-// });
+// router.beforeEach((to, from, next) 和 router.afterEach((to, from) 写在permission.ts中
 
 
 /**
@@ -320,9 +297,10 @@ export function resetRouter() {
   });
 
   // 添加新的路由
-  routes.forEach((route) => {
+  constantRoutes.forEach((route) => {
     router.addRoute(route);
   });
 }
+
 
 export default router;

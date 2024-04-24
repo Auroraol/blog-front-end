@@ -1,25 +1,43 @@
+// <template>
+  //
+  <div :class="classObj" class="app-wrapper">
+    // <div // v-if="device === 'mobile' && sidebar.opened" // class="drawer-bg"
+    // @click="handleClickOutside" // /> //
+    <!-- 侧边栏 -->
+    //
+    <!-- <sidebar class="sidebar-container" /> -->
+    //
+    <div class="main-container">
+      //
+      <div :class="{ 'fixed-header': fixedHeader }">
+        //
+        <!-- 导航栏 -->
+        // <navbar /> //
+      </div>
+      // <app-main /> //
+    </div>
+    //
+  </div>
+  //
+</template>
+
 <template>
   <div class="common-layout">
     <el-container>
-      <!-- 侧边栏 -->
-      <el-aside width="200px">
-        <sidebar class="sidebar-container" />
-      </el-aside>
+      <el-aside width="200px">Aside</el-aside>
       <el-container>
-        <el-header>
-          <!-- 导航栏 -->
-          <navbar
-        /></el-header>
-        <el-main><app-main /></el-main>
+        <el-header>Header</el-header>
+        <el-main>Main</el-main>
       </el-container>
     </el-container>
   </div>
 </template>
 
 
+
 <script setup lang="ts">
-import { Navbar, Sidebar, AppMain } from "./components/index";
-// import { AppMain, Navbar } from "./components/index";
+// import { Navbar, Sidebar, AppMain } from "./components/index";
+import { AppMain } from "./components/index";
 
 // import ResizeMixin from "./mixin/ResizeHandler";
 import { useAppStore, useSettingsStore } from "/@/store/index";
@@ -44,6 +62,7 @@ function handleClickOutside() {
   useAppStorePinia.closeSidebar(false);
 }
 </script>
+
 <style lang="less" scoped>
 // @import "/@/assets/styles/mixin.scss";
 // @import "/@/assets/styles/variables.css";

@@ -120,17 +120,16 @@ export function validateEmail(params) {
   }, true)
 }
 
-// /**
-//  * code绑定邮箱
-//  * @param {Object} params
-//  */
-// export function bindEmail(params) {
-//   return request({
-//     url: '/user/email/bind',
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * code绑定邮箱
+ * @param {Object} params
+ */
+export function bindEmail(params) {
+  return request(import.meta.env.VITE_APP_BASE_API +'/user/email/bind', {
+    method: 'post',
+    params: params
+  })
+}
 
 // /**
 //  * 验证原手机号

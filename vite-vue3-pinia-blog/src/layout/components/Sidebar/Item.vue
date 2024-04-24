@@ -1,29 +1,26 @@
-<script>
-export default {
-  name: 'MenuItem',
-  functional: true,
-  props: {
-    icon: {
-      type: String,
-      default: ''
-    },
-    title: {
-      type: String,
-      default: ''
-    }
+<script setup lang="ts">
+import { defineProps } from "vue";
+
+const props = defineProps({
+  icon: {
+    type: String,
+    default: "",
   },
-  render(h, context) {
-    const { icon, title } = context.props
-    const vnodes = []
+  title: {
+    type: String,
+    default: "",
+  },
+});
 
-    if (icon) {
-      vnodes.push(<svg-icon icon-class={icon}/>)
-    }
+const vnodes = [];
 
-    if (title) {
-      vnodes.push(<span slot='title'>{(title)}</span>)
-    }
-    return vnodes
-  }
-}
+// if (props.icon) {
+//   vnodes.push(<svg-icon icon-class={props.icon} />);
+// }
+
+// if (props.title) {
+//   vnodes.push(<span slot="title">{props.title}</span>);
+// }
+
+return vnodes;
 </script>

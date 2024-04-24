@@ -1,37 +1,35 @@
 <template>
-  <div class="sidebar-logo-container" :class="{'collapse':collapse}">
+  <div class="sidebar-logo-container" :class="{ collapse: collapse }">
     <transition name="sidebarLogoFade">
-      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }} </h1>
+      <router-link
+        v-if="collapse"
+        key="collapse"
+        class="sidebar-logo-link"
+        to="/"
+      >
+        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
+        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
     </transition>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'SidebarLogo',
-  props: {
-    collapse: {
-      type: Boolean,
-      required: true
-    }
-  },
-  data() {
-    return {
-      title: '个人阅读分享',
-      logo: 'https://poile-img.nos-eastchina1.126.net/white-logo.png'
-    }
-  }
-}
+<script setup>
+const name = "SidebarLogo";
+import { ref } from "vue";
+
+const collapse = ref(true);
+
+const title = "悦读博客";
+const logo = "https://poile-img.nos-eastchina1.126.net/white-logo.png";
 </script>
 
-<style lang="scss" scoped>
+
+<style lang="less" scoped>
 .sidebarLogoFade-enter-active {
   transition: opacity 1.5s;
 }
