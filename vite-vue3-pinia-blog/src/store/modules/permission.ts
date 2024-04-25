@@ -19,25 +19,26 @@ function hasPermission(roles, route) {
  * @param routes asyncRoutes
  * @param roles
  */
-function filterAsyncRoutes(routes, roles) {
-  const res = [];
-
-  routes.forEach(route => {
-    const tmp = { ...route };
-    if (hasPermission(roles, tmp)) {
-      if (tmp.children) {
-        tmp.children = filterAsyncRoutes(tmp.children, roles);
+export function filterAsyncRoutes(routes, roles) {
+    const res = []
+  
+    routes.forEach(route => {
+      const tmp = { ...route }
+      if (hasPermission(roles, tmp)) {
+        if (tmp.children) {
+          tmp.children = filterAsyncRoutes(tmp.children, roles)
+        }
+        res.push(tmp)
       }
-      res.push(tmp);
-    }
-  });
+    })
+  
+    return res
+  }
 
-  return res;
-}
 
 export const usePermissionStore = defineStore('permission',{
   state: () => ({
-    routes: [],     //总共的路由
+    routes: [],     //路由, 管理员路由 = 公用路由+管理员路由
     addRoutes: []    //动态添加的路由
   }),
   actions: {
@@ -58,7 +59,7 @@ export const usePermissionStore = defineStore('permission',{
     },
     SET_ROUTES(routes) {
       this.addRoutes = routes;
-      this.routes = [...(constantRoutes as any[]), ...(routes as any[])];
+      this.routes = constantRoutes.concat(routes);
 
     }
   }

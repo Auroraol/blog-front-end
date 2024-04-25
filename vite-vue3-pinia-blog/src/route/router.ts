@@ -38,11 +38,13 @@ export const constantRoutes = [
   {
     path: "/",
     redirect: "/index",
+    hidden: true
   },
   {
     path: "/index",
     name: "index",
     component: () => import("/@/views/index/index.vue"),
+    hidden: true,
     meta: {
       title: "首页",
     },
@@ -54,6 +56,7 @@ export const constantRoutes = [
     meta: {
       title: "文章列表",
     },
+    hidden: true
   },
   {
     path: '/category',
@@ -73,12 +76,14 @@ export const constantRoutes = [
     component: () => import('/@/views/write/index.vue'),
     meta: {
         title: '写作'
-    }
+    },
+    hidden: true
   },
   {
     path: "/login-register",
     name: "login-register",
     component: () => import("/@/views/login-register/index.vue"),
+    hidden: true,
     meta: {
       title: "登录注册",
     },
@@ -88,6 +93,7 @@ export const constantRoutes = [
         path: "login",
         name: "login",
         component: () => import("/@/views/login-register/components/Login.vue"),
+        hidden: true,
         meta: {
           title: "登录",
         },
@@ -97,6 +103,7 @@ export const constantRoutes = [
         name: "register",
         component: () =>
           import("/@/views/login-register/components/Register.vue"),
+          hidden: true,
         meta: {
           title: "注册",
         },
@@ -138,6 +145,7 @@ export const constantRoutes = [
   {
     path: "/about",
     name: "about",
+    hidden: true,
     component: () => import("/@/views/about/index.vue"),
     meta: {
       title: "关于",
@@ -208,37 +216,37 @@ export const constantRoutes = [
       title: "浏览文章",
     }
   },
-  {
-    path: "/personalcenter",
-    name: "personalcenter",
-    component: () => import("/@/views/personal-center/index.vue"),
-    meta: {
-      title: "个人中心",
-    },
-    children: [
-      {
-        path: "write",
-        name: "write",
-        // component: () => import("/@/views/write/index.vue"),
-        meta: {
-          title: "写作",
-        },
-      },
-      //TODO
-      // {
-      //   path: 'a',
-      //   component: () => import('@/components/me/a.vue'),
-      // },
-      // {
-      //   path: 'b',
-      //   component: () => import('@/components/me/b.vue'),
-      // },
-      // {
-      //   path: 'c',
-      //   component: () => import('@/components/me/c.vue'),
-      // },
-    ],
-  },
+  // {
+  //   path: "/personalcenter",
+  //   name: "personalcenter",
+  //   component: () => import("/@/views/personal-center/index.vue"),
+  //   meta: {
+  //     title: "个人中心",
+  //   },
+  //   children: [
+  //     {
+  //       path: "write",
+  //       name: "write",
+  //       // component: () => import("/@/views/write/index.vue"),
+  //       meta: {
+  //         title: "写作",
+  //       },
+  //     },
+  //     //TODO
+  //     // {
+  //     //   path: 'a',
+  //     //   component: () => import('@/components/me/a.vue'),
+  //     // },
+  //     // {
+  //     //   path: 'b',
+  //     //   component: () => import('@/components/me/b.vue'),
+  //     // },
+  //     // {
+  //     //   path: 'c',
+  //     //   component: () => import('@/components/me/c.vue'),
+  //     // },
+  //   ],
+  // },
   // 后台-公用
   {
     path: '/user',
@@ -263,7 +271,20 @@ export const constantRoutes = [
  * 后台-根据用户角色动态加载路由 
  */
 export const asyncRoutes   = [
-
+  {
+    path: '/user-manage',
+    component: Layout,
+    children: [{
+      path: 'index',
+      name: 'UserManage',
+      // component: () => import('@/views/user-manage/index'),
+      meta: {
+        title: '用户管理',
+        icon: 'user-manage',
+        roles: ['admin']
+      }
+    }]
+  },
 ]
 
 

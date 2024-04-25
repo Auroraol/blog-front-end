@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
+// import SvgIcon from "/@/components/SvgIcon/index.vue";
 
 const props = defineProps({
   icon: {
@@ -14,13 +15,13 @@ const props = defineProps({
 
 const vnodes = [];
 
-// if (props.icon) {
-//   vnodes.push(<svg-icon icon-class={props.icon} />);
-// }
+if (props.icon) {
+  vnodes.push(<SvgIcon name={props.icon} />);
+}
 
-// if (props.title) {
-//   vnodes.push(<span slot="title">{props.title}</span>);
-// }
+if (props.title) {
+  vnodes.push(<span slot="title">{props.title}</span>);
+}
 
 return vnodes;
 </script>

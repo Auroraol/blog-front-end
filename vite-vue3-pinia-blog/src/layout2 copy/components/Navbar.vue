@@ -2,8 +2,8 @@
   <div class="navbar">
     <!-- 菜单收缩展开按钮 -->
     <hamburger
-      class="hamburger-container"
       :is-active="sidebar.opened"
+      class="hamburger-container"
       @toggleClick="toggleSideBar"
     />
     <!-- 后台管理面包屑 -->
@@ -49,9 +49,8 @@ import { useAppStore, useUserStore, useSettingsStore } from "/@/store/index";
 const useAppStorePinia = useAppStore();
 const sidebar = computed(() => useAppStorePinia.sidebar);
 
-// 切换SideBar
 const toggleSideBar = () => {
-  useAppStorePinia.toggleSidebar();
+  // $store.dispatch("app/toggleSideBar");
 };
 
 // const saveSubmit = () => {

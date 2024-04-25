@@ -1,24 +1,15 @@
 <template>
-  <div :class="classObj">
+  <div class="common-layout">
     <el-container>
-      <div
-        v-if="device === 'mobile' && sidebar.opened"
-        class="drawer-bg"
-        @click="handleClickOutside"
-      />
-      <!-- 左侧侧边栏 -->
-      <el-aside width="200px"
-        ><layout-menu class="sidebar-container" />
+      <!-- 侧边栏 -->
+      <el-aside width="200px">
+        <sidebar class="sidebar-container" />
       </el-aside>
       <el-container>
         <el-header>
-          <div :class="{ 'fixed-header': fixedHeader }">
-            <!-- 导航栏 -->
-            <navbar></navbar>
-          </div>
-          <!-- <layout-crumbs></layout-crumbs> -->
-          <!-- <layout-tag></layout-tag> -->
-        </el-header>
+          <!-- 导航栏 -->
+          <navbar
+        /></el-header>
         <el-main><app-main /></el-main>
       </el-container>
     </el-container>
@@ -27,7 +18,7 @@
 
 
 <script setup lang="ts">
-import { layoutMenu, AppMain, Navbar } from "./components/index";
+import { Navbar, Sidebar, AppMain } from "./components/index";
 // import { AppMain, Navbar } from "./components/index";
 
 // import ResizeMixin from "./mixin/ResizeHandler";

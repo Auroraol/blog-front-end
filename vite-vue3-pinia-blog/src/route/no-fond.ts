@@ -5,6 +5,7 @@ export default {
   path: "/:pathMatch(.*)",
   // component: () => import("/@/pages/error/404.vue"),
   component: () => import("/@/views/error/404.vue"),
+  hidden: true,
   meta: {
     loading: true,
     title: "404",
