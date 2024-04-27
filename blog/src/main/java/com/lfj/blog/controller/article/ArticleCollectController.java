@@ -3,6 +3,7 @@ package com.lfj.blog.controller.article;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lfj.blog.common.response.ApiResponseResult;
+import com.lfj.blog.service.ArticleRecommendService;
 import com.lfj.blog.service.IArticleCollectService;
 import com.lfj.blog.service.vo.ArticleVo;
 import io.swagger.annotations.Api;
@@ -27,14 +28,14 @@ public class ArticleCollectController {
 	@Autowired
 	private IArticleCollectService articleCollectService;
 
-//	@Autowired
-//	private ArticleRecommendService articleRecommendService;
+	@Autowired
+	private ArticleRecommendService articleRecommendService;
 
 	@PostMapping("/add")
 	@ApiOperation(value = "新增收藏", notes = "需要accessToken")
 	public ApiResponseResult add(@ApiParam(value = "文章id") @NotNull(message = "文章id不能为空") @RequestParam(value = "articleId") Integer articleId) {
 		articleCollectService.add(articleId);
-//		articleRecommendService.asyncRefresh(articleId);
+		articleRecommendService.asyncRefresh(articleId);
 		return ApiResponseResult.success();
 	}
 
@@ -42,7 +43,7 @@ public class ArticleCollectController {
 	@ApiOperation(value = "删除收藏", notes = "需要accessToken")
 	public ApiResponseResult delete(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam("articleId") Integer articleId) {
 		articleCollectService.delete(articleId);
-//		articleRecommendService.asyncRefresh(articleId);
+		articleRecommendService.asyncRefresh(articleId);
 		return ApiResponseResult.success();
 	}
 

@@ -1,5 +1,6 @@
 package com.lfj.blog.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lfj.blog.common.security.details.vo.UserVo;
 import com.lfj.blog.controller.model.request.UpdateUserRequest;
@@ -110,25 +111,8 @@ public interface IUserService extends IService<User> {
 //	 */
 //	void rebindMobile(long mobile, String code);
 //
-//	/**
-//	 * 分页查询用户
-//	 *
-//	 * @param current
-//	 * @param size
-//	 * @param username
-//	 * @param nickname
-//	 * @return
-//	 */
-//	IPage<User> page(long current, long size, String username, String nickname);
-//
-//	/**
-//	 * 修改用户状态
-//	 *
-//	 * @param userId
-//	 * @param status
-//	 */
-//	void status(Integer userId, Integer status);
-//
+
+
 //	/**
 //	 * 绑定手机号 - 用于原手机号为空的情况
 //	 *
@@ -143,4 +127,26 @@ public interface IUserService extends IService<User> {
 //	 * @param username
 //	 */
 //	void bindUsername(String username);
+
+
+	/**
+	 * 分页查询用户
+	 *
+	 * @param current
+	 * @param size
+	 * @param username
+	 * @param nickname
+	 * @return
+	 */
+	IPage<User> page(long current, long size, String username, String nickname);
+
+	/**
+	 * 修改用户状态
+	 *
+	 * @param userId
+	 * @param status
+	 */
+	void status(Integer userId, Integer status);
+//
+
 }

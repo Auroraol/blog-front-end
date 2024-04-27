@@ -80,9 +80,9 @@
                   "
                 >
                   <img
-                    style="width:120px;height:120px;margin: 5px;"
+                    style="width: 120px; height: 120px; margin: 5px"
                     :src="
-                    'https://my.tv.sohu.com/user/a/wvideo/getQRCode.do?text='+
+                      'https://my.tv.sohu.com/user/a/wvideo/getQRCode.do?text=' +
                       codedUrl
                     "
                   />
@@ -119,7 +119,7 @@ const props = defineProps({
   title: {
     type: String,
     default: "",
-  }
+  },
 });
 
 import useClipboard from "vue-clipboard3"; //  copy 功能插件
@@ -151,7 +151,7 @@ const token = computed(() => useGettersPinia.token);
 const liked = computed(() => token.value && ifPraise.value);
 const collected = computed(() => token.value && ifCollection.value);
 const codedUrl = computed(() => encodeURIComponent(url.value));
-const codedTitle = computed(() => encodeURIComponent(props.title ));
+const codedTitle = computed(() => encodeURIComponent(props.title));
 
 // 监视
 watch(token, (newValue, oldValue) => {
@@ -207,13 +207,16 @@ const copy = async (msg) => {
   }
 };
 
-const changeUrl = (newUrl) => {
-  url.value = newUrl;
-};
-
-const changeId = (newId) => {
-  id.value = newId;
-};
+watch(
+  () => Number(router.currentRoute.value.params.id),
+  (newValue, oldValue) => {
+    // 当路由参数发生变化时执行逻辑
+    id.value = newValue;
+    url.value = "http://localhost:8888/article/" + id.value;
+    isLiked();
+    isCollected();
+  }
+);
 
 //点赞
 const praiseClick = async () => {

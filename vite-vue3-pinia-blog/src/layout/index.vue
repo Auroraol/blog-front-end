@@ -1,36 +1,29 @@
 <template>
-  <div :class="classObj">
+  <el-container class="app-wrapper" :class="classObj">
+    <div
+      v-if="device === 'mobile' && sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
+    />
+    <!-- 左侧侧边栏 -->
+    <el-aside width="200px"
+      ><layout-menu class="sidebar-container" />
+    </el-aside>
     <el-container>
-      <div
-        v-if="device === 'mobile' && sidebar.opened"
-        class="drawer-bg"
-        @click="handleClickOutside"
-      />
-      <!-- 左侧侧边栏 -->
-      <el-aside width="200px"
-        ><layout-menu class="sidebar-container" />
-      </el-aside>
-      <el-container>
-        <el-header>
-          <div :class="{ 'fixed-header': fixedHeader }">
-            <!-- 导航栏 -->
-            <navbar></navbar>
-          </div>
-          <!-- <layout-crumbs></layout-crumbs> -->
-          <!-- <layout-tag></layout-tag> -->
-        </el-header>
-        <el-main><app-main /></el-main>
-      </el-container>
+      <el-header>
+        <div :class="{ 'fixed-header': fixedHeader }">
+          <!-- 导航栏 -->
+          <navbar></navbar>
+        </div>
+      </el-header>
+      <el-main><app-main /></el-main>
     </el-container>
-  </div>
+  </el-container>
 </template>
 
 
 <script setup lang="ts">
 import { layoutMenu, AppMain, Navbar } from "./components/index";
-// import { AppMain, Navbar } from "./components/index";
-
-// import ResizeMixin from "./mixin/ResizeHandler";
 import { useAppStore, useSettingsStore } from "/@/store/index";
 
 const useAppStorePinia = useAppStore();
@@ -75,22 +68,5 @@ function handleClickOutside() {
   height: 100%;
   position: absolute;
   z-index: 999;
-}
-
-// .fixed-header {
-//   position: fixed;
-//   top: 0;
-//   right: 0;
-//   z-index: 9;
-//   width: calc(100% - #{$sideBarWidth});
-//   transition: width 0.28s;
-// }
-
-.hideSidebar .fixed-header {
-  width: calc(100% - 54px);
-}
-
-.mobile .fixed-header {
-  width: 100%;
 }
 </style>

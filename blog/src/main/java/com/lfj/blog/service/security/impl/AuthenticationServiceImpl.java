@@ -8,11 +8,10 @@ import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.entity.Client;
 import com.lfj.blog.service.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 /**
@@ -49,6 +48,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		// 对认证信息进行认证, AuthenticationManager的authenticate()方法来进行用户认证
 		try {
 			Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+			// 可以不判断
+			UserDetails userDetails = (UserDetails) authenticate.getPrincipal();
+			System.out.println(userDetails);
+			if (!userDetails.isAccountNonExpired()) {
+				throw new AccountExpiredException("账户已过期");
+			} else if (!userDetails.isAccountNonLocked()) {
+				throw new LockedException("账户已被锁定");
+			} else if (!userDetails.isCredentialsNonExpired()) {
+				throw new CredentialsExpiredException("密码已过期");
+			} else if (!userDetails.isEnabled()) {
+				throw new DisabledException("用户已弃用");
+			}
 			// 将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
 			return redisTokenStore.storeToken(authenticate, client);
 		} catch (AuthenticationException e) {

@@ -73,13 +73,6 @@
               <el-icon><ChatLineRound /></el-icon>
               留言
             </el-menu-item>
-
-            <!-- <el-menu-item>
-              <router-link :to="{ path: '/chat', query: { name: '默认房间' } }">
-               
-                聊天室</router-link
-              >
-            </el-menu-item> -->
             <el-menu-item index="/friend-link">
               <el-icon><Link /></el-icon>
               友链

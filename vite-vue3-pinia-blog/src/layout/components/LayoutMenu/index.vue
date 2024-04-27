@@ -4,14 +4,14 @@
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         class="menu"
-        :default-active="activeMenu"
+        :default-active="activeIndex"
         :collapse="isCollapse"
-        :unique-opened="false"
+        @select="handleSelect"
         :collapse-transition="false"
       >
         <!-- 侧边栏项目 -->
         <sidebar-item
-          v-for="route in permission_routes"
+          v-for="route in filteredRoutes"
           :key="route.path"
           :item="route"
           :base-path="route.path"
@@ -36,9 +36,27 @@ const usePermissionStorePinia = usePermissionStore();
 
 const sidebar = computed(() => useAppStorePinia.sidebar);
 const permission_routes = computed(() => usePermissionStorePinia.routes);
+// 过滤隐藏的路由
+const filteredRoutes = computed(() => {
+  return permission_routes.value.filter((route) => !route.hidden);
+});
+
+// 导航栏收缩
+const isCollapse = computed(() => {
+  return !sidebar.value.opened;
+});
+
+//
+const activeIndex = ref("");
+const router = useRouter();
+
+const handleSelect = (index: string) => {
+  activeIndex.value = index; // 活动菜单
+  router.push({ path: `${index}` });
+};
 
 const routeMenu = useRoute();
-// 活动菜单
+// 活动菜单  // 为URL
 const activeMenu = () => {
   const { meta, path } = routeMenu;
   if (meta.activeMenu) {
@@ -50,11 +68,6 @@ const activeMenu = () => {
 // 显示logo
 const showLogo = () => {
   return useSettingsStorePinia.sidebarLogo;
-};
-
-// 导航栏收缩
-const isCollapse = () => {
-  return !sidebar.value.opened;
 };
 </script>
 

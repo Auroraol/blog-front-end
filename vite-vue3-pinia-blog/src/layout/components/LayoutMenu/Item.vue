@@ -1,11 +1,13 @@
 <template>
-  <div class="app">{ renderItems() }</div>
+  <svg-icon v-if="icon" :iconClass="icon" />
+  <span v-if="title">{{ title }}</span>
 </template>
 
-<script setup lang="ts">
-import { defineProps, h, VNode } from "vue";
-// import SvgIcon from "/@/components/SvgIcon/index.vue";
-const vnodes: VNode[] = [];
+<script setup>
+import { ref, watchEffect } from "vue";
+
+const icon = ref("");
+const title = ref("");
 
 const props = defineProps({
   icon: {
@@ -18,15 +20,17 @@ const props = defineProps({
   },
 });
 
-function renderItems() {
+// 监听传入的属性变化
+watchEffect(() => {
   if (props.icon) {
-    vnodes.push(h("svg-icon", { props: { iconClass: props.icon } }));
+    icon.value = props.icon;
   }
-
-  if (props.title) {
-    vnodes.push(h("span", { slot: "title" }, props.title));
-  }
-
-  return vnodes;
-}
+  title.value = props.title;
+});
 </script>
+
+<style scoped>
+span {
+  margin-left: 16px;
+}
+</style>

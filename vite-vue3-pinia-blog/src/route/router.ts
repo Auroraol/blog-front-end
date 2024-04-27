@@ -7,10 +7,9 @@ import {
 // 导入路由404分模块
 import NoFond from "./no-fond";
 /* Layout */
-import Layout from '/@/layout/index.vue'
+import Layout from "/@/layout/index.vue";
 //引入main.ts
 import app from "../main";
-
 
 /**
  *
@@ -38,7 +37,7 @@ export const constantRoutes = [
   {
     path: "/",
     redirect: "/index",
-    hidden: true
+    hidden: true,
   },
   {
     path: "/index",
@@ -56,11 +55,11 @@ export const constantRoutes = [
     meta: {
       title: "文章列表",
     },
-    hidden: true
+    hidden: true,
   },
   {
-    path: '/category',
-    component: () => import('/@/views/category/index.vue'),
+    path: "/category",
+    component: () => import("/@/views/category/index.vue"),
     hidden: true,
     meta: {
       title: "分类",
@@ -72,12 +71,12 @@ export const constantRoutes = [
     },
   },
   {
-    path: '/write',
-    component: () => import('/@/views/write/index.vue'),
+    path: "/write",
+    component: () => import("/@/views/write/index.vue"),
     meta: {
-        title: '写作'
+      title: "写作",
     },
-    hidden: true
+    hidden: true,
   },
   {
     path: "/login-register",
@@ -103,7 +102,7 @@ export const constantRoutes = [
         name: "register",
         component: () =>
           import("/@/views/login-register/components/Register.vue"),
-          hidden: true,
+        hidden: true,
         meta: {
           title: "注册",
         },
@@ -152,16 +151,16 @@ export const constantRoutes = [
     },
   },
   {
-    path: '/message',
-    component: () => import('/@/views/message/index.vue'),
+    path: "/message",
+    component: () => import("/@/views/message/index.vue"),
     hidden: true,
     meta: {
       title: "留言",
     },
   },
   {
-    path: '/archives',
-    component: () => import('/@/views/archives/index.vue'),
+    path: "/archives",
+    component: () => import("/@/views/archives/index.vue"),
     hidden: true,
     meta: {
       title: "归档",
@@ -209,12 +208,12 @@ export const constantRoutes = [
     },
   },
   {
-    path: '/article/:id',
-    component: () => import('/@/views/article-browser/index.vue'),
+    path: "/article/:id",
+    component: () => import("/@/views/article-browser/index.vue"),
     hidden: true,
     meta: {
       title: "浏览文章",
-    }
+    },
   },
   // {
   //   path: "/personalcenter",
@@ -249,18 +248,35 @@ export const constantRoutes = [
   // },
   // 后台-公用
   {
-    path: '/user',
+    path: "/user",
     component: Layout,
-    redirect: '/user/info',
-    children: [{
-      path: 'info',
-      name: 'Info',
-      component: () => import('/@/views/user/index.vue'),
-      meta: {
-        title: '基本信息',
-        icon: 'user'
-      }
-    }]
+    redirect: "/user/info",
+    children: [
+      {
+        path: "info",
+        name: "Info",
+        component: () => import("/@/views/user/index.vue"),
+        meta: {
+          title: "基本信息",
+          icon: "user",
+        },
+      },
+    ],
+  },
+  {
+    path: "/collect",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "collect",
+        component: () => import("/@/views/collect-manage/index.vue"),
+        meta: {
+          title: "我的收藏",
+          icon: "collect-manage",
+        },
+      },
+    ],
   },
 
   // 路由分模块 404
@@ -268,27 +284,152 @@ export const constantRoutes = [
 ];
 
 /**
- * 后台-根据用户角色动态加载路由 
+ * 后台-根据用户角色动态加载路由
  */
-export const asyncRoutes   = [
+export const asyncRoutes = [
   {
-    path: '/user-manage',
+    path: "/user-manage",
     component: Layout,
-    children: [{
-      path: 'index',
-      name: 'UserManage',
-      // component: () => import('@/views/user-manage/index'),
-      meta: {
-        title: '用户管理',
-        icon: 'user-manage',
-        roles: ['admin']
-      }
-    }]
+    children: [
+      {
+        path: "index",
+        name: "UserManage",
+        component: () => import('/@/views/user-manage/index.vue'),
+        meta: {
+          title: "用户管理",
+          icon: "user-manage",
+          roles: ["admin"],
+        },
+      },
+    ],
   },
-]
-
-
-
+  {
+    path: "/art-manage",
+    component: Layout,
+    redirect: "noRedirect",
+    meta: {
+      title: "文章管理",
+      icon: "art-manage",
+      roles: ["admin"],
+    },
+    children: [
+      {
+        path: "edit",
+        name: "Edit",
+        // component: () => import('@/views/article-manage/edit'),
+        meta: {
+          title: "编辑",
+          icon: "art-edit",
+        },
+      },
+      {
+        path: "list",
+        name: "List",
+        // component: () => import('@/views/article-manage/list'),
+        meta: {
+          title: "文章",
+          icon: "art-list",
+        },
+      },
+    ],
+  },
+  {
+    path: "/recommend",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "RecommendManage",
+        // component: () => import('@/views/recommend-manage/index'),
+        meta: {
+          title: "推荐管理",
+          icon: "recommend-manage",
+          roles: ["admin"],
+        },
+      },
+    ],
+  },
+  {
+    path: "/tag-manage",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "TagManage",
+        // component: () => import('@/views/tag-manage/index'),
+        meta: {
+          title: "标签管理",
+          icon: "tag-manage",
+          roles: ["admin"],
+        },
+      },
+    ],
+  },
+  {
+    path: "/category-manage",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "CategoryManage",
+        // component: () => import('@/views/category-manage/index'),
+        meta: {
+          title: "分类管理",
+          icon: "category-manage",
+          roles: ["admin"],
+        },
+      },
+    ],
+  },
+  {
+    path: "/friend-link/manage",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "FriendChainManage",
+        // component: () => import('@/views/friend-link-manage/index'),
+        meta: {
+          title: "友链管理",
+          icon: "friend-chain-manage",
+          roles: ["admin"],
+        },
+      },
+    ],
+  },
+  {
+    path: "/client",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "client",
+        // component: () => import('@/views/client-manage/index'),
+        meta: {
+          title: "客户端管理",
+          icon: "client-manage",
+          roles: ["admin"],
+        },
+      },
+    ],
+  },
+  {
+    path: "/file",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "File",
+        // component: () => import('@/views/file-manage/index'),
+        meta: {
+          title: "文件管理",
+          icon: "file-manage",
+          roles: ["admin"],
+        },
+      },
+    ],
+  },
+];
 
 // 导出路由
 const router = createRouter({
@@ -307,7 +448,6 @@ const router = createRouter({
 
 // router.beforeEach((to, from, next) 和 router.afterEach((to, from) 写在permission.ts中
 
-
 /**
  * 重置路由
  */
@@ -322,6 +462,5 @@ export function resetRouter() {
     router.addRoute(route);
   });
 }
-
 
 export default router;

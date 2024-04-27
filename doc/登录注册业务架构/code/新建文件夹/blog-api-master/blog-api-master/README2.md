@@ -1013,7 +1013,7 @@ nickname：昵称关键字，非必传
 
 请求参数：
 userId：用户id，必传
-status：状态，必传，0:正常，1:锁定，2:禁用，3:过期
+status：状态，必传，0:正常，1:锁定，2:禁用，3:过期    (这里使用Spring Security )
 
 需要access_token： 是
 

@@ -1,11 +1,13 @@
 package com.lfj.blog.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.common.validator.annotation.IsImage;
 import com.lfj.blog.common.validator.annotation.IsPhone;
 import com.lfj.blog.controller.model.request.UpdateUserRequest;
 import com.lfj.blog.controller.model.request.UserRegisterRequest;
+import com.lfj.blog.entity.User;
 import com.lfj.blog.service.IUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -132,22 +134,22 @@ public class UserController {
 		userService.bindEmail(code);
 		return ApiResponseResult.success();
 	}
-//
-//	@GetMapping("/page")
-//	@ApiOperation(value = "分页获取用户信息，用于后台管理", notes = "需要accessToken，需要管理员权限")
-//	public ApiResponseResult<IPage<User>> page(@ApiParam("页码") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
-//											   @ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size,
-//											   @ApiParam("用户名") @RequestParam(value = "username", required = false) String username,
-//											   @ApiParam("昵称") @RequestParam(value = "nickname", required = false) String nickname) {
-//		return  ApiResponseResult.success(userService.page(current, size, username, nickname));
-//	}
-//
-//	@PostMapping("/status/update")
-//	@ApiOperation(value = "修改用户状态,用于禁用、锁定用户等操作", notes = "需要accessToken，需要管理员权限")
-//	public ApiResponseResult status(@ApiParam("用户id") @RequestParam("userId") Integer userId,
-//							  @ApiParam("状态,0:正常，1:锁定，2:禁用，3:过期") @RequestParam("status") Integer status) {
-//		userService.status(userId, status);
-//		return  ApiResponseResult.success();
-//	}
+
+	@GetMapping("/page")
+	@ApiOperation(value = "分页获取用户信息，用于后台管理", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult<IPage<User>> page(@ApiParam("页码") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
+											   @ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size,
+											   @ApiParam("用户名") @RequestParam(value = "username", required = false) String username,
+											   @ApiParam("昵称") @RequestParam(value = "nickname", required = false) String nickname) {
+		return ApiResponseResult.success(userService.page(current, size, username, nickname));
+	}
+
+	@PostMapping("/status/update")
+	@ApiOperation(value = "修改用户状态,用于禁用、锁定用户等操作", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult status(@ApiParam("用户id") @RequestParam("userId") Integer userId,
+									@ApiParam("状态,0:正常，1:锁定，2:禁用，3:过期") @RequestParam("status") Integer status) {
+		userService.status(userId, status);
+		return ApiResponseResult.success();
+	}
 
 }

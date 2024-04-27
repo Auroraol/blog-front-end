@@ -1,4 +1,4 @@
-import {request, post} from '/@/utils/network/axios'
+import {request, post, get} from '/@/utils/network/axios'
 import { LoginResponseType, userInfoResponseType} from './data'
 /**
  * 账号登录
@@ -155,26 +155,6 @@ export function rebindMobile(params) {
   // })
 }
 
-// /**
-//  * 分页获取用户
-//  * @param {Object} params
-//  */
-// export function pageUser(params) {
-//   return request.get('/user/page', { params })
-// }
-
-// /**
-//  * 修改用户状态
-//  * @param {Object} params
-//  */
-// export function updateStatus(params) {
-//   return request({
-//     url: '/user/status/update',
-//     method: 'post',
-//     params: params
-//   })
-// }
-
 /**
  * 绑定用户名
  * @param {Object}  params
@@ -197,3 +177,24 @@ export function bindUsername(params) {
 //       params: params
 //     })
 // }
+
+
+// 管理员
+/**
+ * 分页获取用户
+ * @param {Object} params
+ */
+export function pageUser(params) {
+  return get(import.meta.env.VITE_APP_BASE_API +'/user/page', params, true)
+}
+
+/**
+ * 修改用户状态
+ * @param {Object} params
+ */
+export function updateStatus(params) {
+  return request(import.meta.env.VITE_APP_BASE_API +'/user/status/update', {
+    method: 'post',
+    params: params
+  },true)
+}

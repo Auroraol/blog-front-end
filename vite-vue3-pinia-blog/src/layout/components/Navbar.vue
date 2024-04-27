@@ -15,36 +15,8 @@
 import { ref } from "vue";
 import { updatePassword } from "/@/api/user/user";
 import { useAppStore, useUserStore, useSettingsStore } from "/@/store/index";
-
-// const router = useRouter();
-
-// pinia
-// const useUserPinia = useUserStore();
-// const useSettingsStorePinia = useSettingsStore();
-
-// const validatePass2 = (rule, value, callback) => {
-//   if (value !== form.newpwd) {
-//     callback(new Error("两次输入密码不一致"));
-//   } else {
-//     callback();
-//   }
-// };
-
-// const visible = ref(false);
-// const btnLoading = ref(false);
-// const form = ref({
-//   oldpwd: "",
-//   newpwd: "",
-//   newpwd2: "",
-// });
-// const rules = ref({
-//   oldpwd: [{ required: true, message: "请输入原密码", trigger: "blur" }],
-//   newpwd: [{ required: true, message: "请输入新密码", trigger: "blur" }],
-//   newpwd2: [
-//     { required: true, message: "请输入新密码", trigger: "blur" },
-//     { validator: validatePass2, trigger: "blur" },
-//   ],
-// });
+import Breadcrumb from "./Breadcrumb/index.vue";
+import Hamburger from "./Hamburger/index.vue";
 
 const useAppStorePinia = useAppStore();
 const sidebar = computed(() => useAppStorePinia.sidebar);
@@ -53,45 +25,6 @@ const sidebar = computed(() => useAppStorePinia.sidebar);
 const toggleSideBar = () => {
   useAppStorePinia.toggleSidebar();
 };
-
-// const saveSubmit = () => {
-//   $refs.form.validate((valid) => {
-//     if (valid) {
-//       btnLoading.value = true;
-//       const params = {
-//         oldPassword: form.value.oldpwd,
-//         newPassword: form.value.newpwd2,
-//       };
-//       updatePassword(params).then(
-//         (res) => {
-//           btnLoading.value = false;
-//           this.$message({
-//             message: "修改成功",
-//             type: "success",
-//           });
-//           form.value = {
-//             oldpwd: "",
-//             newpwd: "",
-//             newpwd2: "",
-//           };
-//           this.$refs["form"].resetFields();
-//           this.$refs["form"].clearValidate();
-//           visible.value = false;
-//         },
-//         (error) => {
-//           console.error(error);
-//           btnLoading.value = false;
-//         }
-//       );
-//     }
-//   });
-// };
-
-// const logout = () => {
-//   $store.dispatch("user/logout").then((res) => {
-//     $router.push("/");
-//   });
-// };
 </script>
 
 <style lang="scss" scoped>

@@ -28,7 +28,7 @@ defineProps({
   },
 });
 
-const title = ref("悦读博客");
+const title = ref("类别");
 const logo = ref("https://poile-img.nos-eastchina1.126.net/white-logo.png");
 </script>
 
@@ -77,9 +77,12 @@ const logo = ref("https://poile-img.nos-eastchina1.126.net/white-logo.png");
   }
 
   &.collapse {
+    // 这是折叠时的样式
     .sidebar-logo {
       margin-right: 0px;
     }
+
+    width: 64px;
   }
 }
 </style>
