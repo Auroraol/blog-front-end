@@ -3,7 +3,7 @@
     <!-- 头部 -->
     <div class="head">
       <el-button type="primary" size="small" @click="dialogVisible = true"
-        >+ New FriendLink</el-button
+        >+ Add FriendLink</el-button
       >
     </div>
 
@@ -85,10 +85,22 @@ const form = ref({
   name: "",
   url: "",
 });
+
 const rules = ref({
-  name: [{ required: true, message: "请输入名称", trigger: "blur" }],
-  url: [{ required: true, message: "请输入链接", trigger: "blur" }],
-  icon: [{ required: true, message: "请输入链接", trigger: "blur" }],
+  name: [
+    { required: true, message: "请输入名称", trigger: "blur" },
+    {
+      min: 2,
+      max: 20,
+      message: "名称长度在 2 到 20 个字符之间",
+      trigger: "blur",
+    },
+  ],
+  url: [
+    { required: true, message: "请输入链接", trigger: "blur" },
+    { type: "url", message: "请输入合法的链接", trigger: "blur" },
+  ],
+  icon: [{ required: true, message: "请输入图标", trigger: "blur" }],
 });
 
 //分页
@@ -133,7 +145,7 @@ const getList = () => {
 
 // 编辑
 const handleEdit = (index, row) => {
-  form.value = JSON.parse(JSON.stringify(row));
+  form.value = JSON.parse(JSON.stringify(row)); //避免直接修改原始对象。
   dialogVisible.value = true;
 };
 
@@ -165,9 +177,10 @@ const handleClosed = () => {
   form.value.name = "";
   form.value.url = "";
 };
+
 // 保存提交
 const saveSubmit = () => {
-  formRef.value.form.validate((valid) => {
+  formRef.value.validate((valid) => {
     if (valid) {
       saveFriendLink(form.value).then((res) => {
         ElMessage({

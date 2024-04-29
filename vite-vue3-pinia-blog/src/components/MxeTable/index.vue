@@ -68,7 +68,7 @@ const handleSizeChange = () => {
         </mxe-table-column>
         <template #empty>
           <!-- 给一个空组件 -->
-          <div>空空如也{{ $slots }}</div>
+          <div>空空如也</div>
         </template>
       </el-table>
     </div>

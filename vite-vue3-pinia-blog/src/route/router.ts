@@ -404,7 +404,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "client",
-        // component: () => import('@/views/client-manage/index'),
+        component: () => import('/@/views/client-manage/index.vue'),
         meta: {
           title: "客户端管理",
           icon: "client-manage",
@@ -420,7 +420,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "File",
-        // component: () => import('@/views/file-manage/index'),
+        component: () => import('/@/views/file-manage/index.vue'),
         meta: {
           title: "文件管理",
           icon: "file-manage",

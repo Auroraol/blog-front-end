@@ -29,7 +29,9 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
 	private RedisTokenStore tokenStore;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest httpServletRequest,
+									HttpServletResponse httpServletResponse,
+									FilterChain filterChain) throws ServletException, IOException {
 		final String authorization = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
 		if (authorization != null && authorization.startsWith(TOKEN_TYPE)) {
 			String accessToken = authorization.substring(7);
@@ -43,7 +45,9 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
 					httpServletResponse.getWriter().print(JSON.toJSON(ApiResponseResult.invalidRequest()));
 					return;
 				}
-				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(cacheAuthenticationToken.getPrincipal(), null, cacheAuthenticationToken.getPrincipal().getAuthorities());
+				UsernamePasswordAuthenticationToken authentication =
+						new UsernamePasswordAuthenticationToken(cacheAuthenticationToken.getPrincipal(),
+								null, cacheAuthenticationToken.getPrincipal().getAuthorities());
 				// 放入任务上下文
 				authentication.setDetails(cacheAuthenticationToken);
 				SecurityContextHolder.getContext().setAuthentication(authentication);

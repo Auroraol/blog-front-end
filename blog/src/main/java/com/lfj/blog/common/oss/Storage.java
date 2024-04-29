@@ -35,6 +35,8 @@ public interface Storage {
 	 */
 	boolean delete(String fullPath);
 
+	// TODO 未完成
+
 	/**
 	 * 分页获取文件对象列表
 	 *
