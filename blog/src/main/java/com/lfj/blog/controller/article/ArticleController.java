@@ -94,13 +94,13 @@ public class ArticleController {
 //		return ApiResponseResult.success();
 //	}
 //
-//	@GetMapping("/detail/{id}")
-//	@PreAuthorize("hasAuthority('admin')")
-//	@ApiOperation(value = "后台管理，获取文章详情信息", notes = "需要accessToken,用于后台文章管理，比列表返回的多一个文章内容，文章分类列表")
-//	public ApiResponseResult<ArticleVo> detail(@ApiParam("文章id") @PathVariable("id") int id) {
-//		return ApiResponseResult.success(articleService.selectArticleVoById(id));
-//	}
-//
+	@GetMapping("/detail/{id}")
+	@PreAuthorize("hasAuthority('admin')")
+	@ApiOperation(value = "后台管理，获取文章详情信息", notes = "需要accessToken,用于后台文章管理，比列表返回的多一个文章内容，文章分类列表")
+	public ApiResponseResult<ArticleVo> detail(@ApiParam("文章id") @PathVariable("id") int id) {
+		return ApiResponseResult.success(articleService.selectArticleVoById(id));
+	}
+
 	@GetMapping("/view/{id}")
 	@ApiOperation(value = "获取文章详情信息", notes = "比列表返回的多一个文章内容，文章分类列表")
 	public ApiResponseResult<ArticleVo> view(@ApiParam("文章id") @PathVariable("id") int id) {
@@ -142,7 +142,8 @@ public class ArticleController {
 	@PostMapping("/recommend/save")
 	@PreAuthorize("hasAuthority('admin')")
 	@ApiOperation(value = "添加到推荐，如果已存在则更新", notes = "需要accessToken，需要管理员权限")
-	public ApiResponseResult recommendAdd(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam(value = "articleId") Integer articleId,
+	public ApiResponseResult recommendAdd(@ApiParam("文章id") @NotNull(message = "文章id不能为空")
+										  @RequestParam(value = "articleId") Integer articleId,
 										  @ApiParam("分数，分数越高越排前面") @RequestParam(value = "score", required = false, defaultValue = "0") Double score) {
 		articleRecommendService.add(articleId, score);
 		return ApiResponseResult.success();

@@ -4,9 +4,9 @@
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         class="menu"
-        :default-active="activeIndex"
-        :collapse="isCollapse"
+        :default-active="activeMenu"
         @select="handleSelect"
+        :collapse="isCollapse"
         :collapse-transition="false"
       >
         <!-- 侧边栏项目 -->
@@ -28,7 +28,7 @@ import {
   useSettingsStore,
   usePermissionStore,
 } from "/@/store/index";
-import { RouteLocationNormalized, useRoute } from "vue-router";
+import { RouteLocationNormalized, useRouter } from "vue-router";
 
 const useAppStorePinia = useAppStore();
 const useSettingsStorePinia = useSettingsStore();
@@ -53,16 +53,6 @@ const router = useRouter();
 const handleSelect = (index: string) => {
   activeIndex.value = index; // 活动菜单
   router.push({ path: `${index}` });
-};
-
-const routeMenu = useRoute();
-// 活动菜单  // 为URL
-const activeMenu = () => {
-  const { meta, path } = routeMenu;
-  if (meta.activeMenu) {
-    return meta.activeMenu;
-  }
-  return path;
 };
 
 // 显示logo

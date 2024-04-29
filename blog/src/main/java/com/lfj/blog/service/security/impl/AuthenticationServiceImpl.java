@@ -8,10 +8,11 @@ import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.entity.Client;
 import com.lfj.blog.service.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 /**
@@ -47,25 +48,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				new UsernamePasswordAuthenticationToken(s, password);
 		// 对认证信息进行认证, AuthenticationManager的authenticate()方法来进行用户认证
 		try {
+
 			Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-			// 可以不判断
-			UserDetails userDetails = (UserDetails) authenticate.getPrincipal();
-			System.out.println(userDetails);
-			if (!userDetails.isAccountNonExpired()) {
-				throw new AccountExpiredException("账户已过期");
-			} else if (!userDetails.isAccountNonLocked()) {
-				throw new LockedException("账户已被锁定");
-			} else if (!userDetails.isCredentialsNonExpired()) {
-				throw new CredentialsExpiredException("密码已过期");
-			} else if (!userDetails.isEnabled()) {
-				throw new DisabledException("用户已弃用");
-			}
 			// 将认证信息存储在 redisTokenStore, 返回AuthenticationToken实体类
 			return redisTokenStore.storeToken(authenticate, client);
 		} catch (AuthenticationException e) {
 			// 认证失败，抛出 BadCredentialsException
 			throw new BadCredentialsException("用户名或密码错误");
 		}
+
+		// 账户是否未过期、未被锁定、密码未过期以及是否启用 返回提示信息
+
+
 //		Authentication authenticate = authenticationManager.authenticate(authenticationToken);
 //		if (Objects.isNull(authenticate)) {
 //			throw new RuntimeException("用户名或密码错误");

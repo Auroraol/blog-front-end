@@ -340,7 +340,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "RecommendManage",
-        // component: () => import('@/views/recommend-manage/index'),
+        component: () => import('/@/views/recommend-manage/index.vue'),
         meta: {
           title: "推荐管理",
           icon: "recommend-manage",
@@ -356,7 +356,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "TagManage",
-        // component: () => import('@/views/tag-manage/index'),
+        component: () => import('/@/views/tag-manage/index.vue'),
         meta: {
           title: "标签管理",
           icon: "tag-manage",
@@ -372,7 +372,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "CategoryManage",
-        // component: () => import('@/views/category-manage/index'),
+        component: () => import('/@/views/category-manage/index.vue'),
         meta: {
           title: "分类管理",
           icon: "category-manage",
@@ -388,7 +388,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "FriendChainManage",
-        // component: () => import('@/views/friend-link-manage/index'),
+        component: () => import('/@/views/friend-link-manage/index.vue'),
         meta: {
           title: "友链管理",
           icon: "friend-chain-manage",

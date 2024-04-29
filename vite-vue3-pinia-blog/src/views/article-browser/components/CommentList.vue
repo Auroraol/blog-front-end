@@ -264,9 +264,6 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from "vue";
 import { formatPast } from "/@/utils/format/format-time";
-
-// import '@/assets/quill-emoji/quill-emoji.js';
-
 import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import { Emoji } from "@vavt/v3-extension";

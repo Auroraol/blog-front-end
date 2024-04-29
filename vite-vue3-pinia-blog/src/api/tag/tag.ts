@@ -36,22 +36,23 @@ export function tagList() {
   return request<tagListResponseType[]>(import.meta.env.VITE_APP_BASE_API + '/tag/list')
 }
 
-// /**
-//  * 修改标签
-//  * @param {Object} params
-//  */
-// export function updateTag(params) {
-//   return request({
-//     url: '/tag/update',
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 修改标签
+ * @param {Object} params
+ */
+export function updateTag(params) {
+  return request(import.meta.env.VITE_APP_BASE_API +'/tag/update',  {
+    method: 'post',
+    params: params
+  }, true)
+}
 
-// /**
-//  * 删除标签
-//  * @param {Object} id
-//  */
-// export function deleteTag(id) {
-//   return request.delete('/tag/delete/' + id)
-// }
+/**
+ * 删除标签
+ * @param {Object} id
+ */
+export function deleteTag(id) {
+  return request(import.meta.env.VITE_APP_BASE_API + '/tag/delete/' + id, {
+    method: 'delete',
+  }, true)
+}

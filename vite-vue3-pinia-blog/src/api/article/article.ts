@@ -7,13 +7,13 @@ export function saveArticle(data) {
   return post(import.meta.env.VITE_APP_BASE_API + '/article/save', data, true)
 }
 
-// /**
-//  * 文章详情（后台）
-//  * @param {Object} id
-//  */
-// export function articleDetail(id) {
-//   return request.get(`/article/detail/${id}`)
-// }
+/**
+ * 文章详情（后台）
+ * @param {Object} id
+ */
+export function articleDetail(id) {
+  return get(import.meta.env.VITE_APP_BASE_API +`/article/detail/${id}`, true)
+}
 
 // /**
 //  * 分页获取文章（后台）

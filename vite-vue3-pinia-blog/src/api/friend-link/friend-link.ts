@@ -4,7 +4,7 @@ import {request, post, get} from '/@/utils/network/axios'
  * @data {Object} data
  */
 export function saveFriendLink(data) {
-  return post('/friend/link/save', data, true)
+  return post(import.meta.env.VITE_APP_BASE_API + '/friend/link/save', data, true)
 }
 
 /**
@@ -12,7 +12,7 @@ export function saveFriendLink(data) {
  * @param {Object} params
  */
 export function pageFriendLink(params) {
-  return get('/friend/link/page', { params })
+  return get(import.meta.env.VITE_APP_BASE_API + '/friend/link/page', params, true)
 }
 
 /**
@@ -27,7 +27,7 @@ export function listFriendLink() {
  * @param {Number} id
  */
 export function deleteFriendLink(id) {
-  return request(`/friend/link/delete/${id}`, {
+  return request(import.meta.env.VITE_APP_BASE_API + `/friend/link/delete/${id}`, {
     method: "delete"
   }, true
   )
