@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * 用户表 前端控制器
@@ -61,15 +62,15 @@ public class UserController {
 		return ApiResponseResult.success();
 	}
 
-	//
-//	@PostMapping("/password/update")
-//	@ApiOperation(value = "修改密码", notes = "需要传accessToken,密码至少6位数")
-//	public ApiResponseResult updPassword(@ApiParam("原密码") @NotBlank(message = "旧密码不能为空") @RequestParam(value = "oldPassword") String oldPassword,
-//								   @ApiParam("新密码") @NotBlank(message = "新密码不能为空") @Length(min = 6, message = "密码至少6位数") @RequestParam(value = "newPassword") String newPassword) {
-//		userService.updatePassword(oldPassword, newPassword);
-//		return  ApiResponseResult.success();
-//	}
-//
+
+	@PostMapping("/password/update")
+	@ApiOperation(value = "修改密码", notes = "需要传accessToken,密码至少6位数")
+	public ApiResponseResult updPassword(@ApiParam("原密码") @NotBlank(message = "旧密码不能为空") @RequestParam(value = "oldPassword") String oldPassword,
+										 @ApiParam("新密码") @NotBlank(message = "新密码不能为空") @Length(min = 6, message = "密码至少6位数") @RequestParam(value = "newPassword") String newPassword) {
+		userService.updatePassword(oldPassword, newPassword);
+		return ApiResponseResult.success();
+	}
+
 	@PostMapping("/password/reset")
 	@ApiOperation(value = "重置密码", notes = "不需要传accessToken,需要验证手机号")
 	public ApiResponseResult resetPassword(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam("mobile") String mobile,
@@ -87,40 +88,40 @@ public class UserController {
 		return ApiResponseResult.success();
 	}
 
-	//	@PostMapping("/mobile/validate")
-//	@ApiOperation(value = "更换手机号步骤一，验证原手机号", notes = "需要传accessToken")
-//	public ApiResponseResult validateMobile(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam("mobile") long mobile,
-//									  @NotBlank(message = "验证码不能为空") @RequestParam("code") String code) {
-//		userService.validateMobile(mobile, code);
-//		return  ApiResponseResult.success();
-//	}
-//
-//	@PostMapping("/mobile/rebind")
-//	@ApiOperation(value = "更换手机号步骤二，绑定新手机号", notes = "需要传accessToken")
-//	public ApiResponseResult rebindMobile(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam(value = "mobile") long mobile,
-//									@ApiParam("验证码") @NotBlank(message = "验证码不能为空") @RequestParam(value = "code") String code) {
-//		userService.rebindMobile(mobile, code);
-//		return  ApiResponseResult.success();
-//	}
-//
-//	@PostMapping("/mobile/bind")
-//	@ApiOperation(value = "绑定手机号", notes = "需要传accessToken，只用于原手机为空的情况下")
-//	public ApiResponseResult bindMobile(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam(value = "mobile") long mobile,
-//								  @ApiParam("验证码") @NotBlank(message = "验证码不能为空") @RequestParam(value = "code") String code) {
-//		userService.bindMobile(mobile, code);
-//		return  ApiResponseResult.success();
-//	}
-//
-//	@PostMapping("/username/bind")
-//	@ApiOperation(value = "绑定用户名", notes = "需要传accessToken，只用于原用户名为空的情况下")
-//	public ApiResponseResult bindUsername(@ApiParam("用户名") @NotBlank(message = "用户名不能为空")
-//									@Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_]{1,15}$", message = "用户名只能字母开头，允许2-16字节，允许字母数字下划线")
-//									@RequestParam(value = "username") String username) {
-//		userService.bindUsername(username);
-//		return  ApiResponseResult.success();
-//	}
-//
-//
+	@PostMapping("/mobile/validate")
+	@ApiOperation(value = "更换手机号步骤一，验证原手机号", notes = "需要传accessToken")
+	public ApiResponseResult validateMobile(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam("mobile") long mobile,
+											@NotBlank(message = "验证码不能为空") @RequestParam("code") String code) {
+		userService.validateMobile(mobile, code);
+		return ApiResponseResult.success();
+	}
+
+	@PostMapping("/mobile/rebind")
+	@ApiOperation(value = "更换手机号步骤二，绑定新手机号", notes = "需要传accessToken")
+	public ApiResponseResult rebindMobile(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam(value = "mobile") long mobile,
+										  @ApiParam("验证码") @NotBlank(message = "验证码不能为空") @RequestParam(value = "code") String code) {
+		userService.rebindMobile(mobile, code);
+		return ApiResponseResult.success();
+	}
+
+	@PostMapping("/mobile/bind")
+	@ApiOperation(value = "绑定手机号", notes = "需要传accessToken，只用于原手机为空的情况下")
+	public ApiResponseResult bindMobile(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam(value = "mobile") long mobile,
+										@ApiParam("验证码") @NotBlank(message = "验证码不能为空") @RequestParam(value = "code") String code) {
+		userService.bindMobile(mobile, code);
+		return ApiResponseResult.success();
+	}
+
+	@PostMapping("/username/bind")
+	@ApiOperation(value = "绑定用户名", notes = "需要传accessToken，只用于原用户名为空的情况下")
+	public ApiResponseResult bindUsername(@ApiParam("用户名") @NotBlank(message = "用户名不能为空")
+										  @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9_]{1,15}$", message = "用户名只能字母开头，允许2-16字节，允许字母数字下划线")
+										  @RequestParam(value = "username") String username) {
+		userService.bindUsername(username);
+		return ApiResponseResult.success();
+	}
+
+
 	@PostMapping("/email/validate")
 	@ApiOperation(value = "发送验证链接到邮箱", notes = "需要accessToken")
 	public ApiResponseResult validateEmail(@ApiParam("邮箱") @NotBlank(message = "邮箱不能为空") @Email(message = "邮箱格式不正确") @RequestParam("email") String email) {

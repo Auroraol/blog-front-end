@@ -1,7 +1,7 @@
 spring:
   profiles:
     active:
-      - dev   #选择使用的配置文件, 本文件是公有配置
+      - prod    #选择使用的配置文件, 本文件是公有配置
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html

@@ -1,0 +1,249 @@
+/**
+ * 将时间解析为字符串
+ * @param {(Object|string|number)} time
+ * @param {string} cFormat
+ * @returns {string | null}
+ */
+export function parseTime(time, cFormat) {
+  if (arguments.length === 0) {
+    return null;
+  }
+  const format = cFormat || "{y}-{m}-{d} {h}:{i}:{s}";
+  let date;
+  if (typeof time === "object") {
+    date = time;
+  } else {
+    if (typeof time === "string" && /^[0-9]+$/.test(time)) {
+      time = parseInt(time);
+    }
+    if (typeof time === "number" && time.toString().length === 10) {
+      time = time * 1000;
+    }
+    date = new Date(time);
+  }
+  const formatObj = {
+    y: date.getFullYear(),
+    m: date.getMonth() + 1,
+    d: date.getDate(),
+    h: date.getHours(),
+    i: date.getMinutes(),
+    s: date.getSeconds(),
+    a: date.getDay(),
+  };
+  const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
+    const value = formatObj[key];
+    // Note: getDay() returns 0 on Sunday
+    if (key === "a") {
+      return ["日", "一", "二", "三", "四", "五", "六"][value];
+    }
+    return value.toString().padStart(2, "0");
+  });
+  return time_str;
+}
+
+/**
+ * 时间转换
+ * 
+ * @param {number} time
+ * @param {string} option
+ * @returns {string}
+ */
+export function formatTime(time, option) {
+  if (("" + time).length === 10) {
+    time = parseInt(time) * 1000;
+  } else {
+    time = +time;
+  }
+  const d = new Date(time);
+  const now = Date.now();
+
+  const diff = (now - d) / 1000;
+
+  if (diff < 30) {
+    return "刚刚";
+  } else if (diff < 3600) {
+    // less 1 hour
+    return Math.ceil(diff / 60) + "分钟前";
+  } else if (diff < 3600 * 24) {
+    return Math.ceil(diff / 3600) + "小时前";
+  } else if (diff < 3600 * 24 * 2) {
+    return "1天前";
+  }
+  if (option) {
+    return parseTime(time, option);
+  } else {
+    return (
+      d.getMonth() +
+      1 +
+      "月" +
+      d.getDate() +
+      "日" +
+      d.getHours() +
+      "时" +
+      d.getMinutes() +
+      "分"
+    );
+  }
+}
+
+/**
+ * 时间日期转换函数
+ * @param date 当前时间，格式为 Date 类型
+ * @param format 时间格式字符串，如 "YYYY-mm"、"YYYY-mm-dd" 等
+ * @returns 返回根据给定格式转换后的时间字符串
+ * @description format 字符串中支持的格式：
+ *   - 年份： "YYYY" 代表四位数年份，如 "2024"
+ *   - 月份： "mm" 代表两位数月份，如 "04"
+ *   - 日期： "dd" 代表两位数日期，如 "05"
+ *   - 小时： "HH" 代表两位数小时，如 "13"
+ *   - 分钟： "MM" 代表两位数分钟，如 "45"
+ *   - 秒钟： "SS" 代表两位数秒钟，如 "30"
+ *   - 季度： "QQQQ" 代表当前季度的中文表示，如 "第一季度"
+ *   - 星期： "WWW" 或 "WW" 代表当前星期的中文表示，如 "星期一" 或 "周一"
+ *   - 几周： "ZZZ" 代表当前年份中的第几周，如 "第13周"
+ */
+export function formatDate(date: Date, format: string): string {
+  const we = date.getDay(); // 星期
+  const z = getWeek(date); // 周
+  const qut = Math.floor((date.getMonth() + 3) / 3).toString(); // 季度
+
+  const opt: { [key: string]: string } = {
+    "Y+": date.getFullYear().toString(), // 年
+    "m+": (date.getMonth() + 1).toString().padStart(2, "0"), // 月
+    "d+": date.getDate().toString().padStart(2, "0"), // 日
+    "H+": date.getHours().toString().padStart(2, "0"), // 时
+    "M+": date.getMinutes().toString().padStart(2, "0"), // 分
+    "S+": date.getSeconds().toString().padStart(2, "0"), // 秒
+    "q+": qut, // 季度
+  };
+
+  const week: { [key: string]: string } = {
+    "0": "日",
+    "1": "一",
+    "2": "二",
+    "3": "三",
+    "4": "四",
+    "5": "五",
+    "6": "六",
+  };
+
+  const quarter: { [key: string]: string } = {
+    "1": "一",
+    "2": "二",
+    "3": "三",
+    "4": "四",
+  };
+
+  format = format.replace(/(W+)/g, (_, $1) => {
+    return $1.length > 2 ? "周" + week[we] : "星期" + week[we];
+  });
+
+  format = format.replace(/(Q+)/g, (_, $1) => {
+    return $1.length === 4 ? "第" + quarter[qut] + "季度" : quarter[qut];
+  });
+
+  format = format.replace(/(Z+)/g, (_, $1) => {
+    return $1.length === 3 ? "第" + z + "周" : z.toString();
+  });
+
+  for (const key in opt) {
+    const reg = new RegExp("(" + key + ")");
+    format = format.replace(reg, (match, $1) => {
+      return $1.length === 1 ? opt[key] : opt[key].padStart($1.length, "0");
+    });
+  }
+
+  return format;
+}
+
+
+/**
+ * 获取当前日期是第几周
+ * @param dateTime 当前传入的日期值
+ * @returns 返回第几周数字值
+ */
+export function getWeek(dateTime: Date): number {
+  let temptTime = new Date(dateTime.getTime());
+  // 周几
+  let weekday = temptTime.getDay() || 7;
+  // 周1+5天=周六
+  temptTime.setDate(temptTime.getDate() - weekday + 1 + 5);
+  let firstDay = new Date(temptTime.getFullYear(), 0, 1);
+  let dayOfWeek = firstDay.getDay();
+  let spendDay = 1;
+  if (dayOfWeek != 0) spendDay = 7 - dayOfWeek + 1;
+  firstDay = new Date(temptTime.getFullYear(), 0, 1 + spendDay);
+  let d = Math.ceil((temptTime.valueOf() - firstDay.valueOf()) / 86400000);
+  let result = Math.ceil(d / 7);
+  return result;
+}
+
+/**
+ * 将时间转换为 `几秒前`、`几分钟前`、`几小时前`、`几天前`
+ * @param param 当前时间，new Date() 格式或者字符串时间格式
+ * @param format 需要转换的时间格式字符串
+ * @description param new Date("2024-04-05")
+ * @description param 10秒：  10 * 1000
+ * @description param 1分：   60 * 1000
+ * @description param 1小时： 60 * 60 * 1000
+ * @description param 24小时：60 * 60 * 24 * 1000
+ * @description param 3天：   60 * 60* 24 * 1000 * 3
+ * @returns 返回拼接后的时间字符串
+ */
+export function formatPast(
+  param: string | Date,
+  format: string = "YYYY-mm-dd"
+): string {
+  // 传入格式处理、存储转换值
+  let t: any, s: number;
+  // 获取js 时间戳
+  let time: number = new Date().getTime();
+  // 是否是对象
+  typeof param === "string" || "object"
+    ? (t = new Date(param).getTime())
+    : (t = param);
+  // 当前时间戳 - 传入时间戳
+  time = Number.parseInt(`${time - t}`);
+  if (time < 10000) {
+    // 10秒内
+    return "刚刚";
+  } else if (time < 60000 && time >= 10000) {
+    // 超过10秒少于1分钟内
+    s = Math.floor(time / 1000);
+    return `${s}秒前`;
+  } else if (time < 3600000 && time >= 60000) {
+    // 超过1分钟少于1小时
+    s = Math.floor(time / 60000);
+    return `${s}分钟前`;
+  } else if (time < 86400000 && time >= 3600000) {
+    // 超过1小时少于24小时
+    s = Math.floor(time / 3600000);
+    return `${s}小时前`;
+  } else if (time < 259200000 && time >= 86400000) {
+    // 超过1天少于3天内
+    s = Math.floor(time / 86400000);
+    return `${s}天前`;
+  } else {
+    // 超过3天
+    let date = typeof param === "string" || "object" ? new Date(param) : param;
+    return formatDate(date, format);
+  }
+}
+
+/**
+ * 时间问候语
+ * @param param 当前时间，new Date() 格式
+ * @description param 调用 `formatAxis(new Date())` 输出 `上午好`
+ * @returns 返回拼接后的时间字符串
+ */
+export function formatAxis(param: Date): string {
+  let hour: number = new Date(param).getHours();
+  if (hour < 6) return "凌晨好";
+  else if (hour < 9) return "早上好";
+  else if (hour < 12) return "上午好";
+  else if (hour < 14) return "中午好";
+  else if (hour < 17) return "下午好";
+  else if (hour < 19) return "傍晚好";
+  else if (hour < 22) return "晚上好";
+  else return "夜里好";
+}

@@ -1,3 +1,4 @@
+#  是测试员测试的环境
 server:
   port: 9000
 
@@ -10,7 +11,7 @@ spring:
     password: CODE(yTDT90o8m/N9uwVvJybwjg==)
   # redis配置
   redis:
-    host: 192.168.200.134
+    host: 192.168.200.134 #redis服务地址
     port: 6379
     password: CODE(yTDT90o8m/N9uwVvJybwjg==)
     # lettuce配置(需引入 commons-pool2依赖)
@@ -55,12 +56,6 @@ jasypt:
       #自定义的前后缀标记，默认ENC()
       prefix: CODE(
       suffix: )
-
-
-# 生产环境禁用swagger
-swagger:
-  enabled: true
-
 
 # 第三方登录
 oauth:

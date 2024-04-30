@@ -73,15 +73,15 @@ public interface IUserService extends IService<User> {
 	 */
 	void updateAvatar(MultipartFile file);
 
-//	/**
-//	 * 修改密码
-//	 *
-//	 * @param oldPassword
-//	 * @param newPassword
-//	 * @return void
-//	 */
-//	void updatePassword(String oldPassword, String newPassword);
-//
+	/**
+	 * 修改密码
+	 *
+	 * @param oldPassword
+	 * @param newPassword
+	 * @return void
+	 */
+	void updatePassword(String oldPassword, String newPassword);
+
 
 	/**
 	 * 重置密码
@@ -93,40 +93,39 @@ public interface IUserService extends IService<User> {
 	 */
 	void resetPassword(String mobile, String code, String password);
 
-//	/**
-//	 * 更换手机号  验证手机号
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 * @return void
-//	 */
-//	void validateMobile(long mobile, String code);
-//
-//	/**
-//	 * 更换手机号 重新绑定
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 * @return void
-//	 */
-//	void rebindMobile(long mobile, String code);
-//
+	/**
+	 * 更换手机号  验证手机号
+	 *
+	 * @param mobile
+	 * @param code
+	 * @return void
+	 */
+	void validateMobile(long mobile, String code);
+
+	/**
+	 * 更换手机号 重新绑定
+	 *
+	 * @param mobile
+	 * @param code
+	 * @return void
+	 */
+	void rebindMobile(long mobile, String code);
 
 
-//	/**
-//	 * 绑定手机号 - 用于原手机号为空的情况
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 */
-//	void bindMobile(long mobile, String code);
-//
-//	/**
-//	 * 绑定用户名 - 用于用户名为空的情况
-//	 *
-//	 * @param username
-//	 */
-//	void bindUsername(String username);
+	/**
+	 * 绑定手机号 - 用于原手机号为空的情况
+	 *
+	 * @param mobile
+	 * @param code
+	 */
+	void bindMobile(long mobile, String code);
+
+	/**
+	 * 绑定用户名 - 用于用户名为空的情况
+	 *
+	 * @param username
+	 */
+	void bindUsername(String username);
 
 
 	/**

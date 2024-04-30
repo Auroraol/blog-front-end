@@ -281,32 +281,32 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 			throw new ApiException(ResponseCodeEnum.SYSTEM_ERROR.getCode(), ResponseCodeEnum.SYSTEM_ERROR.getMessage());
 		}
 	}
-//
-//	/**
-//	 * 修改密码
-//	 *
-//	 * @param oldPassword
-//	 * @param newPassword
-//	 * @return void
-//	 */
-//	@Override
-//	public void updatePassword(String oldPassword, String newPassword) {
-//		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
-//		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//		boolean matches = passwordEncoder.matches(oldPassword, userDetail.getPassword());
-//		if (!matches) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "原密码不正确");
-//		}
-//		User user = new User();
-//		Integer userId = userDetail.getId();
-//		user.setId(userId);
-//		String encodePassword = passwordEncoder.encode(newPassword);
-//		user.setPassword(encodePassword);
-//		updateById(user);
-//		// 清空用户缓存
-//		tokenStore.clearUserCacheById(userId);
-//	}
-//
+
+	/**
+	 * 修改密码
+	 *
+	 * @param oldPassword
+	 * @param newPassword
+	 * @return void
+	 */
+	@Override
+	public void updatePassword(String oldPassword, String newPassword) {
+		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		boolean matches = passwordEncoder.matches(oldPassword, userDetail.getPassword());
+		if (!matches) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "原密码不正确");
+		}
+		User user = new User();
+		Integer userId = userDetail.getId();
+		user.setId(userId);
+		String encodePassword = passwordEncoder.encode(newPassword);
+		user.setPassword(encodePassword);
+		updateById(user);
+		// 清空用户缓存
+		tokenStore.clearUserCacheById(userId);
+	}
+
 
 	/**
 	 * 重置密码
@@ -338,140 +338,127 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 		// 清空用户缓存
 		tokenStore.clearUserCacheById(userId);
 	}
-//
-//	/**
-//	 * 更换手机号  验证手机号
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 * @return void
-//	 */
-//	@Override
-//	public void validateMobile(long mobile, String code) {
-//		checkSmsCode(mobile, code);
-//		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
-//		if (!userDetail.getMobile().equals(mobile)) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "手机号与当前用户手机号不匹配");
-//		}
-//		// 经过原手机号验证标识
-//		stringRedisTemplate.opsForValue().set(REDIS_MOBILE_VALIDATED_PREFIX + mobile, Long.toString(mobile), 5L, TimeUnit.MINUTES);
-//		smsCodeService.deleteSmsCode(mobile);
-//	}
-//
-//	/**
-//	 * 更换手机号 重新绑定
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 * @return void
-//	 */
-//	@Override
-//	public void rebindMobile(long mobile, String code) {
-//		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
-//		long cacheKey = userDetail.getMobile();
-//		// 判断是否经过步骤一
-//		String validated = stringRedisTemplate.opsForValue().get(REDIS_MOBILE_VALIDATED_PREFIX + cacheKey);
-//		if (StringUtils.isBlank(validated)) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "未经原手机号验证或验证已超时，请验证原手机号通过后再试");
-//		}
-//		// 验证码校验
-//		checkSmsCode(mobile, code);
-//		// 判断手机号是否已被注册
-//		User user = selectUserByUsernameOrMobile(null, mobile);
-//		if (user != null) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), ResponseCodeEnum.INVALID_REQUEST.getErrorMsg());
-//		}
-//		User newUser = new User();
-//		Integer userId = userDetail.getId();
-//		newUser.setId(userId);
-//		newUser.setMobile(mobile);
-//		updateById(newUser);
-//		// 清空用户缓存
-//		tokenStore.clearUserCacheById(userId);
-//		smsCodeService.deleteSmsCode(mobile);
-//	}
-//
-//
-//	/**
-//	 * 绑定手机号 - 用于原手机号为空的情况下
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 */
-//	@Override
-//	public void bindMobile(long mobile, String code) {
-//		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
-//		boolean hasMobile = userDetail.getMobile() != null;
-//		if (hasMobile) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "已存在手机号，请验证原手机后重新绑定");
-//		}
-//		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-//		queryWrapper.lambda().eq(User::getMobile, mobile);
-//		int count = count(queryWrapper);
-//		if (count != 0) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "手机号已被使用");
-//		}
-//		// 验证码校验
-//		checkSmsCode(mobile, code);
-//		User user = new User();
-//		Integer id = userDetail.getId();
-//		user.setId(id);
-//		user.setMobile(mobile);
-//		updateById(user);
-//		smsCodeService.deleteSmsCode(mobile);
-//		// 清空用户缓存
-//		tokenStore.clearUserCacheById(id);
-//	}
-//
-//	/**
-//	 * 绑定用户名 - 用于用户名为空的情况
-//	 *
-//	 * @param username
-//	 */
-//	@Override
-//	public void bindUsername(String username) {
-//		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
-//		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-//		queryWrapper.lambda().eq(User::getUsername, username);
-//		int count = count(queryWrapper);
-//		if (count != 0) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "用户名已存在");
-//		}
-//		User updateUser = new User();
-//		updateUser.setId(userDetail.getId());
-//		updateUser.setUsername(username);
-//		updateById(updateUser);
-//		// 清空用户缓存
-//		tokenStore.clearUserCacheById(userDetail.getId());
-//	}
-//
 
-//
-//	/**
-//	 * 校验短信验证码
-//	 *
-//	 * @param mobile
-//	 * @param code
-//	 */
-//	private void checkSmsCode(long mobile, String code) {
-//		if (!smsCodeService.checkSmsCode(mobile, code)) {
-//			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getErrorCode(), "验证码不正确");
-//		}
-//	}
-//
-//	/**
-//	 * 根据用户名或手机号查询 User
-//	 *
-//	 * @param username
-//	 * @param mobile
-//	 * @return
-//	 */
-//	private User selectUserByUsernameOrMobile(String username, Long mobile) {
-//		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-//		queryWrapper.lambda().eq(User::getUsername, username).or().eq(User::getMobile, mobile);
-//		return getOne(queryWrapper, false);
-//	}
-//
+	/**
+	 * 更换手机号  验证手机号
+	 *
+	 * @param mobile
+	 * @param code
+	 * @return void
+	 */
+	@Override
+	public void validateMobile(long mobile, String code) {
+		checkSmsCode(mobile, code);
+		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
+		if (!userDetail.getMobile().equals(mobile)) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "手机号与当前用户手机号不匹配");
+		}
+		// 经过原手机号验证标识
+		stringRedisTemplate.opsForValue().set(REDIS_MOBILE_VALIDATED_PREFIX + mobile, Long.toString(mobile), 5L, TimeUnit.MINUTES);
+		smsCodeService.deleteSmsCode(String.valueOf(mobile));
+	}
+
+	/**
+	 * 更换手机号 重新绑定
+	 *
+	 * @param mobile
+	 * @param code
+	 * @return void
+	 */
+	@Override
+	public void rebindMobile(long mobile, String code) {
+		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
+		long cacheKey = userDetail.getMobile();
+		// 判断是否经过步骤一
+		String validated = stringRedisTemplate.opsForValue().get(REDIS_MOBILE_VALIDATED_PREFIX + cacheKey);
+		if (StringUtils.isBlank(validated)) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "未经原手机号验证或验证已超时，请验证原手机号通过后再试");
+		}
+		// 验证码校验
+		checkSmsCode(mobile, code);
+		// 判断手机号是否已被注册
+		User user = selectUserByUsernameOrMobile(null, mobile);
+		if (user != null) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(),
+					ResponseCodeEnum.INVALID_REQUEST.getMessage());
+		}
+		User newUser = new User();
+		Integer userId = userDetail.getId();
+		newUser.setId(userId);
+		newUser.setMobile(mobile);
+		updateById(newUser);
+		// 清空用户缓存
+		tokenStore.clearUserCacheById(userId);
+		smsCodeService.deleteSmsCode(String.valueOf(mobile));
+	}
+
+
+	/**
+	 * 绑定手机号 - 用于原手机号为空的情况下
+	 *
+	 * @param mobile
+	 * @param code
+	 */
+	@Override
+	public void bindMobile(long mobile, String code) {
+		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
+		boolean hasMobile = userDetail.getMobile() != null;
+		if (hasMobile) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "已存在手机号，请验证原手机后重新绑定");
+		}
+		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().eq(User::getMobile, mobile);
+		long count = count(queryWrapper);
+		if (count != 0) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "手机号已被使用");
+		}
+		// 验证码校验
+		checkSmsCode(mobile, code);
+		User user = new User();
+		Integer id = userDetail.getId();
+		user.setId(id);
+		user.setMobile(mobile);
+		updateById(user);
+		smsCodeService.deleteSmsCode(String.valueOf(mobile));
+		// 清空用户缓存
+		tokenStore.clearUserCacheById(id);
+	}
+
+	/**
+	 * 绑定用户名 - 用于用户名为空的情况
+	 *
+	 * @param username
+	 */
+	@Override
+	public void bindUsername(String username) {
+		CustomUserDetails userDetail = ServerSecurityContext.getUserDetail(true);
+		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().eq(User::getUsername, username);
+		long count = count(queryWrapper);
+		if (count != 0) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "用户名已存在");
+		}
+		User updateUser = new User();
+		updateUser.setId(userDetail.getId());
+		updateUser.setUsername(username);
+		updateById(updateUser);
+		// 清空用户缓存
+		tokenStore.clearUserCacheById(userDetail.getId());
+	}
+
+
+	/**
+	 * 校验短信验证码
+	 *
+	 * @param mobile
+	 * @param code
+	 */
+	private void checkSmsCode(long mobile, String code) {
+		if (!smsCodeService.checkSmsCode(String.valueOf(mobile), code)) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "验证码不正确");
+		}
+	}
+
 
 	/**
 	 * 分页查询用户

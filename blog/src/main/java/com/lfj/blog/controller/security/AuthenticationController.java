@@ -103,20 +103,7 @@ public class AuthenticationController {
 		AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
 		return ApiResponseResult.success(accessTokenDTO);
 	}
-
-//	@GetMapping("/oauth")
-//	@ApiOperation(value = "第三方登录", notes = "不需要accessToken")
-//	public ApiResponseResult<AccessTokenDTO> oauth(
-//			@ApiParam("认证类型") @NotNull(message = "认证类型不能为空") @RequestParam Integer type,
-//			@ApiParam("第三方授权码") @NotBlank(message = "授权码不能为空") @RequestParam String code,
-//			@ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
-//		Client client = getAndValidatedClient(authorization);
-//		// 第三方 //生成响应的token
-//		AuthenticationToken authenticationToken = oauthService.oauth(type, code, client);
-//		AccessTokenDTO accessTokenDTO = BeanCopyUtil.copyObject(authenticationToken, AccessTokenDTO.class);
-//		return ApiResponseResult.success(accessTokenDTO);
-//	}
-
+	
 	@DeleteMapping("/logout")
 	@ApiOperation(value = "用户登出")
 	public ApiResponseResult logout(@RequestHeader(value = "Authorization") String authorization,

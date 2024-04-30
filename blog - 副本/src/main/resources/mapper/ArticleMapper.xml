@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lfj.blog.mapper.ArticleMapper">
+
+    <!-- Article实体数据   -->
+    <resultMap id="BaseResultMap" type="com.lfj.blog.entity.Article">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="original" column="original" jdbcType="TINYINT"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="categoryName" column="category_name" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="summary" column="summary" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="htmlContent" column="html_content" jdbcType="VARCHAR"/>
+        <result property="cover" column="cover" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="viewCount" column="view_count" jdbcType="INTEGER"/>
+        <result property="commentCount" column="comment_count" jdbcType="INTEGER"/>
+        <result property="likeCount" column="like_count" jdbcType="INTEGER"/>
+        <result property="collectCount" column="collect_count" jdbcType="INTEGER"/>
+        <result property="publishTime" column="publish_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="reproduce" column="reproduce" jdbcType="VARCHAR"/>
+        <result property="deleted" column="deleted" jdbcType="TINYINT"/>
+    </resultMap>
+    <!--多表查询, ArticleVo封装Article实体数据部分数据+User部分数据+tag部分数据-->
+    <resultMap id="articleVoResultMap" type="com.lfj.blog.service.vo.ArticleVo">
+        <id property="id" column="id"/>
+        <result property="original" column="original"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="userId" column="user_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="title" column="title"/>
+        <result property="summary" column="summary"/>
+        <result property="content" column="content"/>
+        <result property="htmlContent" column="html_content"/>
+        <result property="cover" column="cover"/>
+        <result property="status" column="status"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="commentCount" column="comment_count"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="collectCount" column="collect_count"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="reproduce" column="reproduce"/>
+        <result property="deleted" column="deleted"/>
+        <!--Article和User 一对一的关系-->
+        <association property="user" javaType="com.lfj.blog.entity.User">
+            <id property="id" column="u_user_id"/>
+            <result property="nickname" column="nickname"/>
+            <result property="avatar" column="avatar"/>
+        </association>
+        <!--Article和Tag 多对一的关系-->
+        <collection property="tagList" ofType="com.lfj.blog.entity.Tag">
+            <id property="id" column="tag_id"/>
+            <result property="name" column="tag_name"/>
+        </collection>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id
+        ,original,user_id,
+        category_name,category_id,title,
+        summary,content,html_content,
+        cover,status,view_count,
+        comment_count,like_count,collect_count,
+        publish_time,update_time,reproduce,
+        deleted
+    </sql>
+
+    <sql id="Article_Column_List">
+        inner_a
+        .
+        id
+        ,inner_a.original, inner_a.user_id, inner_a.category_name, inner_a.category_id, inner_a.title, inner_a.summary, inner_a.content, inner_a.html_content, inner_a.cover, inner_a.status, inner_a.view_count,
+        inner_a.comment_count, inner_a.like_count, inner_a.collect_count, inner_a.publish_time, inner_a.update_time, inner_a.reproduce, inner_a.deleted
+    </sql>
+
+    <!--根据id查询-->
+    <select id="selectArticleVoById" resultMap="articleVoResultMap">
+        select
+        outer_a.id,
+        outer_a.original,
+        outer_a.category_name,
+        outer_a.category_id,
+        outer_a.title,
+        outer_a.summary,
+        outer_a.content,
+        outer_a.html_content,
+        outer_a.cover,
+        outer_a.status,
+        outer_a.view_count,
+        outer_a.comment_count,
+        outer_a.like_count,
+        outer_a.collect_count,
+        outer_a.publish_time,
+        outer_a.update_time,
+        outer_a.reproduce,
+        outer_a.deleted,
+        u.id u_user_id,
+        u.avatar,
+        u.nickname,
+        t.id tag_id,
+        t.name tag_name
+        from
+        (
+        select
+        <include refid="Article_Column_List"/>
+        from article inner_a
+        where inner_a.deleted = 0 and inner_a.id = #{id}
+        <if test="status != null">
+            and inner_a.status = #{status}
+        </if>
+        ) outer_a
+        left join user u on u.id = outer_a.user_id
+        left join article_tag a_t on a_t.article_id = outer_a.id
+        left join tag t on t.id = a_t.tag_id
+    </select>
+
+    <!--分页查询计数-->
+    <select id="selectPageCount" resultType="Integer">
+        select count(1)
+        from article a
+        where a.deleted = 0
+        <if test="status != null">
+            and a.status = #{status}
+        </if>
+        <if test="title != null and title != ''">
+            and a.title like concat('%',concat(#{title}, '%'))
+        </if>
+        <if test="categoryId != null">
+            and a.category_id = #{categoryId}
+        </if>
+        <if test="start != null and end != null">
+            and a.publish_time >= #{start} and a.publish_time <![CDATA[<]]> #{end}
+        </if>
+        <if test="tagId != null">
+            and a.id in (select a_t.article_id from article_tag a_t where a_t.tag_id = #{tagId})
+        </if>
+    </select>
+
+    <!--分页查询文章-->
+    <select id="selectArticleVoPage" resultMap="articleVoResultMap">
+        select
+        outer_a.id,
+        outer_a.original,
+        outer_a.user_id,
+        outer_a.category_name,
+        outer_a.category_id,
+        outer_a.title,
+        outer_a.summary,
+        outer_a.cover,
+        outer_a.status,
+        outer_a.view_count,
+        outer_a.comment_count,
+        outer_a.like_count,
+        outer_a.collect_count,
+        outer_a.publish_time,
+        outer_a.update_time,
+        outer_a.reproduce,
+        outer_a.deleted,
+        u.id u_user_id,
+        u.avatar,
+        u.nickname,
+        t.id tag_id,
+        t.name tag_name
+        from
+        -- 表子查询
+        (
+        select
+        <include refid="Article_Column_List"/>
+        ,(
+        inner_a.view_count * 0.15
+        + inner_a.comment_count * 0.35
+        + inner_a.like_count * 0.25
+        + inner_a.collect_count * 0.25
+        ) as score
+        from article inner_a
+
+        where
+        inner_a.deleted = 0 -- 未删除的
+        <if test="status != null">
+            and inner_a.status = #{status}
+        </if>
+        <if test="title != null and title != ''">
+            and inner_a.title like concat('%',concat(#{title}, '%')) -- 生成字符串 "%apple%"，用于进行模糊匹配操作
+        </if>
+        <if test="categoryId != null">
+            and inner_a.category_id = #{categoryId}
+        </if>
+        <if test="start != null and end != null">
+            and inner_a.publish_time >= #{start} and inner_a.publish_time <![CDATA[<]]> #{end} -- 使用了 CDATA
+            -- 标记来包裹比较符号小于
+            -- 以防止标签。
+        </if>
+        <if test="tagId != null">
+            and inner_a.id in (select inner_a_t.article_id from article_tag inner_a_t where inner_a_t.tag_id = #{tagId})
+        </if>
+        -- 排序
+        <choose>
+            <when test="orderBy == 'publish_time'">
+                order by inner_a.publish_time desc -- 从大到小
+            </when>
+            <otherwise>
+                order by inner_a.view_count desc
+            </otherwise>
+        </choose>
+        limit #{offset},#{limit} -- 分页
+        ) outer_a
+        left join user u on u.id = outer_a.user_id
+        left join article_tag a_t on a_t.article_id = outer_a.id
+        left join tag t on t.id = a_t.tag_id
+        -- 排序
+        <choose>
+            <when test="orderBy == 'publish_time'">
+                order by outer_a.publish_time desc
+            </when>
+            <otherwise>
+                order by score desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 查询用户收藏文章 -->
+    <select id="selectCollectByUserId" resultMap="articleVoResultMap">
+        select
+        outer_a.id,
+        outer_a.original,
+        outer_a.user_id,
+        outer_a.category_name,
+        outer_a.category_id,
+        outer_a.title,
+        outer_a.summary,
+        outer_a.cover,
+        outer_a.status,
+        outer_a.view_count,
+        outer_a.comment_count,
+        outer_a.like_count,
+        outer_a.collect_count,
+        outer_a.publish_time,
+        outer_a.update_time,
+        outer_a.reproduce,
+        outer_a.deleted,
+        u.id u_user_id,
+        u.avatar,
+        u.nickname,
+        t.id tag_id,
+        t.name tag_name
+        from
+        (
+        select
+        <include refid="Article_Column_List"/>
+        from article inner_a
+        inner join article_collect a_c on a_c.article_id = inner_a.id and a_c.user_id = #{userId}
+        where inner_a.deleted = 0
+        and inner_a.status = 0
+        limit #{offset},#{limit}
+        ) outer_a
+        left join user u on u.id = outer_a.user_id
+        left join article_tag a_t on a_t.article_id = outer_a.id
+        left join tag t on t.id = a_t.tag_id
+    </select>
+
+    <!-- 标签列表查询文章列表 -->
+    <select id="selectByTagList" resultMap="articleVoResultMap">
+        select
+        outer_a.id,
+        outer_a.original,
+        outer_a.user_id,
+        outer_a.category_name,
+        outer_a.category_id,
+        outer_a.title,
+        outer_a.summary,
+        outer_a.cover,
+        outer_a.status,
+        outer_a.view_count,
+        outer_a.comment_count,
+        outer_a.like_count,
+        outer_a.collect_count,
+        outer_a.publish_time,
+        outer_a.update_time,
+        outer_a.reproduce,
+        outer_a.deleted,
+        u.id u_user_id,
+        u.avatar,
+        u.nickname,
+        t.id tag_id,
+        t.name tag_name
+        from
+        (
+        select
+        <include refid="Article_Column_List"/>
+        from article inner_a
+        where inner_a.deleted = 0
+        and inner_a.status = 0
+        and inner_a.id in
+        (select distinct inner_a_t.article_id from article_tag inner_a_t where inner_a_t.tag_id in
+        <foreach collection="tagList" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+        limit 0,#{limit}
+        ) outer_a
+        left join user u on u.id = outer_a.user_id
+        left join article_tag a_t on a_t.article_id = outer_a.id
+        left join tag t on t.id = a_t.tag_id
+    </select>
+
+    <!-- 文章归档计数 -->
+    <select id="selectArticleArchivesCount" resultType="Integer">
+        select count(1) count
+        from (select date_format(a.publish_time, '%Y-%m') yearMonth
+              from article a
+              where a.status = 0
+                and a.deleted = 0
+              group by yearMonth) temp
+    </select>
+
+    <!-- 文章归档 -->
+    <select id="selectArticleArchives" resultType="com.lfj.blog.service.vo.ArticleArchivesVo">
+        select date_format(a.publish_time, '%Y-%m') yearMonth,
+               count(1)                             article_count
+        from article a
+        where a.status = 0
+          and a.deleted = 0
+        group by yearMonth
+        order by yearMonth desc
+        limit #{offset}, #{limit}
+    </select>
+
+    <!-- 查询上一篇和下一篇
+    具体来说，这个查询可以分为两部分：
+第一个子查询选取比给定 id 小的文章中 id 最大的一篇，并且符合 deleted = 0 和 status = 0 的条件。这一部分用于获取上一篇文章的信息。
+第二个子查询选取比给定 id 大的文章中 id 最小的一篇，并且同样符合 deleted = 0 和 status = 0 的条件。这一部分用于获取下一篇文章的信息。
+然后，这两个子查询的结果通过 union all 进行合并，最终将上一篇和下一篇文章的信息组合在一起返回。
+    -->
+    <select id="selectPreAndNext" resultMap="BaseResultMap">
+        (select a.id,
+                a.title
+         from article a
+         where a.id <![CDATA[<]]> #{id}
+           and a.deleted = 0
+           and a.status = 0
+         order by a.id desc
+         limit 1)
+        union all
+        (select b.id,
+                b.title
+         from article b
+         where b.id > #{id}
+           and b.deleted = 0
+           and b.status = 0
+         order by b.id
+         limit 1)
+    </select>
+
+    <!-- 文章分类统计查询 -->
+    <select id="selectCategoryStatistic" resultType="com.lfj.blog.service.vo.ArticleCategoryStatisticsVo">
+        select c.id,
+               c.name,
+               c.parent_id,
+               (select count(1)
+                from article a
+                where a.status = 0
+                  and a.deleted = 0
+                  and a.category_id = c.id) article_count
+        from category c
+        where c.deleted = 0
+    </select>
+
+    <!-- 文章标签统计查询 -->
+    <select id="selectTagStatistic" resultType="com.lfj.blog.service.vo.ArticleTagStatisticsVo">
+        select t.id,
+               t.name
+                ,
+               (select count(1)
+                from article a
+                where a.status = 0
+                  and a.deleted = 0
+                  and a.id in
+                      (select a_t.article_id
+                       from article_tag a_t
+                       where a_t.tag_id = t.id)) article_count
+        from tag t
+        where t.deleted = 0
+    </select>
+
+    <!-- 点赞数自增 -->
+    <update id="likeCountIncrement">
+        update article a
+        set a.like_count = (a.like_count + 1)
+        where a.id = #{id}
+    </update>
+
+    <!-- 点赞数自减 -->
+    <update id="likeCountDecrement">
+        update article a
+        set a.like_count = (a.like_count - 1)
+        where a.id = #{id}
+    </update>
+
+    <!-- 评论数自增 -->
+    <update id="commentCountIncrement">
+        update article a
+        set a.comment_count = (a.comment_count + 1)
+        where a.id = #{id}
+    </update>
+
+    <!-- 评论数自减 -->
+    <update id="commentCountDecrement">
+        update article a
+        set a.comment_count = (a.comment_count - 1)
+        where a.id = #{id}
+    </update>
+
+    <!-- 收藏数自增 -->
+    <update id="collectCountIncrement">
+        update article a
+        set a.collect_count = (a.collect_count + 1)
+        where a.id = #{id}
+    </update>
+
+    <!-- 收藏数自减 -->
+    <update id="collectCountDecrement">
+        update article a
+        set a.collect_count = (a.collect_count - 1)
+        where a.id = #{id}
+    </update>
+
+
+</mapper>
