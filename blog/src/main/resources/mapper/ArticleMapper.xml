@@ -358,36 +358,36 @@
          limit 1)
     </select>
 
-    <!--    &lt;!&ndash; 文章分类统计查询 &ndash;&gt;-->
-    <!--    <select id="selectCategoryStatistic" resultType="cn.poile.blog.vo.ArticleCategoryStatisticsVo">-->
-    <!--        select c.id,-->
-    <!--               c.name,-->
-    <!--               c.parent_id,-->
-    <!--               (select count(1)-->
-    <!--                from article a-->
-    <!--                where a.status = 0-->
-    <!--                  and a.deleted = 0-->
-    <!--                  and a.category_id = c.id) article_count-->
-    <!--        from category c-->
-    <!--        where c.deleted = 0-->
-    <!--    </select>-->
+    <!-- 文章分类统计查询 -->
+    <select id="selectCategoryStatistic" resultType="com.lfj.blog.service.vo.ArticleCategoryStatisticsVo">
+        select c.id,
+               c.name,
+               c.parent_id,
+               (select count(1)
+                from article a
+                where a.status = 0
+                  and a.deleted = 0
+                  and a.category_id = c.id) article_count
+        from category c
+        where c.deleted = 0
+    </select>
 
-    <!--    &lt;!&ndash; 文章标签统计查询 &ndash;&gt;-->
-    <!--    <select id="selectTagStatistic" resultType="cn.poile.blog.vo.ArticleTagStatisticsVo">-->
-    <!--        select t.id,-->
-    <!--               t.name-->
-    <!--                ,-->
-    <!--               (select count(1)-->
-    <!--                from article a-->
-    <!--                where a.status = 0-->
-    <!--                  and a.deleted = 0-->
-    <!--                  and a.id in-->
-    <!--                      (select a_t.article_id-->
-    <!--                       from article_tag a_t-->
-    <!--                       where a_t.tag_id = t.id)) article_count-->
-    <!--        from tag t-->
-    <!--        where t.deleted = 0-->
-    <!--    </select>-->
+    <!-- 文章标签统计查询 -->
+    <select id="selectTagStatistic" resultType="com.lfj.blog.service.vo.ArticleTagStatisticsVo">
+        select t.id,
+               t.name
+                ,
+               (select count(1)
+                from article a
+                where a.status = 0
+                  and a.deleted = 0
+                  and a.id in
+                      (select a_t.article_id
+                       from article_tag a_t
+                       where a_t.tag_id = t.id)) article_count
+        from tag t
+        where t.deleted = 0
+    </select>
 
     <!-- 点赞数自增 -->
     <update id="likeCountIncrement">

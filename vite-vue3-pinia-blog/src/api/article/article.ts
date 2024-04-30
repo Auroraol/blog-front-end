@@ -15,25 +15,6 @@ export function articleDetail(id) {
   return get(import.meta.env.VITE_APP_BASE_API +`/article/detail/${id}`, true)
 }
 
-// /**
-//  * 分页获取文章（后台）
-//  * @param {Object} params
-//  */
-// export function pageArticle(params) {
-//   return request.get('/article/page', { params })
-// }
-
-// /**
-//  * 状态修改
-//  * @param {Object} params 
-//  */
-// export function updateStatus(params) {
-//   return request({
-//     url: '/article/status/update',
-//     method: 'post',
-//     params: params
-//   })
-// }
 
 /**
  * 分页获取已发布文章（前台）
@@ -42,14 +23,6 @@ export function articleDetail(id) {
 export function pagePublishedArticle(params) {
   return get(import.meta.env.VITE_APP_BASE_API + '/article/published/page', params )
 }
-
-// /**
-//  * 删除文章
-//  * @param {Number} id
-//  */
-// export function deleteArticle(id) {
-//   return request.delete(`/article/delete/${id}`)
-// }
 
 /**
  * 添加或更新推荐
@@ -111,4 +84,34 @@ export function interrelated(params) {
  */
 export function pageArchives(params) {
   return get(import.meta.env.VITE_APP_BASE_API +  '/article/archives/page',  params )
+}
+
+/**
+ * 分页获取文章（后台）
+ * @param {Object} params
+ */
+export function pageArticle(params) {
+  return get(import.meta.env.VITE_APP_BASE_API + '/article/page', params, true )
+}
+
+/**
+ * 状态修改
+ * @param {Object} params 
+ */
+export function updateStatus(params) {
+  return request(import.meta.env.VITE_APP_BASE_API + '/article/status/update', {
+    method: 'post',
+    params: params
+  }, true)
+}
+
+
+/**
+ * 删除文章
+ * @param {Number} id
+ */
+export function deleteArticle(id) {
+  return request(import.meta.env.VITE_APP_BASE_API + `/article/delete/${id}`,{
+    method: "delete"
+  }, true)
 }

@@ -109,6 +109,7 @@ const previewId = ref("");
 const tableData = ref([]);
 const columns = [
   {
+    type: "expand",
     slots: {
       default: "opera1",
     },

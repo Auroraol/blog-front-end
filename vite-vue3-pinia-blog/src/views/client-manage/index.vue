@@ -167,6 +167,10 @@ onMounted(() => {
 
 const getList = () => {
   loadData();
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
 };
 
 // 弹框关闭

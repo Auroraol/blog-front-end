@@ -9,9 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 2019-11-13 11:03
+ * ConstraintValidator<自定义注解类, 校验的数据类型>
  **/
-//  ConstraintValidator<自定义注解类, 校验的数据类型>
 public class IsImageValidator implements ConstraintValidator<IsImage, MultipartFile> {
 
 	private static final String[] IMAGE_CONTENT_TYPE_ARRAY = {"image/bmp", "image/gif", "image/jpeg", "image/png", "image/jpg", "image/webp"};

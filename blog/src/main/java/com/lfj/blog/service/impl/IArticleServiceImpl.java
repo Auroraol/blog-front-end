@@ -22,6 +22,8 @@ import com.lfj.blog.service.IArticleTagService;
 import com.lfj.blog.service.ICategoryService;
 import com.lfj.blog.service.ITagService;
 import com.lfj.blog.service.vo.ArticleArchivesVo;
+import com.lfj.blog.service.vo.ArticleCategoryStatisticsVo;
+import com.lfj.blog.service.vo.ArticleTagStatisticsVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import com.lfj.blog.service.wrapper.ArticlePageQueryWrapper;
 import com.lfj.blog.utils.IpUtil;
@@ -249,7 +251,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 */
 	@Override
 	public ArticleVo selectArticleVoById(int id) {
-		ArticleVo articleVo = this.baseMapper.selectArticleVoById(id, null);
+		ArticleVo articleVo = articleMapper.selectArticleVoById(id, null);
 		if (articleVo == null) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "文章不存在");
 		}
@@ -267,7 +269,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public ArticleVo selectOne(int id) {
-		ArticleVo articleVo = this.baseMapper.selectArticleVoById(id, ArticleStatusEnum.NORMAL.getStatus());
+		ArticleVo articleVo = articleMapper.selectArticleVoById(id, ArticleStatusEnum.NORMAL.getStatus());
 //		System.out.println(articleVo.getContent());
 		if (articleVo == null) {
 			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "文章不存在");
@@ -328,7 +330,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 		articlePageQueryWrapper.setCategoryId(article.getCategoryId());
 		articlePageQueryWrapper.setStatus((ArticleStatusEnum.NORMAL.getStatus()));  //发布
 //		查询结果中排除与给定 id 相同的元素，并返回一个过滤后的 ArticleVo 对象列表
-		List<ArticleVo> resultList = this.baseMapper
+		List<ArticleVo> resultList = articleMapper
 				.selectArticleVoPage(articlePageQueryWrapper).stream()
 				.filter(a -> !id.equals(a.getId())).collect(Collectors.toList());
 		// 分类下没有使用标签查询
@@ -337,7 +339,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 			queryWrapper.lambda().eq(ArticleTag::getArticleId, id);
 			List<ArticleTag> articleTagList = articleTagService.list(queryWrapper);
 			if (!CollectionUtils.isEmpty(articleTagList)) {
-				resultList = this.baseMapper
+				resultList = articleMapper
 						.selectByTagList(articleTagList.stream().map(ArticleTag::getTagId).collect(Collectors.toList()), limit)
 						.stream().filter(a -> !id.equals(a.getId())).collect(Collectors.toList());
 			}
@@ -396,7 +398,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 */
 	@Override
 	public List<ArticleVo> selectCollectByUserId(long offset, long limit, Integer userId) {
-		return this.baseMapper.selectCollectByUserId(offset, limit, userId);
+		return articleMapper.selectCollectByUserId(offset, limit, userId);
 	}
 
 	/**
@@ -406,7 +408,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 */
 	@Override
 	public void commentCountIncrement(int articleId) {
-		this.baseMapper.commentCountIncrement(articleId);
+		articleMapper.commentCountIncrement(articleId);
 	}
 
 	/**
@@ -416,7 +418,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 */
 	@Override
 	public void commentCountDecrement(int articleId) {
-		this.baseMapper.commentCountDecrement(articleId);
+		articleMapper.commentCountDecrement(articleId);
 	}
 
 	/**
@@ -428,16 +430,80 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 */
 	@Override
 	public IPage<ArticleArchivesVo> selectArticleArchives(long current, long size) {
-		Integer count = this.baseMapper.selectArticleArchivesCount(); // 文章归档计数
+		Integer count = articleMapper.selectArticleArchivesCount(); // 文章归档计数
 		if (count == 0) {
 			return new Page<>(current, size);
 		}
 		//文章归档
 		List<ArticleArchivesVo> articleArchivesVoList =
-				this.baseMapper.selectArticleArchives((current - 1) * size, size);
+				articleMapper.selectArticleArchives((current - 1) * size, size);
 		Page<ArticleArchivesVo> page = new Page<>(current, size, count);
 		page.setRecords(articleArchivesVoList);
 		return page;
+	}
+
+
+	/**
+	 * 按分类计数文章数
+	 *
+	 * @return
+	 */
+	@Override
+	public List<ArticleCategoryStatisticsVo> selectCategoryStatistic() {
+		return articleMapper.selectCategoryStatistic();
+	}
+
+
+	/**
+	 * 按标签计数文章数
+	 *
+	 * @return
+	 */
+	@Override
+	public List<ArticleTagStatisticsVo> selectTagStatistic() {
+		return articleMapper.selectTagStatistic();
+	}
+
+
+	/**
+	 * 丢弃文章（放到回收站）
+	 *
+	 * @param id
+	 */
+	@Override
+	public void discard(int id) {
+		Article article = new Article();
+		article.setId(id);
+		article.setStatus(ArticleStatusEnum.DISCARD.getStatus());
+		updateById(article);
+	}
+
+	/**
+	 * 删除文章（逻辑删除）
+	 *
+	 * @param id
+	 */
+	@Override
+	public void delete(int id) {
+		removeById(id);
+	}
+
+	/**
+	 * 更新文章状态
+	 *
+	 * @param articleId
+	 * @param status    0为正常，1为待发布，2为回收站
+	 */
+	@Override
+	public void updateStatus(Integer articleId, Integer status) {
+		Integer[] array = {0, 1, 2};
+		if (!ArrayUtils.contains(array, status)) {
+			throw new ApiException(ResponseCodeEnum.INVALID_REQUEST.getCode(), "无效状态码");
+		}
+		Article article = new Article();
+		article.setId(articleId);
+		article.setStatus(status);
+		updateById(article);
 	}
 
 
@@ -463,7 +529,7 @@ public class IArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
 	 * @return
 	 */
 	private PreArtAndNextArtDTO selectPreAndNext(int id) {
-		List<Article> articleList = this.baseMapper.selectPreAndNext(id);
+		List<Article> articleList = articleMapper.selectPreAndNext(id);
 		int two = 2;
 		int size = articleList.size();
 		PreArtAndNextArtDTO dto = new PreArtAndNextArtDTO();

@@ -115,6 +115,8 @@ public class ArticleRecommendServiceImpl implements ArticleRecommendService {
 
 	/**
 	 * 异步刷新(底层使用aop，所以同一个类调用异步不会生效)
+	 * <p>
+	 * 从一个排序集合中移除具有特定 articleId 的元素，并且根据这个 articleId 添加新的元素
 	 *
 	 * @param articleId
 	 */
@@ -125,7 +127,8 @@ public class ArticleRecommendServiceImpl implements ArticleRecommendService {
 			return;
 		}
 		ArticleVo articleVo;
-		Set<ZSetOperations.TypedTuple<Object>> valueScoreSet = zSetOperations.reverseRangeWithScores(KEY, 0, -1);
+		Set<ZSetOperations.TypedTuple<Object>> valueScoreSet =
+				zSetOperations.reverseRangeWithScores(KEY, 0, -1);
 		if (valueScoreSet != null) {
 			for (ZSetOperations.TypedTuple<Object> item : valueScoreSet) {
 				ArticleVo value = (ArticleVo) item.getValue();

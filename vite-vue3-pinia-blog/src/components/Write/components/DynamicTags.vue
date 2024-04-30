@@ -57,71 +57,57 @@ import { addTag as apiAddTag, getTagId } from "/@/api/tag/tag";
 
 const emits = defineEmits(["tagsChange"]);
 
-const props = defineProps<{
-  seletedTags: Tag[];
-}>();
-
-const dynamicTags = computed(() =>
-  props.seletedTags && props.seletedTags.length > 0
-    ? props.seletedTags
-    : [
-        {
-          id: 1,
-          name: "c++",
-          deleted: 0,
-        },
-        {
-          id: 2,
-          name: "测试",
-          deleted: 0,
-        },
-        {
-          id: 3,
-          name: "java",
-          deleted: 0,
-        },
-      ]
-);
-
 interface Tag {
   id?: number;
   name: string;
   deleted?: number;
 }
 
-const chooseTags = reactive<Tag[]>([]);
-const inputTagVisible = ref(false);
-const inputTagValue = ref("");
+//待选择的标签，可自定义添加新标签
+const inputValue = ref("");
+const inputVisible = ref(false);
+const InputRef = ref<InstanceType<typeof ElInput>>(); // 绑定<el-input></el-input>
 
-onMounted(() => {});
+const props = defineProps<{
+  beSeletedTags: Tag[];
+  beenSeletedTags: Tag[];
+}>();
 
-watch(chooseTags, (val) => {
-  emits("tagsChange", val);
-});
+const dynamicTags = computed(() =>
+  props.beSeletedTags && props.beSeletedTags.length > 0
+    ? props.beSeletedTags
+    : []
+);
 
-//选中筛选tag
-const chooseTag = (tagName: Tag) => {
+const chooseTags = computed(() =>
+  props.beenSeletedTags && props.beenSeletedTags.length > 0
+    ? props.beenSeletedTags
+    : []
+);
+
+//选中待tag
+const chooseTag = (tag: Tag) => {
   //如果已经选中了则不要重复选中
-  if (chooseTags.indexOf(tagName) !== -1) {
+  if (chooseTags.value.indexOf(tag) !== -1) {
+    ElMessage.warning("不能重复选中");
     return;
   } else {
-    if (chooseTags.length < 6) {
-      chooseTags.push(tagName);
+    if (chooseTags.value.length < 6) {
+      const updatedTags = [...chooseTags.value, tag]; // s6语法拼接数组
+      chooseTags.value.push(tag);
+      emits("tagsChange", updatedTags);
     } else {
       alert("标签数量达到上限");
     }
   }
 };
 
-//已选择的标签，可自定义添加新标签
-const inputValue = ref("");
-const inputVisible = ref(false);
-const InputRef = ref<InstanceType<typeof ElInput>>(); // 绑定<el-input></el-input>
-
+//点击关闭
 const handleClose = (tag: Tag) => {
-  chooseTags.splice(chooseTags.indexOf(tag), 1);
+  chooseTags.value.splice(chooseTags.value.indexOf(tag), 1);
 };
 
+//点击增加标签
 const addTag = () => {
   inputVisible.value = true;
   nextTick(() => {
@@ -129,17 +115,16 @@ const addTag = () => {
   });
 };
 
+// 保存标签
 const handleInputConfirm = async () => {
   if (inputValue.value) {
     //判断，如果标签数量已经达到最大数量则不添加新标签并且给出弹窗
-    if (chooseTags.length < 6) {
+    if (chooseTags.value.length < 6) {
       try {
         const data = { tagName: inputValue.value };
         await apiAddTag(data); // 服务器增加标签
         const res = await getTagId(data);
-        console.error(res);
-
-        chooseTags.push({
+        chooseTags.value.push({
           id: res,
           name: inputValue.value,
         });

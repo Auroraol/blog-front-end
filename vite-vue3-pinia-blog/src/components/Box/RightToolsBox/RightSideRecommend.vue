@@ -93,8 +93,7 @@ onMounted(() => {
   .content-list {
     margin: 10px;
     padding: 0;
-    min-height: 120px;
-    max-height: 280px;
+    width: 100%;
     overflow-y: auto; /* 当内容溢出时显示滚动条 */
 
     .list-item {

@@ -108,6 +108,10 @@ const pageUser = () => {
 const currentChange = (val) => {
   current.value = val;
   pageUser();
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
 };
 
 // 禁用启用开关

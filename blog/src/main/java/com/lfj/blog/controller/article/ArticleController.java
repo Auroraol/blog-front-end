@@ -7,6 +7,8 @@ import com.lfj.blog.controller.model.request.ArticleRequest;
 import com.lfj.blog.service.ArticleRecommendService;
 import com.lfj.blog.service.IArticleService;
 import com.lfj.blog.service.vo.ArticleArchivesVo;
+import com.lfj.blog.service.vo.ArticleCategoryStatisticsVo;
+import com.lfj.blog.service.vo.ArticleTagStatisticsVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,39 +63,39 @@ public class ArticleController {
 		return ApiResponseResult.success(articleService.selectPublishedArticleVoPage(current, size, categoryId, tagId, yearMonth, title, orderBy));
 	}
 
+
+	@GetMapping("/page")
+	@PreAuthorize("hasAuthority('admin')")
+	@ApiOperation(value = "后台管理分页获取文章", notes = "可以查询所有状态的文章，用于后台管理，需要accessToken，需要管理员权限")
+	public ApiResponseResult<IPage<ArticleVo>> page(@ApiParam("当前页") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
+													@ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size,
+													@ApiParam("文章状态,非必传，不传查全部；0:已发布，1:未发布，2:回收站") @RequestParam(value = "status", required = false) Integer status,
+													@ApiParam("分类id，非必传") @RequestParam(value = "categoryId", required = false) Integer categoryId,
+													@ApiParam("标签id，非必传") @RequestParam(value = "tagId", required = false) Integer tagId,
+													@ApiParam("年月,非必传") @YearMonthFormat @RequestParam(value = "yearMonth", required = false) String yearMonth,
+													@ApiParam("标题关键字，可空") @RequestParam(value = "title", required = false) String title) {
+		return ApiResponseResult.success(articleService.selectArticleVoPage(current, size, status, title, categoryId, tagId, yearMonth));
+	}
+
+	@DeleteMapping("/discard/{id}")
+	@PreAuthorize("hasAuthority('admin')")
+	@ApiOperation(value = "丢弃文章(回收站)", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult discard(@ApiParam("文章id") @PathVariable("id") int id) {
+		articleService.discard(id);
+		articleRecommendService.remove(id);
+		return ApiResponseResult.success();
+	}
+
+	@DeleteMapping("/delete/{id}")
+	@PreAuthorize("hasAuthority('admin')")
+	@ApiOperation(value = "删除文章", notes = "逻辑删除，需要accessToken，需要管理员权限")
+	public ApiResponseResult delete(@ApiParam("文章id") @PathVariable("id") int id) {
+		articleService.delete(id);
+		articleRecommendService.remove(id);
+		return ApiResponseResult.success();
+	}
+
 	//
-//
-//	@GetMapping("/page")
-//	@PreAuthorize("hasAuthority('admin')")
-//	@ApiOperation(value = "后台管理分页获取文章", notes = "可以查询所有状态的文章，用于后台管理，需要accessToken，需要管理员权限")
-//	public ApiResponseResult<IPage<ArticleVo>> page(@ApiParam("当前页") @RequestParam(value = "current", required = false, defaultValue = "1") long current,
-//													@ApiParam("每页数量") @RequestParam(value = "size", required = false, defaultValue = "5") long size,
-//													@ApiParam("文章状态,非必传，不传查全部；0:已发布，1:未发布，2:回收站") @RequestParam(value = "status", required = false) Integer status,
-//													@ApiParam("分类id，非必传") @RequestParam(value = "categoryId", required = false) Integer categoryId,
-//													@ApiParam("标签id，非必传") @RequestParam(value = "tagId", required = false) Integer tagId,
-//													@ApiParam("年月,非必传") @YearMonthFormat @RequestParam(value = "yearMonth", required = false) String yearMonth,
-//													@ApiParam("标题关键字，可空") @RequestParam(value = "title", required = false) String title) {
-//		return ApiResponseResult.success(articleService.selectArticleVoPage(current, size, status, title, categoryId, tagId, yearMonth));
-//	}
-//
-//	@DeleteMapping("/discard/{id}")
-//	@PreAuthorize("hasAuthority('admin')")
-//	@ApiOperation(value = "丢弃文章(回收站)", notes = "需要accessToken，需要管理员权限")
-//	public ApiResponseResult discard(@ApiParam("文章id") @PathVariable("id") int id) {
-//		articleService.discard(id);
-//		articleRecommendService.remove(id);
-//		return ApiResponseResult.success();
-//	}
-//
-//	@DeleteMapping("/delete/{id}")
-//	@PreAuthorize("hasAuthority('admin')")
-//	@ApiOperation(value = "删除文章", notes = "逻辑删除，需要accessToken，需要管理员权限")
-//	public ApiResponseResult delete(@ApiParam("文章id") @PathVariable("id") int id) {
-//		articleService.delete(id);
-//		articleRecommendService.remove(id);
-//		return ApiResponseResult.success();
-//	}
-//
 	@GetMapping("/detail/{id}")
 	@PreAuthorize("hasAuthority('admin')")
 	@ApiOperation(value = "后台管理，获取文章详情信息", notes = "需要accessToken,用于后台文章管理，比列表返回的多一个文章内容，文章分类列表")
@@ -127,18 +129,18 @@ public class ArticleController {
 		return ApiResponseResult.success(articleService.selectArticleArchives(current, size));
 	}
 
-	//	@GetMapping("/category/statistic")
-//	@ApiOperation(value = "文章分类统计", notes = "按分类计数文章数")
-//	public ApiResponseResult<List<ArticleCategoryStatisticsVo>> categoryStatistic() {
-//		return ApiResponseResult.success(articleService.selectCategoryStatistic());
-//	}
-//
-//	@GetMapping("/tag/statistic")
-//	@ApiOperation(value = "文章标签统计", notes = "按标签计数文章数")
-//	public ApiResponseResult<List<ArticleTagStatisticsVo>> tagStatistic() {
-//		return ApiResponseResult.success(articleService.selectTagStatistic());
-//	}
-//
+	@GetMapping("/category/statistic")
+	@ApiOperation(value = "文章分类统计", notes = "按分类计数文章数")
+	public ApiResponseResult<List<ArticleCategoryStatisticsVo>> categoryStatistic() {
+		return ApiResponseResult.success(articleService.selectCategoryStatistic());
+	}
+
+	@GetMapping("/tag/statistic")
+	@ApiOperation(value = "文章标签统计", notes = "按标签计数文章数")
+	public ApiResponseResult<List<ArticleTagStatisticsVo>> tagStatistic() {
+		return ApiResponseResult.success(articleService.selectTagStatistic());
+	}
+
 	@PostMapping("/recommend/save")
 	@PreAuthorize("hasAuthority('admin')")
 	@ApiOperation(value = "添加到推荐，如果已存在则更新", notes = "需要accessToken，需要管理员权限")
@@ -172,22 +174,22 @@ public class ArticleController {
 	) {
 		return ApiResponseResult.success(articleService.selectInterrelatedById(articleId, limit));
 	}
-//
-//	@GetMapping("/count")
-//	@ApiOperation(value = "已发布文章总数")
-//	public ApiResponseResult<Long> count() {
-//		return ApiResponseResult.success(articleService.count());
-//	}
-//
-//	@PostMapping("/status/update")
-//	@ApiOperation(value = "修改文章发布或保存状态", notes = "需要accessToken，需要管理员权限")
-//	public ApiResponseResult status(
-//			@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam("articleId") Integer articleId,
-//			@ApiParam("文章状态，0为正常，1为待发布，2为回收站") @NotNull(message = "文章状态不能为空") @RequestParam("status") Integer status
-//	) {
-//		articleService.updateStatus(articleId, status);
-//		articleRecommendService.asyncRefresh(articleId);
-//		return ApiResponseResult.success();
-//	}
+
+	@GetMapping("/count")
+	@ApiOperation(value = "已发布文章总数")
+	public ApiResponseResult<Long> count() {
+		return ApiResponseResult.success(articleService.count());
+	}
+
+	@PostMapping("/status/update")
+	@ApiOperation(value = "修改文章发布或保存状态", notes = "需要accessToken，需要管理员权限")
+	public ApiResponseResult status(
+			@ApiParam("文章id") @NotNull(message = "文章id不能为空") @RequestParam("articleId") Integer articleId,
+			@ApiParam("文章状态，0为正常，1为待发布，2为回收站") @NotNull(message = "文章状态不能为空") @RequestParam("status") Integer status
+	) {
+		articleService.updateStatus(articleId, status);
+		articleRecommendService.asyncRefresh(articleId); //如果1为待发布, 则文章推荐也删除掉
+		return ApiResponseResult.success();
+	}
 
 }

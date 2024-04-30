@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" class="edit-container">
+  <div class="edit-container">
     <!-- 头部 -->
     <div class="edit-head">
       <div class="edit-head-left">
@@ -32,12 +32,24 @@
             :value="category.id"
           />
         </el-select>
-        <!-- <el-button type="primary" @click="dialogVisible = true"
-          >预览封面</el-button
-        > -->
 
-        <el-button class="col" type="warning" @click="save(1)">保存</el-button>
-        <el-button class="col" type="danger" @click="save(0)">发布</el-button>
+        <el-button
+          v-if="articleWrite.cover"
+          type="primary"
+          icon="picture"
+          @click="coverPreview"
+          >预览封面</el-button
+        >
+        <el-button
+          class="col"
+          type="warning"
+          :loading="loading1"
+          @click="save(1)"
+          >保存</el-button
+        >
+        <el-button class="col" type="danger" :loading="loading" @click="save(0)"
+          >发布</el-button
+        >
       </div>
     </div>
     <div class="edit-head-box">
@@ -45,7 +57,7 @@
         <label>标题:</label>
         <el-input
           class="input"
-          maxlength="20"
+          maxlength="30"
           show-word-limit
           v-model="articleWrite.title"
           placeholder="输入文章标题"
@@ -68,20 +80,24 @@
             class="input"
             maxlength="30"
             show-word-limit
-            v-model="reproduce"
+            v-model="articleWrite.reproduce"
             placeholder="输入转载地址"
           />
         </div>
       </div>
     </div>
     <!-- 标签 -->
-    <dynamic-tags :seleted-tags="seletedTags" @tagsChage="tagsChage" />
+    <dynamic-tags
+      :beSeletedTags="beSeletedTags"
+      :beenSeletedTags="beenSeletedTags"
+      @tagsChange="tagsChange"
+    />
     <!-- 上传封面 -->
     <img-upload @uploadSuccess="coverUploadSuccess"></img-upload>
     <!-- markdown编辑器 -->
     <MdEditor
       editorId="uploadingArticle"
-      v-model="articleWrite.content"
+      v-model="articleWrite.htmlContent"
       style="height: 45rem"
       previewTheme="vuepress"
       codeTheme="a11y"
@@ -104,11 +120,10 @@
 
     <el-dialog
       :modal="false"
-      v-model="dialogVisible"
+      v-model="coverVisible"
       title="预览封面"
       :top="'25vh'"
       width="320px"
-      :before-close="coverClose"
       :lock-scroll="false"
     >
       <div
@@ -121,11 +136,10 @@
         "
       >
         <el-image
-          :src="preview_cover"
+          :src="articleWrite.cover"
           style="height: 100%; width: 100%"
           :fit="contain"
         />
-        <!-- <el-icon size="35px" style="margin-top: 20px;"><DeleteFilled /></el-icon> -->
       </div>
     </el-dialog>
   </div>
@@ -133,19 +147,24 @@
   
 <script setup lang='ts'>
 import { ref } from "vue";
+import { ElLoading } from "element-plus";
 import { useRequest } from "vue-hooks-plus";
-import { MdEditor } from "md-editor-v3";
+import { MdEditor, config } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
-// import DynamicTags from "/@/components/Write/components/DynamicTags.vue";
-// import ImgUpload from "/@/components/Write/components/ImgUpload.vue";
 import { ArticleRequestData, categoryItem } from "/@/typings.d";
 import { categoryList } from "/@/api/category/category";
-import { saveArticle } from "/@/api/article/article";
+import { saveArticle, articleDetail } from "/@/api/article/article";
 import { deleteFile } from "/@/api/file/file";
+import { request } from "/@/utils/network/axios";
+import { tagList } from "/@/api/tag/tag";
+import TargetBlankExtension from "./components/TargetBlankExtension";
+import DynamicTags from "/@/components/Write/components/DynamicTags.vue";
+import ImgUpload from "/@/components/Write/components/ImgUpload.vue";
 
+const router = useRouter();
 // 定义响应式变量
 // 上传文章
-const articleWrite = reactive<ArticleRequestData>({
+const articleWrite = ref<ArticleRequestData>({
   id: null,
   original: 1, // 原创，1：是，0：否
   status: 0,
@@ -159,6 +178,7 @@ const articleWrite = reactive<ArticleRequestData>({
   tagIds: [],
 });
 
+const loading1 = ref(false);
 const loading = ref(false);
 const uploadType = ref(1); // 上传类型，1：文章图片，2：文章封面
 const preview_cover = ref("");
@@ -173,49 +193,61 @@ const options = [
 
 // 定义分类列表和已选标签列表
 const categories = ref<categoryItem[]>([]);
-const seletedTags = ref([]);
+const beSeletedTags = ref([]); // 待选择
+const beenSeletedTags = ref([]); // 已选择
 
 // 初始化
 onMounted(() => {
   initCategoryList();
-  // 如果有草稿就同步一下草稿
-  const session = sessionStorage.getItem("articleDraft");
-  if (session) {
-    const draft = JSON.parse(session);
-    articleWrite.title = draft.title;
-    articleWrite.htmlContent = draft.htmlContent;
-    articleWrite.tagIds = draft.tagIds;
-    articleWrite.summary = draft.summary;
-    // articleWrite.author = draft.author
+  initTag();
+  initEdit(Number(router.currentRoute.value.query.id)); // 当前路由的 id 参数
+});
+
+const initEdit = async (id: number | null) => {
+  if (!id) return;
+
+  try {
+    loading.value = true;
+    const res = await articleDetail(id);
+    const {
+      categoryId,
+      title,
+      summary,
+      cover,
+      content,
+      original,
+      reproduce,
+      tagList,
+      htmlContent,
+    } = res;
+
+    console.error(res);
+
+    articleWrite.value = {
+      id,
+      original,
+      status: 0,
+      categoryId,
+      title,
+      summary,
+      reproduce,
+      content,
+      htmlContent,
+      cover,
+      tagIds: tagList.map((tag) => tag.id),
+    };
+
+    articleWrite.value.id = id;
+
+    // 已选择标签
+    beenSeletedTags.value = tagList;
+
+    loading.value = false;
+  } catch (error) {
+    console.error(error);
+    loading.value = false;
   }
-});
-
-// MdEditor  保存草稿（防抖,避免一直触发）
-function getArticleTitle(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve("成功");
-    }, 500);
-  });
-}
-
-const { data, run } = useRequest(() => getArticleTitle(), {
-  debounceWait: 1000,
-  manual: true,
-  onSuccess: (data) => {
-    const draft = JSON.stringify(articleWrite);
-    sessionStorage.setItem("articleDraft", draft); // 保存到浏览器
-  },
-});
-
-// 监视属性
-watch(
-  () => articleWrite,
-  (newValue, oldValue) => {
-    run();
-  },
-  { immediate: true, deep: true }
-);
+};
 
 // 获取分类列表
 const initCategoryList = () => {
@@ -224,46 +256,119 @@ const initCategoryList = () => {
   });
 };
 
+// 加载标签
+const initTag = async () => {
+  try {
+    const res = await tagList();
+    beSeletedTags.value = res;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const openFullScreen2 = () => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: "Loading",
+    background: "rgba(0, 0, 0, 0.7)",
+  });
+  setTimeout(() => {
+    loading.close();
+  }, 2000);
+};
+
 // 监控到已选标签(子传父)
-const tagsChage = (tags) => {
-  articleWrite.tagIds = tags.map((x) => {
-    return x.tagId;
+const tagsChange = (tags) => {
+  //赋值
+  articleWrite.value.tagIds = tags.map((x) => {
+    return x.id;
   });
 };
 
-//MdEditor 上传图片事件
-const onUploadImg = (files, callback) => {
-  imgUploadVisible = false;
-  const oldCover = this.cover;
-  this.cover = url;
-  const params = {
-    fullPath: oldCover,
-  };
-  if (oldCover) {
-    deleteFile(params);
+// 预览封面
+const coverPreview = () => {
+  coverVisible.value = true;
+};
+
+//MdEditor  设置链接在新窗口打开
+config({
+  markdownItConfig(md) {
+    md.use(TargetBlankExtension);
+  },
+});
+
+//MdEditor 上传图片事件  上传图片事件，弹窗会等待上传结果，务必将上传后的 urls 作为 callback 入参回传。
+const onUploadImg = async (files, callback) => {
+  try {
+    const res = await Promise.all(
+      files.map((file) => {
+        return new Promise((resolve, reject) => {
+          const form = new FormData();
+          form.append("file", file);
+
+          // 发送文件上传请求
+          request(
+            import.meta.env.VITE_APP_BASE_API + "/file/upload",
+            {
+              method: "post",
+              data: form,
+              headers: { "Content-Type": "multipart/form-data" },
+            },
+            true
+          )
+            .then((response) => {
+              resolve(response); // 将响应传递给 Promise.resolve
+            })
+            .catch((error) => {
+              reject(error); // 将错误传递给 Promise.reject
+            });
+        });
+      })
+    );
+
+    // 方式一
+    callback(res.map((url) => url));
+
+    // 方式二
+    // callback(
+    //   res.map((item: any) => ({
+    //     url: item.data.url,
+    //     alt: 'alt',
+    //     title: 'title'
+    //   }))
+    // );
+
+    ElMessage({
+      message: "图片上传成功",
+      type: "success",
+    });
+  } catch (error) {
+    console.error(error);
   }
-  ElMessage({
-    message: "封面上传成功",
-    type: "success",
-  });
 };
 
 //MdEditor html 变化回调事件，用于获取预览 html 代码
 const htmlChange = (h: string) => {
-  articleWrite.htmlContent = h;
+  articleWrite.value.htmlContent = h;
 };
 
-//MdEditor  保存事件
+// 保存/发布
 const save = (status: number) => {
-  console.error("Ss");
+  if (status === 0) {
+    loading.value = true;
+  } else {
+    loading1.value = true;
+  }
 
-  loading.value = true;
-  const data = toRaw(articleWrite);
+  articleWrite.value.status = status;
+  const data = articleWrite.value;
+  console.error(data);
+
   saveArticle(data).then(
     (res) => {
-      articleWrite.id = res; // 保存成功服务器返回文章id
+      articleWrite.value.id = res; // 保存成功服务器返回文章id
+      loading1.value = false;
       loading.value = false;
-      console.error(articleWrite.id);
       ElMessage({
         message: status === 0 ? "文章发布成功" : "文章保存成功",
         type: "success",
@@ -271,27 +376,21 @@ const save = (status: number) => {
     },
     (error) => {
       console.error(error);
+      loading1.value = false;
       loading.value = false;
     }
   );
 };
 
-//MdEditor  保存事件
-const onSave = (v, h) => {
-  console.error(v);
-
-  h.then((html) => {
-    articleWrite.htmlContent = h;
-  });
-};
-
 // 封面上传成功，删除原封面
 const coverUploadSuccess = (url) => {
-  const oldCover = articleWrite.cover;
-  articleWrite.cover = url;
+  const oldCover = articleWrite.value.cover;
+  articleWrite.value.cover = url;
   const params = {
     fullPath: oldCover,
   };
+  console.error(params.fullPath);
+
   if (oldCover) {
     deleteFile(params);
   }
@@ -300,20 +399,17 @@ const coverUploadSuccess = (url) => {
     type: "success",
   });
 };
-
-// 定义显示消息的方法
-const showMessage = (message: string, type: string) => {
-  // 在这里调用显示消息的函数（例如使用 $message）
-};
 </script>
-<style lang="less" scoped>
+
+<style lang="less">
 .edit-container {
-  margin-top: 5px;
   font-size: 1.4rem;
   margin-left: 10px;
   margin-right: 10px;
   background-color: #fff;
-
+  margin: 0 auto;
+  width: 65%;
+  margin-top: 5px;
   //
   .edit-head {
     height: 50px;

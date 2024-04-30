@@ -316,7 +316,7 @@ export const asyncRoutes = [
       {
         path: "edit",
         name: "Edit",
-        // component: () => import('@/views/article-manage/edit'),
+        component: () => import('/@/views/article-manage/edit.vue'),
         meta: {
           title: "编辑",
           icon: "art-edit",
@@ -325,7 +325,7 @@ export const asyncRoutes = [
       {
         path: "list",
         name: "List",
-        // component: () => import('@/views/article-manage/list'),
+        component: () => import('/@/views/article-manage/list.vue'),
         meta: {
           title: "文章",
           icon: "art-list",

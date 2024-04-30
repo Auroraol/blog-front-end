@@ -3,6 +3,8 @@ package com.lfj.blog.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lfj.blog.entity.Article;
 import com.lfj.blog.service.vo.ArticleArchivesVo;
+import com.lfj.blog.service.vo.ArticleCategoryStatisticsVo;
+import com.lfj.blog.service.vo.ArticleTagStatisticsVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import com.lfj.blog.service.wrapper.ArticlePageQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -81,19 +83,19 @@ public interface ArticleMapper extends BaseMapper<Article> {
 	 */
 	List<ArticleArchivesVo> selectArticleArchives(@Param("offset") long offset, @Param("limit") long limit);
 
-//	/**
-//	 * 按分类计数文章数
-//	 *
-//	 * @return
-//	 */
-//	List<ArticleCategoryStatisticsVo> selectCategoryStatistic();
-//
-//	/**
-//	 * 按标签计数文章数
-//	 *
-//	 * @return
-//	 */
-//	List<ArticleTagStatisticsVo> selectTagStatistic();
+	/**
+	 * 按分类计数文章数
+	 *
+	 * @return
+	 */
+	List<ArticleCategoryStatisticsVo> selectCategoryStatistic();
+
+	/**
+	 * 按标签计数文章数
+	 *
+	 * @return
+	 */
+	List<ArticleTagStatisticsVo> selectTagStatistic();
 
 	/**
 	 * 标签列表查询文章列表

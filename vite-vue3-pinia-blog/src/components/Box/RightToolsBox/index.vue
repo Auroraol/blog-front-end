@@ -1,10 +1,10 @@
 <template>
   <div class="articleRight">
-      <right-side-recommend></right-side-recommend>
+    <right-side-recommend></right-side-recommend>
     <!-- </div> -->
     <!-- 标签 -->
     <right-side-tags></right-side-tags>
-    
+
     <!-- <div class="message">
       <div class="messageTitle">
         <div class="title">
@@ -14,8 +14,8 @@
         <span></span>
       </div>
       <div class="messageContent"> -->
-        <right-side-comment></right-side-comment>
-      <!-- </div> -->
+    <right-side-comment></right-side-comment>
+    <!-- </div> -->
     <!-- </div> -->
   </div>
 </template>
@@ -102,11 +102,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-
 }
-
-
-
 
 @media screen and (max-width: 800px) {
   .articleRight {

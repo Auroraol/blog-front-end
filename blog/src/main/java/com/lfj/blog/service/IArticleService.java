@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.lfj.blog.controller.model.request.ArticleRequest;
 import com.lfj.blog.entity.Article;
 import com.lfj.blog.service.vo.ArticleArchivesVo;
+import com.lfj.blog.service.vo.ArticleCategoryStatisticsVo;
+import com.lfj.blog.service.vo.ArticleTagStatisticsVo;
 import com.lfj.blog.service.vo.ArticleVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -151,5 +153,42 @@ public interface IArticleService extends IService<Article> {
 	 * @return
 	 */
 	IPage<ArticleArchivesVo> selectArticleArchives(long current, long size);
+
+
+	/**
+	 * 丢弃文章
+	 *
+	 * @param id
+	 */
+	void discard(int id);
+
+	/**
+	 * 删除文章（逻辑删除）
+	 *
+	 * @param id
+	 */
+	void delete(int id);
+
+	/**
+	 * 按分类计数文章数(mapper)
+	 *
+	 * @return
+	 */
+	List<ArticleCategoryStatisticsVo> selectCategoryStatistic();
+
+	/**
+	 * 按标签计数文章数(mapper)
+	 *
+	 * @return
+	 */
+	List<ArticleTagStatisticsVo> selectTagStatistic();
+
+	/**
+	 * 更新文章状态
+	 *
+	 * @param articleId
+	 * @param status    0或1
+	 */
+	void updateStatus(Integer articleId, Integer status);
 
 }

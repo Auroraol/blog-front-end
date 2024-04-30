@@ -92,8 +92,6 @@ const init = () => {
   pageFile(params).then(
     (res) => {
       loading.value = false;
-      console.error(res);
-
       tableData.value = res.records;
       markers.value.push(res.nextMarker);
       loadedAll = res.loadedAll;
@@ -112,13 +110,13 @@ const nextClick = () => {
   pageFile(params).then(
     (res) => {
       loading.value = false;
-      tableData.value = res.data.records;
-      const marker = res.data.nextMarker;
+      tableData.value = res.records;
+      const marker = res.nextMarker;
       if (markers.value.indexOf(marker) === -1) {
         markers.value.push(marker);
       }
       pageNum++;
-      loadedAll = res.data.loadedAll;
+      loadedAll = res.loadedAll;
     },
     (error) => {
       console.error(error);
@@ -134,13 +132,13 @@ const prevClick = () => {
   pageFile(params).then(
     (res) => {
       loading.value = false;
-      tableData.value = res.data.records;
-      const marker = res.data.nextMarker;
+      tableData.value = res.records;
+      const marker = res.nextMarker;
       if (markers.value.indexOf(marker) === -1) {
         markers.value.push(marker);
       }
       pageNum--;
-      loadedAll = res.data.loadedAll;
+      loadedAll = res.loadedAll;
     },
     (error) => {
       console.error(error);
