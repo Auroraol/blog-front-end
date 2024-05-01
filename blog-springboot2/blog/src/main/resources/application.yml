@@ -1,0 +1,69 @@
+spring:
+  profiles:
+    active:
+      - dev   #选择使用的配置文件, 本文件是公有配置
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    cache: true
+    encoding: UTF-8 #开发期间关闭，上线以后开启
+  # 配置文件上传大小限制
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0
+      location: /var/tmp
+      max-request-size: 5MB
+      max-file-size: 5MB
+
+# mybatis-plus配置，不可修改
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration: # sql日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #    cache-enabled: true   # mybatis-plus二级缓存
+    map-underscore-to-camel-case: true  #开启MyBatis的下划线命名到驼峰命名的自动映射功能
+
+# 忽略安全校验url列表，不可修改
+ignore:
+  list:
+    - /actuator/**
+    - /swagger-ui/index.html
+    - /swagger-ui.html
+    - /v2/api-docs
+    - /swagger/api-docs
+    - /swagger-resources/**
+    - /webjars/**
+    - /druid/**
+    - /sms/**
+    - /account/login
+    - /mobile/login
+    - /logout
+    - /refresh_access_token
+    - /user/register
+    - /user/password/reset
+    - /user/email/bind
+    - /user/password/reset
+    - /category/tree
+    - /category/list
+    - /tag/list
+    - /article/published/page
+    - /article/view/**
+    - /article/increment_view/**
+    - /article/archives/page
+    - /article/category/statistic
+    - /article/tag/statistic
+    - /article/recommend/list
+    - /article/interrelated/list
+    - /article/count
+    - /article/like/list
+    - /friend/link/page
+    - /friend/link/list
+    - /article/comment/page
+    - /article/comment/latest
+    - /leave/message/page
+    - /leave/message/latest
+    - /oauth
+    - /files/**

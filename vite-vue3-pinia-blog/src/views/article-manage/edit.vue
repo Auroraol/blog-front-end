@@ -158,8 +158,8 @@ import { deleteFile } from "/@/api/file/file";
 import { request } from "/@/utils/network/axios";
 import { tagList } from "/@/api/tag/tag";
 import TargetBlankExtension from "./components/TargetBlankExtension";
-import DynamicTags from "/@/components/Write/components/DynamicTags.vue";
-import ImgUpload from "/@/components/Write/components/ImgUpload.vue";
+import DynamicTags from "/@/components/ArticleEdit/DynamicTags.vue";
+import ImgUpload from "/@/components/ArticleEdit/ImgUpload.vue";
 
 const router = useRouter();
 // 定义响应式变量

@@ -1,6 +1,6 @@
 <template>
   <div class="console">
-    <router-link to="/personalcenter">个人中心</router-link>
+    <router-link to="/user">个人中心</router-link>
   </div>
   <el-dropdown class="infoBox" size="large">
     <el-avatar

@@ -3996,3 +3996,242 @@ article.setUserId(userDetail.getId());
 	}
 ```
 
+
+
+# 从 Spring Security 5 迁移到 Spring Security 6/Spring Boot 3
+
+[Spring Security6版本变化内容_spring security 新版本更新内容-CSDN博客](https://blog.csdn.net/qq_34491508/article/details/132121362)
+
+[从 Spring Security 5 迁移到 Spring Security 6/Spring Boot 3 - spring 中文网 (springdoc.cn)](https://springdoc.cn/spring-security-migrate-5-to-6/)
+
+[Spring Security 6 配置方法，废弃 WebSecurityConfigurerAdapter_websecurityconfigureradapter作废-CSDN博客](https://blog.csdn.net/xieshaohu/article/details/129780439?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2~default~CTRLIST~Rate-1-129780439-blog-130098599.235^v43^pc_blog_bottom_relevance_base1&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2~default~CTRLIST~Rate-1-129780439-blog-130098599.235^v43^pc_blog_bottom_relevance_base1&utm_relevant_index=1)
+
+官网: [Configuration Migrations :: Spring Security](https://docs.spring.io/spring-security/reference/5.8/migration/servlet/config.html)
+
+## 配置HttpSecurity
+
+### 旧版
+
+```java
+@Log4j2
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true) // 开启授权
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    
+//	配置HttpSecurity
+	protected void configure(HttpSecurity http) throws Exception {
+		List<String> ignorePropertiesList = ignoreProperties.getList();
+		int size = ignorePropertiesList.size();
+
+		http.cors()   //允许跨域
+				.and()
+				.csrf().disable()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and()
+				.authorizeRequests()
+				.antMatchers(ignorePropertiesList.toArray(new String[size])).permitAll()  //配置的url 不需要授权
+				//任何请求
+				.anyRequest().authenticated()
+				.and()
+				.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
+
+		//添加认证过滤器(自定义)
+		// 第一个参数是要添加的过滤器对象，第二个参数是指定在哪一个现有过滤器之前添加这个自定义过滤器。
+		//实现在进行用户名密码认证之前对请求进行自定义的认证逻辑处理。
+		http.addFilterBefore(authorizationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+		//配置异常处理器(自定义未认证和未授权异常)
+		http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPointHandler).
+				accessDeniedHandler(customAccessDeniedHandler);
+	}
+    
+}
+```
+
+### 新版
+
+```java
+@Log4j2
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity // 开启授权
+public class WebSecurityConfig {
+
+    
+//	配置HttpSecurity
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		List<String> ignorePropertiesList = ignoreProperties.getList();
+		int size = ignorePropertiesList.size();
+
+		http.httpBasic(AbstractHttpConfigurer::disable)          // 禁用basic明文验证
+				.cors(Customizer.withDefaults())  //跨域
+				.csrf(AbstractHttpConfigurer::disable) //前后端分离架构不需要csrf保护
+				.formLogin(AbstractHttpConfigurer::disable)   // 禁用默认登录页
+				.authorizeHttpRequests(request ->
+						request.requestMatchers(ignorePropertiesList.toArray(new String[size])).permitAll()  //配置的url 不需要授权
+								.anyRequest().authenticated()  // 允许任意请求被已登录用户访问，不检查Authority
+				)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 前后端分离是无状态的，不需要session了，直接禁用。
+				.logout((logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))); // 退出
+
+		// 添加认证过滤器(自定义)
+		// 第一个参数是要添加的过滤器对象，第二个参数是指定在哪一个现有过滤器之前添加这个自定义过滤器。
+		// 实现在进行用户名密码认证之前对请求进行自定义的认证逻辑处理。
+		http.addFilterBefore(authorizationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+		// 配置异常处理器(自定义未认证和未授权异常)，如果不设置，默认使用Http403ForbiddenEntryPoint
+		http.exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(customAuthenticationEntryPointHandler).
+				accessDeniedHandler(customAccessDeniedHandler));
+
+		return http.build();
+	}
+}
+```
+
+参考:
+
+```java
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                // 禁用basic明文验证
+                .httpBasic().disable()
+                // 前后端分离架构不需要csrf保护
+                .csrf().disable()
+                // 禁用默认登录页
+                .formLogin().disable()
+                // 禁用默认登出页
+                .logout().disable()
+                // 设置异常的EntryPoint，如果不设置，默认使用Http403ForbiddenEntryPoint
+                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(invalidAuthenticationEntryPoint))
+                // 前后端分离是无状态的，不需要session了，直接禁用。
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                        // 允许所有OPTIONS请求
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // 允许直接访问授权登录接口
+                        .requestMatchers(HttpMethod.POST, "/web/authenticate").permitAll()
+                        // 允许 SpringMVC 的默认错误地址匿名访问
+                        .requestMatchers("/error").permitAll()
+                        // 其他所有接口必须有Authority信息，Authority在登录成功后的UserDetailsImpl对象中默认设置“ROLE_USER”
+                        //.requestMatchers("/**").hasAnyAuthority("ROLE_USER")
+                        // 允许任意请求被已登录用户访问，不检查Authority
+                        .anyRequest().authenticated())
+                .authenticationProvider(authenticationProvider())
+                // 加我们自定义的过滤器，替代UsernamePasswordAuthenticationFilter
+                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+ 
+        return http.build();
+    }
+```
+
+
+
+## 配置WebSecurity
+
+### 旧版
+
+```java
+//	配置WebSecurity
+	@Override
+	public void configure(WebSecurity web) {
+		web
+				.ignoring()
+				.antMatchers(
+						HttpMethod.GET,
+						"/*.html",
+						"/favicon.ico",
+						"/**/*.html",
+						"/**/*.css",
+						"/**/*.js"
+				);
+	}
+```
+
+### 新版
+
+```java
+	//	配置WebSecurity
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return (web) -> web
+				.ignoring()
+				.requestMatchers(
+						HttpMethod.GET,
+						"/*.html",
+						"/favicon.ico",
+						"/**/*.html",
+						"/**/*.css",
+						"/**/*.js"
+				);
+	}
+
+```
+
+### 配置AuthenticationManager认证
+
+以前可以通过重写父类的方法来获取这个 Bean，类似下面这样
+
+```java
+@Configuration
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+}
+```
+
+6.x中只能自己创建这个 Bean 了
+
+```java
+@Configuration
+public class SecurityConfig {
+ 
+    @Autowired
+    UserService userService;
+ 
+    @Bean
+    AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userService);
+        ProviderManager pm = new ProviderManager(daoAuthenticationProvider);
+        return pm;
+    }
+}
+```
+
+当然，也可以从 HttpSecurity 中提取出来 AuthenticationManager，如下：
+
+```java
+@Configuration
+@EnableWebSecurity
+public class MySecurityConfig {
+   
+    AuthenticationManager authenticationManager;
+    @Resource
+    UserDetailsServiceImpl userDetailsService;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+ 
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.userDetailsService(userDetailsService);
+        authenticationManager = authenticationManagerBuilder.build();
+        
+        //不需要认证的请求
+        return http.authorizeHttpRequests(conf -> conf.requestMatchers("/login", "/info").permitAll().anyRequest().authenticated())
+                //通过new JwtFilter()的方式，而不是bean组件注入的方式
+                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
+                .csrf(withDefaults())
+                .cors(withDefaults()).build();
+    }
+ 
+}
+```
+
+
+
+ [AuthenticationManager](https://so.csdn.net/so/search?q=AuthenticationManager&spm=1001.2101.3001.7020)的获取

@@ -127,20 +127,20 @@ export const constantRoutes = [
   {
     path: "/bind-mobile",
     name: "bind-mobile",
-    component: () => import("/@/views/bind-mobile/index.vue"),
+    component: () => import("/@/views/mobile-bind/index.vue"),
     hidden: true,
     meta: {
       title: "手机号绑定",
     },
   },
-  // {
-  //   path: '/rebind-mobile',
-  //   component: () => import('@/views/rebind-mobile/index'),
-  //   hidden: true,
-  // meta: {
-  //   title: "手机号换绑",
-  // },
-  // },
+  {
+    path: '/rebind-mobile',
+    component: () => import('/@/views/mobile-rebind/index.vue'),
+    hidden: true,
+  meta: {
+    title: "手机号换绑",
+  },
+  },
   {
     path: "/about",
     name: "about",
@@ -215,37 +215,6 @@ export const constantRoutes = [
       title: "浏览文章",
     },
   },
-  // {
-  //   path: "/personalcenter",
-  //   name: "personalcenter",
-  //   component: () => import("/@/views/personal-center/index.vue"),
-  //   meta: {
-  //     title: "个人中心",
-  //   },
-  //   children: [
-  //     {
-  //       path: "write",
-  //       name: "write",
-  //       // component: () => import("/@/views/write/index.vue"),
-  //       meta: {
-  //         title: "写作",
-  //       },
-  //     },
-  //     //TODO
-  //     // {
-  //     //   path: 'a',
-  //     //   component: () => import('@/components/me/a.vue'),
-  //     // },
-  //     // {
-  //     //   path: 'b',
-  //     //   component: () => import('@/components/me/b.vue'),
-  //     // },
-  //     // {
-  //     //   path: 'c',
-  //     //   component: () => import('@/components/me/c.vue'),
-  //     // },
-  //   ],
-  // },
   // 后台-公用
   {
     path: "/user",
