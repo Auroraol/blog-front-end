@@ -1,7 +1,6 @@
 package com.lfj.blog.controller.model.request;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,14 +18,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "添加分类json", description = "添加分类")
+@Schema(title = "添加分类json", description = "添加分类")
 public class AddCategoryRequest {
 
 	@NotBlank(message = "分类名称不能为空")
-	@ApiModelProperty(value = "名称")
+	@Schema(description = "名称")
 	private String name;
 
 	@NotNull(message = "parentId不能为空")
-	@ApiModelProperty(value = "父类id,添加根目录分类时值为0")
+	@Schema(description = "父类id,添加根目录分类时值为0")
 	private Integer parentId;
 }

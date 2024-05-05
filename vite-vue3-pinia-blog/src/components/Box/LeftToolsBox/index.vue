@@ -11,54 +11,73 @@
           <div class="right-element"><span>名片</span></div>
         </div>
       </template>
-      <!-- <el-row>
-        <el-col :span="24">
-          <div class="header">
-            <div style="font-size: 1.8rem; line-height: normal">名片</div>
-            <span></span>
-          </div>
-        </el-col>
-      </el-row> style="margin-top: 20px"-->
-      <el-row>
-        <el-col :span="6"
-          ><div class="grid-content ep-bg-purple" />
-          <div class="block">
-            <el-avatar shape="square" size="large" :src="squareUrl" />
-          </div>
-        </el-col>
-        <el-col :span="18"
-          ><div class="grid-content ep-bg-purple-light" />
 
-          <div class="personal-card-show-name">
-            <h4 style="font-weight: 500">xxx</h4>
+      <el-row>
+        <el-col :span="6">
+          <div class="grid-content ep-bg-purple">
+            <div class="block">
+              <el-avatar
+                v-if="userInfo"
+                style="cursor: pointer"
+                :size="45"
+                :src="userInfo.avatar"
+              />
+              <el-avatar
+                v-else
+                style="cursor: pointer"
+                :size="45"
+                :src="defaultAvatar"
+              />
+            </div>
           </div>
-          <div class="personal-card-show-words">
-            <small style="font-size: 13px; color: #808080ad"
-              >昨日之深渊，今日之浅谈
-            </small>
+        </el-col>
+        <el-col :span="18">
+          <div class="grid-content ep-bg-purple-light">
+            <div class="personal-card-show-name">
+              <h4 style="font-weight: 500" v-if="userInfo">
+                {{ userInfo.nickname }}
+              </h4>
+
+              <h4 style="font-weight: 500" v-else>游客</h4>
+            </div>
+            <div class="personal-card-show-words" style="margin-top: 8px">
+              <small style="font-size: 13px; color: #808080ad" v-if="userInfo">
+                {{ userInfo.brief }}
+              </small>
+              <small style="font-size: 13px; color: #808080ad" v-else>
+                昨日之深渊，今日之浅谈
+              </small>
+            </div>
           </div>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24"
-          ><div
+        <el-col :span="24">
+          <div
             class="grid-content ep-bg-purple-dark"
             style="margin-top: 10px; display: flex; justify-content: center"
           >
-            <span style="color: #009688">微信：xxxx</span><br />
+            <span style="color: #009688" v-if="userInfo"
+              >邮箱: {{ userInfo.email }}</span
+            >
+            <span style="color: #009688" v-else>邮箱: xxxxxxxxxx</span>
           </div>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24"
-          ><div
+        <el-col :span="24">
+          <div
             class="grid-content ep-bg-purple-dark"
             style="margin-top: 10px; display: flex; justify-content: center"
           >
-            <span style="color: #009688">QQ：xxxx</span><br />
+            <span style="color: #009688" v-if="userInfo"
+              >电话: {{ userInfo.mobile }}</span
+            >
+            <span style="color: #009688" v-else>电话: xxxxxxxxxx</span>
           </div>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="24"
           ><div
@@ -114,9 +133,7 @@
             </a>
           </el-check-tag>
           <el-check-tag>
-            <a
-              href="https://space.bilibili.com/365166956?spm_id_from=333.1007.0.0"
-            >
+            <a href="#">
               <svg
                 t="1709533450533"
                 class="icon"
@@ -214,7 +231,7 @@
     </el-card>
     <!--日历-->
     <el-card shadow="hover" class="calendar_card" style="margin-left: 20px">
-   <cus-calendar />
+      <cus-calendar />
     </el-card>
     <!-- <div class="calendar_card "  style="margin-left: 20px">
       <el-calendar  v-model="value"   >
@@ -231,15 +248,26 @@
 
 <script setup>
 import { ref } from "vue";
-const value = ref(new Date());
+import gsap from "gsap";
+import { useUserStore, useSettingsStore } from "/@/store/index";
+import { useGetters } from "/@/store/getters";
 
+const value = ref(new Date());
 const showQRCode = () => {
   // Handle showing QR code
 };
 
-import gsap from "gsap";
-
 const router = useRouter();
+// pinia
+const useGettersPinia = useGetters();
+const useSettingsStorePinia = useSettingsStore();
+
+const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
+// 计算属性
+const userInfo = computed(() => {
+  const info = useGettersPinia.userInfo;
+  return Object.keys(info).length === 0 ? null : info;
+});
 
 onMounted(() => {
   //动画
@@ -249,14 +277,10 @@ onMounted(() => {
     opacity: 0.2,
   });
 });
-
-const state = reactive({
-  squareUrl:
-    "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
-});
 </script>
 <style lang="less" scoped>
-.card_head, .Announcement_card {
+.card_head,
+.Announcement_card {
   font-size: 1.8rem;
   display: flex;
   align-items: center; /* 垂直居中 */
@@ -280,21 +304,21 @@ const state = reactive({
   margin-top: 30px;
 
   // 圆圈
-.calendar-day {
-  text-align: center;
-  line-height: 30px;
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgb(172, 165, 165);
-  border-radius: 50%;
-}
+  .calendar-day {
+    text-align: center;
+    line-height: 30px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgb(172, 165, 165);
+    border-radius: 50%;
+  }
 }
 
-  // .el-calendar-table .el-calendar-day{
-  //   width: 100%;
-  //   height: 30px;
-  //   text-align: center;
-  // }
+// .el-calendar-table .el-calendar-day{
+//   width: 100%;
+//   height: 30px;
+//   text-align: center;
+// }
 
 :v-deep .el-calendar-table tr td:first-child {
   border-left: none !important;

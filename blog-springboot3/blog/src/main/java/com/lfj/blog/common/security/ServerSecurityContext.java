@@ -14,21 +14,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class ServerSecurityContext {
 	/**
 	 * 获取当前用户相信信息
+	 * 如果 throwEx 被设置为 false，则不会抛出异常，而是在出现异常情况时返回 null。
 	 *
 	 * @return
 	 */
 	public static CustomUserDetails getUserDetail(boolean throwEx) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		Authentication authentication = context.getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 		if (authentication == null && throwEx) {
-			throw new ApiException(ResponseCodeEnum.CREDENTIALS_INVALID.getCode(), ResponseCodeEnum.CREDENTIALS_INVALID.getMessage());
+			throw new ApiException(ResponseCodeEnum.CREDENTIALS_INVALID.getCode(),
+					ResponseCodeEnum.CREDENTIALS_INVALID.getMessage());
 		}
 		if (authentication == null) {
 			return null;
 		}
 		Object principal = authentication.getPrincipal();
 		if (principal == null && throwEx) {
-			throw new ApiException(ResponseCodeEnum.CREDENTIALS_INVALID.getCode(), ResponseCodeEnum.CREDENTIALS_INVALID.getMessage());
+			throw new ApiException(ResponseCodeEnum.CREDENTIALS_INVALID.getCode(),
+					ResponseCodeEnum.CREDENTIALS_INVALID.getMessage());
 		}
 		String noneUser = "anonymousUser";
 		if (noneUser.equals(principal)) {

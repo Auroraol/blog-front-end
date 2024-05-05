@@ -9,7 +9,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,6 +27,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.List;
+
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 /**
  * 安全配置
@@ -53,23 +54,14 @@ public class WebSecurityConfig {
 	@Autowired
 	private IUserService userService;
 
-//
-//	//注册自定义用户登录信息查询Bean
-//	@Bean
-//	public UserDetailsService userDetailsService() {
-//		return username -> userDetailsService.loadUserByUsername(username);
-//	}
-
-
-	//	/**
-//	 * 这里是对认证管理器的添加配置
-//	 * 新版AuthenticationManager认证管理器默认全局）
-//	 * 调用UserDetailsServiceImp中loadUserByUsername获得UserDetail信息，
-//	 * 在AbstractUserDetailsAuthenticationProvider里执行用户状态检查
-//	 *
-//	 * @return
-//	 */
-//
+	/**
+	 * 这里是对认证管理器的添加配置
+	 * 新版AuthenticationManager认证管理器默认全局）
+	 * 调用UserDetailsServiceImp中loadUserByUsername获得UserDetail信息，
+	 * 在AbstractUserDetailsAuthenticationProvider里执行用户状态检查
+	 *
+	 * @return
+	 */
 	@Bean
 	AuthenticationManager authenticationManager() {
 		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
@@ -78,21 +70,6 @@ public class WebSecurityConfig {
 		ProviderManager pm = new ProviderManager(daoAuthenticationProvider);
 		return pm;
 	}
-
-
-//	/**
-//	 * 调用UserDetailsServiceImp中loadUserByUsername获得UserDetail信息，
-//	 * 在AbstractUserDetailsAuthenticationProvider里执行用户状态检查
-//	 *
-//	 * @return
-//	 */
-//	@Bean
-//	public AuthenticationProvider authenticationProvider() {
-//		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-//		daoAuthenticationProvider.setUserDetailsService(userDetailsService); // 确认用户数据的来源
-//		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());     //加密
-//		return daoAuthenticationProvider;
-//	}
 
 
 	/**
@@ -109,17 +86,10 @@ public class WebSecurityConfig {
 
 	//	配置HttpSecurity
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-
-//		AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-//		authenticationManagerBuilder.userDetailsService(userDetailsService);
-//		authenticationManager = authenticationManagerBuilder.build();
-
-
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		List<String> ignorePropertiesList = ignoreProperties.getList();
 		int size = ignorePropertiesList.size();
-//
+
 		http.httpBasic(AbstractHttpConfigurer::disable)          // 禁用basic明文验证
 				.cors(Customizer.withDefaults())  //跨域
 				.csrf(AbstractHttpConfigurer::disable) //前后端分离架构不需要csrf保护
@@ -131,8 +101,8 @@ public class WebSecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 前后端分离是无状态的，不需要session了，直接禁用。
 				.logout((logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))); // 退出
 
-//		http.authenticationProvider(provider())//自定义手机验证码认证提供者
-//				.authenticationProvider(provider2());//自定义主键查询用户认证提供者(用于第三方登录)
+		http.authenticationProvider(provider())//自定义手机验证码认证提供者
+				.authenticationProvider(provider2());//自定义主键查询用户认证提供者(用于第三方登录)
 
 		// 添加认证过滤器(自定义)
 		// 第一个参数是要添加的过滤器对象，第二个参数是指定在哪一个现有过滤器之前添加这个自定义过滤器。
@@ -147,19 +117,22 @@ public class WebSecurityConfig {
 	}
 
 
-	//	配置WebSecurity
+	//配置WebSecurity
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web
-				.ignoring()
-				.requestMatchers(
-						HttpMethod.GET,
-						"/*.html",
-						"/favicon.ico",
-						"/**/*.html",
-						"/**/*.css",
-						"/**/*.js"
-				);
+		return (web) -> web.ignoring().requestMatchers(
+//				antMatcher("/css/**"),
+//				antMatcher("/fonts/**"),
+//				antMatcher("/img/**"),
+//				antMatcher("/js/**"),
+//				antMatcher("/widget/js/**"),
+//				antMatcher("/favicon.ico"),
+//				antMatcher("/*.html"),
+				antMatcher("/favicon.ico"),
+				antMatcher("/**/*.html"),
+				antMatcher("/**/*.css"),
+				antMatcher("/**/*.js"))
+				;
 	}
 
 	/**

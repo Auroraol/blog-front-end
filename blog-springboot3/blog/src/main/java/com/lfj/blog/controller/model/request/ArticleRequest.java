@@ -3,8 +3,7 @@ package com.lfj.blog.controller.model.request;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.lfj.blog.common.validator.annotation.ListSize;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,49 +21,49 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "文章请求json", description = "文章请求体")
+@Schema(title = "文章请求json", description = "文章请求体")
 public class ArticleRequest {
 
-	@ApiModelProperty(value = "文章id，编辑时不可空")
+	@Schema(description = "文章id，编辑时不可空")
 	@TableId(value = "id", type = IdType.AUTO)
 	private Integer id;
 
 	@NotNull(message = "是否原创标识不能为空")
-	@ApiModelProperty(value = "是否原创，1:是，0:否")
+	@Schema(description = "是否原创，1:是，0:否")
 	private Integer original;
 
 	@NotNull(message = "状态不能为空")
-	@ApiModelProperty(value = "状态，0:发布，1:保存")
+	@Schema(description = "状态，0:发布，1:保存")
 	private Integer status;
 
 	@NotNull(message = "文章分类id不能为空")
-	@ApiModelProperty(value = "文章分类id")
+	@Schema(description = "文章分类id")
 	private Integer categoryId;
 
 	@NotBlank(message = "文章标题不能为空")
-	@ApiModelProperty(value = "文章标题")
+	@Schema(description = "文章标题")
 	private String title;
 
 	@NotBlank(message = "文章摘要不能为空")
-	@ApiModelProperty(value = "文章摘要")
+	@Schema(description = "文章摘要")
 	private String summary;
 
 	@NotBlank(message = "文章内容不能为空")
-	@ApiModelProperty(value = "文章内容")
+	@Schema(description = "文章内容")
 	private String content;
 
-	@ApiModelProperty(value = "文章内容")
+	@Schema(description = "文章内容")
 	private String htmlContent;
 
 	@NotBlank(message = "文章封面不能为空")
-	@ApiModelProperty(value = "文章封面")
+	@Schema(description = "文章封面")
 	private String cover;
 
 	@ListSize(max = 4, message = "一篇文章最多只允许添加4个标签")
-	@ApiModelProperty(value = "文章标签id列表")
+	@Schema(description = "文章标签id列表")
 	private List<Integer> tagIds;
 
-	@ApiModelProperty(value = "转载地址，转载非空")
+	@Schema(description = "转载地址，转载非空")
 	private String reproduce;
 
 }

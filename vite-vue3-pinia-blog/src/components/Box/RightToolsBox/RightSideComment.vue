@@ -31,6 +31,7 @@
               </p>
               <router-link
                 class="content-row text text-ellipsis"
+                v-if="item.article"
                 :to="'/article/' + item.article.id"
                 v-html="item.content"
               />

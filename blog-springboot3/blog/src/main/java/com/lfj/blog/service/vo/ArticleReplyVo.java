@@ -9,8 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.lfj.blog.entity.User;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -25,25 +24,25 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(value = "ArticleReplyVo", description = "文章评论回复Vo")
+@Schema(title = "ArticleReplyVo", description = "文章评论回复Vo")
 public class ArticleReplyVo {
 
-	@ApiModelProperty(value = "id")
+	@Schema(description = "id")
 	@TableId(value = "id", type = IdType.AUTO)
 	private Integer id;
 
-	@ApiModelProperty(value = "回复内容")
+	@Schema(description = "回复内容")
 	private String content;
 
-	@ApiModelProperty(value = "回复时间")
+	@Schema(description = "回复时间")
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private LocalDateTime replyTime;
 
-	@ApiModelProperty(value = "评论者")
+	@Schema(description = "评论者")
 	private User fromUser;
 
-	@ApiModelProperty(value = "被评论者")
+	@Schema(description = "被评论者")
 	private User toUser;
 }

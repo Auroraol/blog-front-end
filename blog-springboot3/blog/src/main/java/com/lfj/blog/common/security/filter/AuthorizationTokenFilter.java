@@ -53,6 +53,7 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		}
+		System.out.println();
 		filterChain.doFilter(httpServletRequest, httpServletResponse);
 	}
 }

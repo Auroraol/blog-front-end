@@ -14,9 +14,9 @@ import com.lfj.blog.service.IClientService;
 import com.lfj.blog.service.security.AuthenticationService;
 import com.lfj.blog.service.security.biz.OauthService;
 import com.lfj.blog.utils.BeanCopyUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.log4j.Log4j2;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
  **/
 @RestController
 @Log4j2
-@Api(tags = "认证服务", value = "/")
+@Tag(name = "认证服务", description = "/")
 public class AuthenticationController {
 
 	private static final String TOKEN_TYPE = "Bearer";
@@ -60,10 +60,10 @@ public class AuthenticationController {
 	private OauthService oauthService;
 
 	@PostMapping("/account/login")
-	@ApiOperation(value = "账号密码登录", notes = "账号可以是用户名或手机号")
-	public ApiResponseResult<AccessTokenDTO> accountLogin(@ApiParam("用户名或手机号") @NotBlank(message = "账号不能为空") @RequestParam String username,
-														  @ApiParam("密码") @NotBlank(message = "密码不能为空") @RequestParam String password,
-														  @ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
+	@Operation(summary = "账号密码登录", description = "账号可以是用户名或手机号")
+	public ApiResponseResult<AccessTokenDTO> accountLogin(@Parameter(description = "用户名或手机号") @NotBlank(message = "账号不能为空") @RequestParam String username,
+														  @Parameter(description = "密码") @NotBlank(message = "密码不能为空") @RequestParam String password,
+														  @Parameter(description = "客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
 		// 通过客户端认证请求头查询Client
 		Client client = getAndValidatedClient(authorization);
 		try {
@@ -78,10 +78,10 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/mobile/login")
-	@ApiOperation(value = "手机号验证码登录", notes = "验证码调用发送验证码接口获取")
-	public ApiResponseResult<AccessTokenDTO> mobileLogin(@ApiParam("手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam String mobile,
-														 @ApiParam("手机号验证码") @NotBlank(message = "验证码不能为空") @RequestParam String code,
-														 @ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
+	@Operation(summary = "手机号验证码登录", description = "验证码调用发送验证码接口获取")
+	public ApiResponseResult<AccessTokenDTO> mobileLogin(@Parameter(description = "手机号") @NotNull(message = "手机号不能为空") @IsPhone @RequestParam String mobile,
+														 @Parameter(description = "手机号验证码") @NotBlank(message = "验证码不能为空") @RequestParam String code,
+														 @Parameter(description = "客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
 		Client client = getAndValidatedClient(authorization);
 		//生成响应的token
 		AuthenticationToken authenticationToken = authenticationService.mobileCodeAuthenticate(mobile, code, client);
@@ -90,11 +90,11 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/oauth")
-	@ApiOperation(value = "第三方登录", notes = "不需要accessToken")
+	@Operation(summary = "第三方登录", description = "不需要accessToken")
 	public ApiResponseResult<AccessTokenDTO> oauth(
-			@ApiParam("认证类型") @NotNull(message = "认证类型不能为空") @RequestParam Integer state,
-			@ApiParam("第三方授权码") @NotBlank(message = "授权码不能为空") @RequestParam String code,
-			@ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
+			@Parameter(description = "认证类型") @NotNull(message = "认证类型不能为空") @RequestParam Integer state,
+			@Parameter(description = "第三方授权码") @NotBlank(message = "授权码不能为空") @RequestParam String code,
+			@Parameter(description = "客户端认证请求头") @RequestHeader(value = "Authorization") String authorization) {
 		Client client = getAndValidatedClient(authorization);
 		// 第三方 //生成响应的token
 		AuthenticationToken authenticationToken = oauthService.oauth(state, code, client);
@@ -103,19 +103,19 @@ public class AuthenticationController {
 	}
 
 	@DeleteMapping("/logout")
-	@ApiOperation(value = "用户登出")
+	@Operation(summary = "用户登出")
 	public ApiResponseResult logout(@RequestHeader(value = "Authorization") String authorization,
-									@ApiParam("access_token") @RequestParam("access_token") String accessToken) {
+									@Parameter(description = "access_token") @RequestParam("access_token") String accessToken) {
 		Client client = getAndValidatedClient(authorization);
 		authenticationService.remove(accessToken, client);
 		return ApiResponseResult.success();
 	}
 
 	@PostMapping("/refresh_access_token")
-	@ApiOperation(value = "刷新accessToken")
+	@Operation(summary = "刷新accessToken")
 	public ApiResponseResult<AccessTokenDTO> refreshAccessToken(
-			@ApiParam("客户端认证请求头") @RequestHeader(value = "Authorization") String authorization,
-			@ApiParam("refresh_token") @NotBlank(message = "refresh_token不能为空") @RequestParam("refresh_token") String refreshToken) {
+			@Parameter(description = "客户端认证请求头") @RequestHeader(value = "Authorization") String authorization,
+			@Parameter(description = "refresh_token") @NotBlank(message = "refresh_token不能为空") @RequestParam("refresh_token") String refreshToken) {
 		Client client = getAndValidatedClient(authorization);
 		AuthenticationToken authenticationToken = authenticationService.refreshAccessToken(refreshToken, client);
 		AccessTokenDTO response = new AccessTokenDTO();

@@ -22,12 +22,7 @@
         <div class="card3 bg-purple-light">
           <!-- 置顶文章盒子 -->
           <Suspense>
-            <template #default>
-              <!-- <top-article-box
-                class="itemBox"
-                :info="topArticleInfo"
-              ></top-article-box> -->
-            </template>
+            <template #default> </template>
             <!-- 加载完成前的载入动画 -->
             <template #fallback>
               <div class="window">
@@ -116,10 +111,6 @@ const RightToolsBox = defineAsyncComponent(
 
 const TopArticleBox = defineAsyncComponent(
   () => import("/@/components/Box/TopArticleBox/index.vue")
-);
-
-const ArticleBox = defineAsyncComponent(
-  () => import("/@/components/Box/ArticleBox/Article.vue")
 );
 
 const AsyncArticleList = defineAsyncComponent(

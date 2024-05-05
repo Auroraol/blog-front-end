@@ -5,8 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -25,7 +24,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(value = "ArticleTag对象", description = "文章-标签 关联表")
+@Schema(title = "ArticleTag对象", description = "文章-标签 关联表")
 public class ArticleTag implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
@@ -33,21 +32,21 @@ public class ArticleTag implements Serializable {
 	 * id
 	 */
 	@EqualsAndHashCode.Exclude
-	@ApiModelProperty(value = "id")
+	@Schema(description = "id")
 	@TableId(value = "id", type = IdType.AUTO)
 	private Integer id;
 	/**
 	 * 文章id
 	 */
 	@NonNull
-	@ApiModelProperty(value = "文章id")
+	@Schema(description = "文章id")
 	@TableField(value = "article_id")
 	private Integer articleId;
 	/**
 	 * 标签id
 	 */
 	@NonNull
-	@ApiModelProperty(value = "标签id")
+	@Schema(description = "标签id")
 	@TableField(value = "tag_id")
 	private Integer tagId;
 }

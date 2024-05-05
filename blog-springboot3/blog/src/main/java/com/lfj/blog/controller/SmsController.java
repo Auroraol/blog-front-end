@@ -6,9 +6,9 @@ import com.lfj.blog.common.response.ApiResponseResult;
 import com.lfj.blog.common.sms.service.SmsCodeService;
 import com.lfj.blog.common.validator.annotation.IsPhone;
 import com.lfj.blog.service.security.biz.EmailService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 @RestController
 @RequestMapping("/sms")
-@Api(tags = "短信验证码服务", value = "/sms")
+@Tag(name = "短信验证码服务", description = "/sms")
 public class SmsController {
 
 	@Autowired
@@ -37,8 +37,8 @@ public class SmsController {
 
 	@PostMapping("/send")
 	@RateLimiter(name = RedisPrefixConstant.SMS_LIMIT_NAME, max = 1, key = "#mobile", timeout = 120L, extra = "smsLimiter")
-	@ApiOperation(value = "发送短信验证码", notes = "验证码有效时5分钟;同一手机号每天只能发10次;同一ip每天只能发10次;同一手机号限流120s一次")
-	public ApiResponseResult sendSmsCode(@ApiParam("手机号") @NotNull @IsPhone @RequestParam String mobile) {
+	@Operation(summary = "发送短信验证码", description = "验证码有效时5分钟;同一手机号每天只能发10次;同一ip每天只能发10次;同一手机号限流120s一次")
+	public ApiResponseResult sendSmsCode(@Parameter(description = "手机号") @NotNull @IsPhone @RequestParam String mobile) {
 		smsCodeService.sendSmsCode(mobile);
 		return ApiResponseResult.success();
 	}

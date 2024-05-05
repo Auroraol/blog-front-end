@@ -96,10 +96,10 @@ public class IUserServiceImpl extends ServiceImpl<UserMapper, User>
 		UserVo userVo = new UserVo();
 		BeanUtils.copyProperties(user, userVo);
 		Integer admin = user.getAdmin();
-//		System.out.println("");
 		List<String> roleList = new ArrayList<>();
 		roleList.add(admin.equals(UserConstant.ADMIN) ? RoleConstant.ADMIN : RoleConstant.ORDINARY);
 		userVo.setRoles(roleList);
+		System.out.println();
 		return userVo;
 	}
 

@@ -222,6 +222,8 @@ const passwordLogin = async () => {
     await useUserPinia.accountLogin(params);
     // TODO获得用户信息, 确定roles, 实现动态路由
     let { roles } = await useUserPinia.getUserInfo();
+    console.error(roles);
+
     //  const accessRoutes = await this.$store.dispatch('permission/generateRoutes', roles)
     // this.$router.addRoutes(accessRoutes)
     // 是否记住密码

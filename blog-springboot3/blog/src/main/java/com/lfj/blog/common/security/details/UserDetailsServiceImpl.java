@@ -14,10 +14,11 @@ import org.springframework.stereotype.Service;
  * 确认用户数据的来源
  **/
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceimpl implements UserDetailsService {
 
 	@Autowired
 	private IUserService userService; //用来查询数据库用户信息
+
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

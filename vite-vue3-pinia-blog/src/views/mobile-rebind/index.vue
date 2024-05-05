@@ -1,6 +1,6 @@
 // todo
 <template>
-  <div class="container">
+  <!-- <div class="container">
     <app-header :nav-item-active="-1" />
     <div class="content-container animated fadeInUp">
       <h3>更换手机号</h3>
@@ -52,125 +52,127 @@
         </el-form-item>
       </el-form>
     </div>
-  </div>
+  </div> -->
+  TODO
 </template>
 
 <script>
-import { validateMobile, rebindMobile } from "@/api/user.js";
-import AppHeader from "@/components/Header/index";
-import { validMobile } from "@/utils/validate.js";
-import { sendCode } from "@/api/code.js";
-export default {
-  components: {
-    AppHeader,
-  },
-  data() {
-    return {
-      loading: false,
-      code: "",
-      mobile: "",
-      codeCount: 0,
-      timer: null,
-      active: 1,
-    };
-  },
-  methods: {
-    // 按钮点击
-    submit() {
-      if (this.vsubmit()) {
-        this.loading = true;
-        const params = { mobile: this.mobile, code: this.code };
-        const active = this.active;
-        if (active === 1) {
-          validateMobile(params).then(
-            (res) => {
-              this.loading = false;
-              this.active = 2;
-              this.mobile = "";
-              this.code = "";
-              this.timer = null;
-              this.codeCount = 0;
-            },
-            (error) => {
-              console.error(error);
-              this.loading = false;
-            }
-          );
-        } else {
-          rebindMobile(params).then(
-            (res) => {
-              this.$message({
-                message: "更换成功",
-                type: "success",
-              });
-              this.$store
-                .dispatch("user/getUserInfo")
-                .then((res) => this.$router.push("/user/info"));
-            },
-            (error) => {
-              console.error(error);
-              this.loading = false;
-            }
-          );
-        }
-      }
-    },
+// import { validateMobile, rebindMobile } from "@/api/user.js";
+// import AppHeader from "@/components/Header/index";
+// import { validMobile } from "@/utils/validate.js";
+// import { sendCode } from "@/api/code.js";
+// export default {
+//   components: {
+//     AppHeader,
+//   },
+//   data() {
+//     return {
+//       loading: false,
+//       code: "",
+//       mobile: "",
+//       codeCount: 0,
+//       timer: null,
+//       active: 1,
+//     };
+//   },
+//   methods: {
+//     // 按钮点击
+//     submit() {
+//       if (this.vsubmit()) {
+//         this.loading = true;
+//         const params = { mobile: this.mobile, code: this.code };
+//         const active = this.active;
+//         if (active === 1) {
+//           validateMobile(params).then(
+//             (res) => {
+//               this.loading = false;
+//               this.active = 2;
+//               this.mobile = "";
+//               this.code = "";
+//               this.timer = null;
+//               this.codeCount = 0;
+//             },
+//             (error) => {
+//               console.error(error);
+//               this.loading = false;
+//             }
+//           );
+//         } else {
+//           rebindMobile(params).then(
+//             (res) => {
+//               this.$message({
+//                 message: "更换成功",
+//                 type: "success",
+//               });
+//               this.$store
+//                 .dispatch("user/getUserInfo")
+//                 .then((res) => this.$router.push("/user/info"));
+//             },
+//             (error) => {
+//               console.error(error);
+//               this.loading = false;
+//             }
+//           );
+//         }
+//       }
+//     },
 
-    // 提交校验
-    vsubmit() {
-      const mobile = this.mobile;
-      if (mobile === "") {
-        this.$message("请输入手机号");
-        return false;
-      }
-      if (!validMobile(mobile)) {
-        this.$message("手机号格式不正确");
-        return false;
-      }
-      if (this.code === "") {
-        this.$message("请输入验证码");
-        return false;
-      }
-      return true;
-    },
+//     // 提交校验
+//     vsubmit() {
+//       const mobile = this.mobile;
+//       if (mobile === "") {
+//         this.$message("请输入手机号");
+//         return false;
+//       }
+//       if (!validMobile(mobile)) {
+//         this.$message("手机号格式不正确");
+//         return false;
+//       }
+//       if (this.code === "") {
+//         this.$message("请输入验证码");
+//         return false;
+//       }
+//       return true;
+//     },
 
-    // 发送验证码
-    sendCode() {
-      const mobile = this.mobile;
-      if (mobile === "") {
-        this.$message("请输入手机号");
-        return;
-      }
-      if (!validMobile(mobile)) {
-        this.$message("手机号格式不正确");
-        return;
-      }
-      // 120倒数计时
-      const TIME_COUNT = 120;
-      if (!this.timer) {
-        this.codeCount = TIME_COUNT;
-        this.timer = setInterval(() => {
-          if (this.codeCount > 0 && this.codeCount <= TIME_COUNT) {
-            this.codeCount--;
-          } else {
-            clearInterval(this.timer);
-            this.timer = null;
-          }
-        }, 1000);
-      }
-      const params = { mobile: mobile };
-      sendCode(params).then((res) => {
-        this.$message({
-          message: "发送成功",
-          type: "success",
-        });
-      });
-    },
-  },
-};
+//     // 发送验证码
+//     sendCode() {
+//       const mobile = this.mobile;
+//       if (mobile === "") {
+//         this.$message("请输入手机号");
+//         return;
+//       }
+//       if (!validMobile(mobile)) {
+//         this.$message("手机号格式不正确");
+//         return;
+//       }
+//       // 120倒数计时
+//       const TIME_COUNT = 120;
+//       if (!this.timer) {
+//         this.codeCount = TIME_COUNT;
+//         this.timer = setInterval(() => {
+//           if (this.codeCount > 0 && this.codeCount <= TIME_COUNT) {
+//             this.codeCount--;
+//           } else {
+//             clearInterval(this.timer);
+//             this.timer = null;
+//           }
+//         }, 1000);
+//       }
+//       const params = { mobile: mobile };
+//       sendCode(params).then((res) => {
+//         this.$message({
+//           message: "发送成功",
+//           type: "success",
+//         });
+//       });
+//     },
+//   },
+// };
+//
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .container {
   width: 100%;
   height: 100vh;
@@ -223,9 +225,9 @@ export default {
       }
     }
 
-    /deep/ .el-step__title.is-process {
-      font-weight: normal;
-    }
+    // /deep/ .el-step__title.is-process {
+    //   font-weight: normal;
+    // }
   }
 }
 </style>

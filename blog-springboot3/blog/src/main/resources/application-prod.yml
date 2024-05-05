@@ -125,6 +125,8 @@ oss:
 # 生产环境禁用swagger
 springdoc:
   api-docs:
+    path: /v3/api-docs
     enabled: false # 关闭OpenApi接口
   swagger-ui:
+    path: /swagger-ui.html
     enabled: false # 关闭swagger界面

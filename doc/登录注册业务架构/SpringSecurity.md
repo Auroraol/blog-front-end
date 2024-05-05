@@ -1,4 +1,10 @@
+# SpringSecurity官网
 
+[Spring Security](https://spring.io/projects/spring-security)
+
+[Java Configuration :: Spring Security](https://docs.spring.io/spring-security/reference/5.7/servlet/configuration/java.html#page-title)
+
+[Spring Security :: Spring Security](https://docs.spring.io/spring-security/reference/index.html)
 
 # 安全架构
 
@@ -3998,6 +4004,14 @@ article.setUserId(userDetail.getId());
 
 
 
+
+
+```java
+Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+```
+
+
+
 # 从 Spring Security 5 迁移到 Spring Security 6/Spring Boot 3
 
 [Spring Security6版本变化内容_spring security 新版本更新内容-CSDN博客](https://blog.csdn.net/qq_34491508/article/details/132121362)
@@ -4031,8 +4045,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.authorizeRequests()
 				.antMatchers(ignorePropertiesList.toArray(new String[size])).permitAll()  //配置的url 不需要授权
-				//任何请求
-				.anyRequest().authenticated()
+				.anyRequest().authenticated() // 剩下的任意请求都需要认证
 				.and()
 				.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
 
@@ -4066,12 +4079,12 @@ public class WebSecurityConfig {
 		int size = ignorePropertiesList.size();
 
 		http.httpBasic(AbstractHttpConfigurer::disable)          // 禁用basic明文验证
-				.cors(Customizer.withDefaults())  //跨域
+				.cors(Customizer.withDefaults())  //开启跨域
 				.csrf(AbstractHttpConfigurer::disable) //前后端分离架构不需要csrf保护
 				.formLogin(AbstractHttpConfigurer::disable)   // 禁用默认登录页
 				.authorizeHttpRequests(request ->
 						request.requestMatchers(ignorePropertiesList.toArray(new String[size])).permitAll()  //配置的url 不需要授权
-								.anyRequest().authenticated()  // 允许任意请求被已登录用户访问，不检查Authority
+								.anyRequest().authenticated()   // 剩下的任意请求都需要认证
 				)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // 前后端分离是无状态的，不需要session了，直接禁用。
 				.logout((logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))); // 退出
@@ -4170,7 +4183,7 @@ public class WebSecurityConfig {
 
 ```
 
-### 配置AuthenticationManager认证
+## 配置AuthenticationManager认证
 
 以前可以通过重写父类的方法来获取这个 Bean，类似下面这样
 
@@ -4235,3 +4248,71 @@ public class MySecurityConfig {
 
 
  [AuthenticationManager](https://so.csdn.net/so/search?q=AuthenticationManager&spm=1001.2101.3001.7020)的获取
+
+
+
+
+
+### 旧版
+
+```java
+	/**
+	 * 配置认证管理器
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
+
+	/**
+	 * 这里是对认证管理器的添加配置
+	 *
+	 * @param auth
+	 * @throws Exception
+	 */
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(provider())//自定义手机验证码认证提供者
+				.authenticationProvider(provider2())//自定义主键查询用户认证提供者(用于第三方登录)
+				.userDetailsService(userDetailsService) // 确认用户数据的来源
+				.passwordEncoder(passwordEncoder());
+	}
+
+```
+
+
+
+### 新版
+
+```java
+	/**
+	 * 这里是对认证管理器的添加配置
+	 * 新版AuthenticationManager认证管理器默认全局）
+	 * 调用UserDetailsServiceImp中loadUserByUsername获得UserDetail信息，
+	 * 在AbstractUserDetailsAuthenticationProvider里执行用户状态检查
+	 *
+	 * @return
+	 */
+	@Bean
+	AuthenticationManager authenticationManager() {
+		DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+		daoAuthenticationProvider.setUserDetailsService(userDetailsService); // 确认用户数据的来源
+		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());     //加密
+		ProviderManager pm = new ProviderManager(daoAuthenticationProvider);
+		return pm;
+	}
+
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+		http.authenticationProvider(provider())//自定义手机验证码认证提供者
+				.authenticationProvider(provider2());//自定义主键查询用户认证提供者(用于第三方登录)
+    	// ...........
+    
+    }
+
+```
+

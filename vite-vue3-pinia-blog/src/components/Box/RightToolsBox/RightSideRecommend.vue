@@ -33,11 +33,19 @@ const loading = ref(true);
 const list = ref([]);
 
 onMounted(() => {
-  recommendList().then((res) => {
+  init();
+});
+
+const init = async () => {
+  loading.value = true;
+  try {
+    const res = await recommendList();
     loading.value = false;
     list.value = res;
-  });
-});
+  } catch (error) {
+    console.error(error);
+  }
+};
 </script>
 
 <style lang="less" scoped>

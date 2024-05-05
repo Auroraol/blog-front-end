@@ -44,10 +44,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-// import { useStore } from "/@/store";
 import { useRouter } from "vue-router";
-import { getUpdateNickName, getUserInfo } from "/@/components/Login/services";
-// import { removeUserAccountInfo  } from '/@/utils/network/auth.js'
 import { useUserStore, useSettingsStore } from "/@/store/index";
 
 const router = useRouter();

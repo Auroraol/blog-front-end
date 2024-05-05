@@ -29,10 +29,19 @@ mybatis-plus:
 ignore:
   list:
     - /actuator/**
+    - /v3/api-docs
+    - /swagger-ui.html
+    - /context-path/swagger-ui/index.html
+    - /user-service/v3/api-docs
+    - /swagger-ui/index.html
+    - /user-service/swagger-ui/index.html
+    - /user-service/swagger-ui/swagger-ui/index.html
+    - /swagger-ui/index.html
+    - /swagger-ui.html
+    - /user-service/v3/api-docs
     - /v2/api-docs
     - /swagger/api-docs
     - /swagger-resources/**
-    - /swagger-ui.html
     - /webjars/**
     - /druid/**
     - /sms/**

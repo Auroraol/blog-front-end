@@ -152,6 +152,7 @@ public class RedisTokenStore {
 	public AuthenticationToken storeToken(Authentication authentication, Client client) {
 
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();  // 获取查询到的数据
+		System.out.println(userDetails);
 		Integer userId = userDetails.getId();
 		String clientId = client.getClientId();   // 获取客户端id
 		//System.out.println("");

@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,24 +18,24 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "用户更新json", description = "用户更新")
+@Schema(title = "用户更新json", description = "用户更新")
 public class UpdateUserRequest {
 
-	@ApiModelProperty(value = "用户id")
+	@Schema(description = "用户id")
 	@NotNull(message = "用户id不能为空")
 	private Integer userId;
 
-	@ApiModelProperty(value = "昵称")
+	@Schema(description = "昵称")
 	private String nickname;
 
-	@ApiModelProperty(value = "性别，1：男，0：女，默认为1")
+	@Schema(description = "性别，1：男，0：女，默认为1")
 	private Integer gender;
 
 	@JsonDeserialize(using = LocalDateDeserializer.class)
 	@JsonSerialize(using = LocalDateSerializer.class)
-	@ApiModelProperty(value = "生日")
+	@Schema(description = "生日")
 	private LocalDate birthday;
 
-	@ApiModelProperty(value = "简介|个性签名")
+	@Schema(description = "简介|个性签名")
 	private String brief;
 }
