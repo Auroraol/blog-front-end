@@ -2,7 +2,7 @@
   <div class="card">
     <el-row :gutter="20">
       <!-- 左侧 -->
-      <el-col :span="6">
+      <el-col :span="6" v-if="device == 'desktop'">
         <div class="card3 bg-purple">
           <Suspense>
             <template #default>
@@ -18,18 +18,8 @@
         </div>
       </el-col>
       <!--中间-->
-      <el-col :span="12">
+      <el-col :span="12" :xs="24">
         <div class="card3 bg-purple-light">
-          <!-- 置顶文章盒子 -->
-          <Suspense>
-            <template #default> </template>
-            <!-- 加载完成前的载入动画 -->
-            <template #fallback>
-              <div class="window">
-                <loading class="winLoad"></loading>
-              </div>
-            </template>
-          </Suspense>
           <!--每日一言 poetry诗歌-->
           <div class="title">
             <div class="poetry">
@@ -76,7 +66,7 @@
         </div>
       </el-col>
       <!-- 右侧 -->
-      <el-col :span="6">
+      <el-col :span="6" v-if="device == 'desktop'">
         <div class="card3 bg-purple">
           <Suspense>
             <template #default>
@@ -98,6 +88,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
 import { pagePublishedArticle } from "/@/api/article/article";
+import { useGetters } from "/@/store/getters";
 
 import axios from "axios";
 import gsap from "gsap";
@@ -116,6 +107,10 @@ const TopArticleBox = defineAsyncComponent(
 const AsyncArticleList = defineAsyncComponent(
   () => import("/@/components/Box/ArticleBox/ArticleList.vue")
 );
+
+const useGettersPinia = useGetters();
+
+const device = computed(() => useGettersPinia.device);
 
 interface Article {
   // 定义文章类型
@@ -227,14 +222,6 @@ const mainTabClick = (index) => {
   border-radius: 0.5rem;
   min-height: 650px;
 }
-
-// .bg-purple {
-//   background: #d3dce6;
-// }
-
-// .bg-purple-light {
-//   background: #e5e9f2;
-// }
 
 .title {
   display: flex;

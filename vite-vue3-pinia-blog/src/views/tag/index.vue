@@ -1,19 +1,19 @@
 <!-- 标签页面 -->
 <template>
   <div ref="container" class="container">
-    <ul v-if="device !== 'desktop'" class="list-header">
-      <li
-        v-for="(tag, index) in tags"
-        :key="index"
-        class="list-header-item"
-        :class="{ 'header-item-active': tagId === tag.id }"
-        @click="tagClick(tag.id)"
-      >
-        {{ tag.name }}
-      </li>
-    </ul>
     <el-row>
-      <el-col :span="20">
+      <el-col :span="20" :xs="23">
+        <ul v-if="device !== 'desktop'" class="list-header">
+          <li
+            v-for="(tag, index) in tags"
+            :key="index"
+            class="list-header-item"
+            :class="{ 'header-item-active': tagId === tag.id }"
+            @click="tagClick(tag.id)"
+          >
+            {{ tag.name }}
+          </li>
+        </ul>
         <!-- 左边 -->
         <div class="left-side">
           <div class="content-head">
@@ -32,21 +32,19 @@
             <el-pagination
               v-model:current-page="current"
               v-model:page-size="size"
-              :page-sizes="[5, 10, 20, 30]"
               :small="small"
               :disabled="disabled"
               :background="background"
-              layout="total, sizes, prev, pager, next, jumper"
               :total="total"
-              @size-change="handleSizeChange"
+              layout="prev, pager, next"
               @current-change="currentChange"
             />
           </div>
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="4" v-if="device === 'desktop'">
         <!-- 右边 -->
-        <div v-if="device === 'desktop'" class="right-side">
+        <div class="right-side">
           <div class="tag-box">
             <div class="box-head">全部标签</div>
             <ul class="tag-list">
@@ -69,20 +67,17 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
 import { tagList } from "/@/api/tag/tag";
-// import ArticleList from '/@/components/ArticleList'
-// import { pagePublishedArticle } from '/@/api/article'
 import { useRouter } from "vue-router";
-
+import { useGetters } from "/@/store/getters";
 import { tagListResponseType } from "/@/api/tag/data";
 import { pagePublishedArticle } from "/@/api/article/article";
 const AsyncArticleList = defineAsyncComponent(
   () => import("/@/components/Box/ArticleBox/ArticleList.vue")
 );
 
+const useGettersPinia = useGetters();
 const router = useRouter();
-
-// todo device是判断是不是手机端用的,待做
-const device = ref("desktop");
+const device = computed(() => useGettersPinia.device);
 
 const tagId = ref<number>(0);
 const current = ref(1);
@@ -137,12 +132,6 @@ const currentChange = (cur) => {
   getArtList();
 };
 
-// 分页监听, 每页数量
-const handleSizeChange = (selectSize) => {
-  size.value = selectSize;
-  getArtList();
-};
-
 // 获取文章列表
 const getArtList = async () => {
   loading.value = true;
@@ -167,9 +156,12 @@ const getArtList = async () => {
 <style lang="less" scoped>
 .container {
   min-height: 605px;
+
+  // 左
   .left-side {
     margin-top: 5px;
     margin-left: 20px;
+    margin-right: 20px;
     flex: 1;
     border-radius: 0.5rem;
     margin-bottom: 20px;
@@ -213,12 +205,12 @@ const getArtList = async () => {
     }
   }
 
+  // 右
   .right-side {
-    margin-top: 10px;
+    margin-top: 5px;
     margin-right: 20px;
     border-radius: 0.5rem;
     background: #fff;
-    margin-left: 20px;
     font-size: 16px;
     min-height: 190px;
 
@@ -266,14 +258,13 @@ const getArtList = async () => {
       display: none;
     }
   }
-  // }
 
+  //
   .list-header {
     margin: 0;
     padding: 0;
     display: flex;
     align-items: center;
-    width: 100vw;
     white-space: nowrap;
     overflow-x: scroll;
     font-size: 14px;
@@ -281,7 +272,7 @@ const getArtList = async () => {
     border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.1);
 
     &:first-child {
-      margin-left: 5px;
+      margin-left: 20px;
     }
 
     .list-header-item {

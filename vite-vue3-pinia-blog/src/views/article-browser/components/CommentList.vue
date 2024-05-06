@@ -224,7 +224,7 @@
     <el-dialog
       v-model="reEditVisible"
       title="提示"
-      :width="device === 'desktop' ? '700px' : '95%'"
+      :width="device === 'desktop' ? '700px' : '80%'"
       top="45vh"
       :modal="false"
       :show-close="false"
@@ -286,6 +286,7 @@ const isReady = ref(false);
 const router = useRouter();
 const gettersStore = useGetters(); // 通过 useGetters() 获取 getters store 的实例
 const useSettingsStorePinia = useSettingsStore();
+const useGettersPinia = useGetters();
 
 // 参数
 const props = defineProps({
@@ -295,7 +296,6 @@ const props = defineProps({
 });
 
 //
-const device = ref("desktop");
 const content = ref("");
 const recontent = ref("");
 const loading = ref(false); //显示
@@ -315,6 +315,8 @@ const userInfo = computed(() => {
   // 手动检查对象是否为空
   return Object.keys(info).length === 0 ? null : info;
 });
+
+const device = computed(() => useGettersPinia.device);
 
 // pinia
 const authorId = userInfo.id;

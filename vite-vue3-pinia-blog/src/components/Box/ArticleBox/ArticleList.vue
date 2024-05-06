@@ -109,33 +109,25 @@ const tagClick = (id: string) => {
 </script>
 
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .note-list {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   min-height: 50px;
   background-color: #fff;
-  // border-radius: 1rem;
   border-bottom-left-radius: 1rem;
   border-bottom-right-radius: 1rem;
   .list-item {
-    //   &:hover {
-    //     cursor: pointer;
-    //     transform: translateY(-.1rem);
-
-    // }
-
     position: relative; /*相对定位*/
     min-height: 200px;
     width: 100%;
     border-bottom: 1px solid #1413132f;
     padding: 15px 2px 15px 30px;
-    // margin-top: 5px;
 
     @media screen and (max-width: 922px) {
       padding-left: 15px;
-      width: 100vw;
+      max-width: 380px;
     }
 
     .active {

@@ -6,15 +6,11 @@
       @click="handleClickOutside"
     />
     <!-- 左侧侧边栏 -->
-    <el-aside width="200px"
-      ><layout-menu class="sidebar-container" />
-    </el-aside>
+    <el-aside class="sidebar-container"><layout-menu /> </el-aside>
     <el-container>
       <el-header>
-        <div :class="{ 'fixed-header': fixedHeader }">
-          <!-- 导航栏 -->
-          <navbar></navbar>
-        </div>
+        <!-- 导航栏 -->
+        <navbar></navbar>
       </el-header>
       <el-main><app-main /></el-main>
     </el-container>
@@ -47,10 +43,7 @@ function handleClickOutside() {
 }
 </script>
 <style lang="less" scoped>
-// @import "/@/assets/styles/mixin.scss";
-// @import "/@/assets/styles/variables.css";
 .app-wrapper {
-  // @include clearfix;
   position: relative;
   height: 100%;
   width: 100%;
@@ -59,14 +52,22 @@ function handleClickOutside() {
     position: fixed;
     top: 0;
   }
-}
-.drawer-bg {
-  background: #000;
-  opacity: 0.3;
-  width: 100%;
-  top: 0;
-  height: 100%;
-  position: absolute;
-  z-index: 999;
+  .drawer-bg {
+    background: #000;
+    opacity: 0.3;
+    width: 100%;
+    top: 0;
+    height: 100%;
+    position: absolute;
+    z-index: 999;
+  }
+
+  .sidebar-container {
+    width: 200px;
+
+    @media screen and (max-width: 960px) {
+      width: 0px;
+    }
+  }
 }
 </style>

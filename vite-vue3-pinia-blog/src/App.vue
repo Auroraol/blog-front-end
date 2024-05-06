@@ -9,21 +9,20 @@
         </transition>
       </div>
     </el-config-provider>
+    <!-- <live2d v-if="device === 'desktop'" /> -->
     <foot></foot>
   </div>
 </template>
 
 
 <script setup lang="ts">
-// 面包屑 不需要引入因为已经在 vite.config.ts 中引入了Components
-// import breadcrumb from "/@/components/breadcrumb.vue";
 import { defineComponent } from "vue";
 import { ElConfigProvider } from "element-plus";
-// import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
-// import { useStore } from '/@/store';
-// import { useStore } from '/@/store'
+import { useAppStore } from "/@/store";
+
 const Height = ref(0);
+const useAppStorePinia = useAppStore();
 
 onMounted(() => {
   // 动态设置内容高度，让 footer 始终居底，header+footer 的高度是 100
@@ -34,35 +33,30 @@ onMounted(() => {
   window.onresize = () => {
     Height.value = document.documentElement.clientHeight - 40;
   };
+
+  // 多端适配, 检测是手机端还是pc
+  window.addEventListener("resize", resizeHandler);
+  const mobile = isMobile();
+  useAppStorePinia.toggleDevice(mobile ? "mobile" : "desktop");
 });
 
-// const pinia = useStore()
+const isMobile = () => {
+  const { body } = document;
+  const WIDTH = 992;
+  const rect = body.getBoundingClientRect();
+  return rect.width - 1 < WIDTH;
+};
 
-// // 初始化
-// onMounted(() => {
-//   const bodyWidth = ref(document.querySelector('body')?.clientWidth)
-//   pinia.setBodyWidth(bodyWidth.value!)
+const resizeHandler = () => {
+  if (!document.hidden) {
+    const mobile = isMobile();
+    useAppStorePinia.toggleDevice(mobile ? "mobile" : "desktop");
+  }
+};
 
-//   window.onresize = () => {
-//     return (() => {
-//       bodyWidth.value = document.querySelector('body')?.clientWidth
-//       pinia.setBodyWidth(bodyWidth.value!)
-//     })()
-//   }
-// })
-
-// //判断登录凭证
-// const tokenPwd = localStorage.getItem('userAccount')
-// if (tokenPwd) {
-//   const token = JSON.parse(window.atob(tokenPwd))
-//   const nowTime = Math.floor(new Date().getTime() / 1000 / 60 / 60)  //现在的时间戳（对应token中存的格式，要换成小时）
-//   const tokenTime = token.time
-//   if (!token.time || nowTime - tokenTime > 30) {  //时间大于30小时，就算过期了
-//     alert("登录凭证过期，请重新登录")
-//     localStorage.removeItem('userAccount')
-//     pinia.userInfo = ''
-//   }
-// }
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", resizeHandler);
+});
 </script>
 
 <style lang="less">

@@ -476,6 +476,7 @@ const sensitiveMobile = (mobile: string) => {
   @media screen and (max-width: 922px) {
     padding: 0;
     margin: 0;
+    background: #fff;
   }
 
   .setting-box {
@@ -514,23 +515,6 @@ const sensitiveMobile = (mobile: string) => {
 
         .input-wrapper {
           flex: 1;
-
-          //   & /deep/ .el-input__inner {
-          //     border: none;
-          //     border-bottom: none;
-          //     border-radius: 0;
-          //     background: #fff !important;
-          //   }
-
-          //   & /deep/ .el-textarea__inner {
-          //     border: none;
-          //     border-bottom: none;
-          //     border-radius: 0;
-          //   }
-
-          //   & /deep/ .el-input__prefix {
-          //     display: none;
-          //   }
         }
 
         .action-box {

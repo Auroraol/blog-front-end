@@ -2,7 +2,7 @@
 <template>
   <el-affix>
     <!-- 手机端 -->
-    <el-row class="nav" v-if="isMobile">
+    <el-row class="nav" v-if="device !== 'desktop'">
       <el-col :span="24">
         <el-menu
           :default-active="activeIndex"
@@ -12,29 +12,40 @@
           background-color="transparent"
           active-text-color="#79bbff"
         >
-          <el-menu-item index="/index">
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-shouye1"></use>
-            </svg>
-            首页
+          <el-menu-item index="/index">首页</el-menu-item>
+          <el-menu-item index="info" style="cursor: default">
+            <el-dropdown size="large" @command="handleSelect">
+              <span class="more"> 更多 </span>
+              <template #dropdown>
+                <el-dropdown-menu style="width: 80px">
+                  <el-dropdown-item command="/category">
+                    <el-text>分类</el-text>
+                  </el-dropdown-item>
+                  <el-dropdown-item command="/write"> 文章 </el-dropdown-item>
+                  <el-dropdown-item command="/archives">归档</el-dropdown-item>
+                  <el-dropdown-item command="/message">留言</el-dropdown-item>
+                  <el-dropdown-item command="/friend-link"
+                    >友链</el-dropdown-item
+                  >
+                  <el-dropdown-item command="/about">关于</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </el-menu-item>
-          <el-sub-menu index="">
-            <template #title>更多</template>
-            <el-menu-item index="/article">文章</el-menu-item>
-            <el-menu-item index="/leavemsg">留言</el-menu-item>
-            <el-menu-item index="/write">写文</el-menu-item>
-            <el-menu-item>
-              <router-link :to="{ path: '/chat', query: { name: '默认房间' } }">
-                聊天室</router-link
-              >
-            </el-menu-item>
-            <el-menu-item index="/more">关于</el-menu-item>
-          </el-sub-menu>
+
+          <el-menu-item index="info" style="cursor: default; margin-left: 60px">
+            <el-button-group v-if="!userInfo">
+              <el-button @click="toLogin">登录</el-button>
+              <el-button @click="toRegister" color="#79BBDC">注册</el-button>
+            </el-button-group>
+            <!-- 组件nav-user-info -->
+            <nav-user-info :userInfo="userInfo" v-else></nav-user-info>
+          </el-menu-item>
         </el-menu>
       </el-col>
     </el-row>
     <!-- 电脑端 -->
-    <el-row class="nav" v-if="!isMobile">
+    <el-row class="nav" v-if="device == 'desktop'">
       <el-col :span="24">
         <div class="grid-content">
           <el-menu
@@ -125,9 +136,7 @@ const userInfo = computed(() => {
   return Object.keys(info).length === 0 ? null : info;
 });
 
-onMounted(() => {
-  checkUserInfo();
-});
+const device = computed(() => useGettersPinia.device);
 
 const checkUserInfo = async () => {
   // //判断是否是登录状态
@@ -158,28 +167,6 @@ const toLogin = () => {
 const toRegister = () => {
   router.push("/login-register/register");
 };
-
-//根据页面响应使用哪个样式的标题栏
-const isMobile = ref(false);
-const getScreen = () => {
-  let screenWidth = document.body.clientWidth;
-  let screenHeight = document.body.clientHeight;
-  return screenWidth / screenHeight;
-};
-const listenScreen = () => {
-  let initScale = getScreen();
-  if (initScale < 1) {
-    isMobile.value = true;
-  }
-  window.addEventListener("resize", () => {
-    isMobile.value = getScreen() < 1 ? true : false;
-  });
-};
-
-// 监听
-watchEffect(async () => {
-  listenScreen();
-});
 </script>
 <style scoped lang="less">
 .nav {
@@ -195,14 +182,11 @@ watchEffect(async () => {
   border: none;
 }
 
-.el-menu-demo {
-  display: flex;
-  align-items: center;
-}
-
+.el-menu-demo,
 .el-menu-item,
 .el-sub-menu,
-.logo-title {
+.logo-title,
+.more {
   display: flex;
   align-items: center;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
@@ -211,6 +195,10 @@ watchEffect(async () => {
   font-size: 15px;
   color: #fff;
 }
+
+// el-tooltip__trigger el-tooltip__trigger .el-submenu /deep/ .el-submenu__title {
+//   font-size: 20px;
+// }
 
 /* 点击出来的下划线进行隐藏 */
 .el-menu-item.is-active {
@@ -232,5 +220,9 @@ watchEffect(async () => {
 
 .login {
   color: #fff;
+}
+
+:deep(:focus-visible) {
+  outline: none;
 }
 </style>

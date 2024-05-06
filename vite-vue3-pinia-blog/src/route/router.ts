@@ -49,15 +49,6 @@ export const constantRoutes = [
     },
   },
   {
-    path: "/article",
-    name: "article",
-    component: () => import("/@/views/Article.vue"),
-    meta: {
-      title: "文章列表",
-    },
-    hidden: true,
-  },
-  {
     path: "/category",
     component: () => import("/@/views/category/index.vue"),
     hidden: true,

@@ -2,8 +2,8 @@
   <div class="container-more">
     <div class="head">
       <div class="hedaImg">
-        <img src="/image/imgs/portrait.jpg" alt="headImg">
-      </div> 
+        <img src="/image/imgs/portrait.jpg" alt="headImg" />
+      </div>
       <h1>你好!</h1>
     </div>
     <div class="info">
@@ -29,17 +29,14 @@
           href="https://github.com/Auroraol/my_blog"
           style="color: #551a8b"
           target="_blank"
-          >
-          
+        >
           https://github.com/Auroraol/my_blog</a
         >
       </p>
       <p>君子终日乾乾，夕惕若厉，无咎。与君共勉！</p>
-      <div class="image">
-      </div>
+      <div class="image"></div>
     </div>
   </div>
-  
 </template>
 
 
@@ -51,19 +48,20 @@ onMounted(() => {
   gsapAnimation();
 });
 
-
 const myInfo = "";
 
 // 动画
 const gsapAnimation = () => {
   const tween = gsap.timeline();
-  tween.from('.hedaImg', {
-        scale: 1.5,
-        ease: "elastic.out(1.5,0.2)",
-        duration: 1.5
-    }).from('.hedaImg', {
-        y: 200,
-        duration: 0.3
+  tween
+    .from(".hedaImg", {
+      scale: 1.5,
+      ease: "elastic.out(1.5,0.2)",
+      duration: 1.5,
+    })
+    .from(".hedaImg", {
+      y: 200,
+      duration: 0.3,
     })
     .from(".head h1", {
       y: 20,
@@ -85,10 +83,8 @@ const gsapAnimation = () => {
 const easterKey = ["l", "f", "j"]; //彩蛋秘籍
 let easterArr = new Array<string>(); //存放按键记录
 window.addEventListener("keyup", (key) => {
-
   if (easterKey.includes(key.key)) {
-
-          console.error(key);
+    console.error(key);
     //按键属于目标字母
     easterArr.push(key.key); //存放
     if (easterArr.length === easterKey.length) {
@@ -104,9 +100,6 @@ window.addEventListener("keyup", (key) => {
     easterArr = []; //清空
   }
 });
-
-
-
 </script>
 
 <style scoped lang="less">
@@ -156,18 +149,17 @@ window.addEventListener("keyup", (key) => {
 
   .bottom {
     margin: 4rem;
- line-height: initial;
+    line-height: initial;
     p {
       font-size: 1.5rem;
       font-weight: 600;
-    //   text-align: center; /* 让段落内文本居中对齐 */
       margin: 1rem;
- 
-    a {
-      display: block; /* 将链接显示为块级元素 */
-      text-align: left; /* 让链接内文本左对齐 */
+
+      a {
+        display: block; /* 将链接显示为块级元素 */
+        text-align: left; /* 让链接内文本左对齐 */
+      }
     }
-   }
     .image {
       width: 100%;
       display: flex;
@@ -182,7 +174,13 @@ window.addEventListener("keyup", (key) => {
 
 @media only screen and (max-width: 1050px) {
   .container-more {
-    width: 100%;
+    width: 90%;
+    .bottom {
+      margin: 4rem;
+      p {
+        font-size: 1.2rem;
+      }
+    }
   }
 }
 </style>

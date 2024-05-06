@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="2">
+    <el-col :span="2" :xs="1">
       <el-affix offset="70">
         <BrowserSidePanel
           class="browserSide container"
@@ -9,7 +9,7 @@
         ></BrowserSidePanel>
       </el-affix>
     </el-col>
-    <el-col :span="16">
+    <el-col :span="16" :xs="22">
       <div v-if="!loading">
         <transition name="fade">
           <div class="layout-left-side">
@@ -78,25 +78,26 @@
       </div>
     </el-col>
 
-    <el-col :span="6"
-      ><div class="grid-content ep-bg-purple" />
-      <el-affix offset="60">
-        <!-- 相关阅读 -->
-        <div v-if="device === 'desktop' && !loading" class="related-articles">
-          <interrelated-list :article-id="id" :authorId="authorId" />
-        </div>
-        <!--文章目录-->
-        <div class="catalog">
-          <div class="titleTop">文章目录</div>
-          <MdCatalog
-            offsetTop="200"
-            scrollElementOffsetTop="100"
-            editorId="preview-only"
-            class="browserCatalog"
-            :scrollElement="scrollElement"
-          />
-        </div>
-      </el-affix>
+    <el-col :span="6" :xs="1"
+      ><div class="grid-content ep-bg-purple" v-if="device === 'desktop'">
+        <el-affix offset="60">
+          <!-- 相关阅读 -->
+          <div v-if="!loading" class="related-articles">
+            <interrelated-list :article-id="id" :authorId="authorId" />
+          </div>
+          <!--文章目录-->
+          <div class="catalog">
+            <div class="titleTop">文章目录</div>
+            <MdCatalog
+              offsetTop="200"
+              scrollElementOffsetTop="100"
+              editorId="preview-only"
+              class="browserCatalog"
+              :scrollElement="scrollElement"
+            />
+          </div>
+        </el-affix>
+      </div>
     </el-col>
   </el-row>
 </template>
@@ -116,10 +117,12 @@ import "md-editor-v3/lib/preview.css";
 import gsap from "gsap";
 import { formatDate } from "/@/utils/format/format-time";
 import { useSettingsStore } from "/@/store/index";
+import { useGetters } from "/@/store/getters";
 
-//
+const useGettersPinia = useGetters();
 const useSettingsStorePinia = useSettingsStore();
 const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
+const device = computed(() => useGettersPinia.device);
 
 //md-catalog目录的监听设置
 const scrollElement = document.documentElement;
@@ -128,7 +131,6 @@ const article = ref({});
 const loading = ref(true);
 const id = ref(0);
 const url = ref("");
-const device = ref("desktop");
 
 const router = useRouter();
 

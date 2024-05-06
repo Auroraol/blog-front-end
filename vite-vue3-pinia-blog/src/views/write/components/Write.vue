@@ -2,16 +2,15 @@
   <div class="edit-container">
     <!-- 头部 -->
     <div class="edit-head">
-      <div class="edit-head-left">
+      <div v-if="device === 'desktop'" class="edit-head-left">
         <span>编辑文章</span>
         <span>ARTICLE EDIT</span>
       </div>
-      <div class="edit-head-right">
-        <el-select
-          v-model="articleWrite.original"
-          class="col"
-          style="width: 75px"
-        >
+      <div
+        class="edit-head-right"
+        style="display: flex; justify-content: space-between"
+      >
+        <el-select v-model="articleWrite.original" class="col" style="flex: 1">
           <el-option
             v-for="(option, index) in options"
             :key="index"
@@ -19,11 +18,12 @@
             :value="option.value"
           />
         </el-select>
+
         <el-select
           v-model="articleWrite.categoryId"
           class="col"
           placeholder="选择分类"
-          style="width: 120px"
+          style="flex: 1"
         >
           <el-option
             v-for="(category, index) in categories"
@@ -38,9 +38,15 @@
           type="warning"
           :loading="loading1"
           @click="save(1)"
+          style="flex: 1"
           >保存</el-button
         >
-        <el-button class="col" type="danger" :loading="loading" @click="save(0)"
+        <el-button
+          class="col"
+          type="danger"
+          :loading="loading"
+          @click="save(0)"
+          style="flex: 1"
           >发布</el-button
         >
       </div>
@@ -142,14 +148,16 @@ import { ElLoading } from "element-plus";
 import { useRequest } from "vue-hooks-plus";
 import { MdEditor, config } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
-// import DynamicTags from "/@/components/Write/components/DynamicTags.vue";
-// import ImgUpload from "/@/components/Write/components/ImgUpload.vue";
 import { ArticleRequestData, categoryItem } from "/@/typings.d";
+import { useGetters } from "/@/store/getters";
 import { categoryList } from "/@/api/category/category";
 import { saveArticle } from "/@/api/article/article";
 import { deleteFile } from "/@/api/file/file";
 import { request } from "/@/utils/network/axios";
 import { tagList } from "/@/api/tag/tag";
+
+const useGettersPinia = useGetters();
+
 // 定义响应式变量
 // 上传文章
 const articleWrite = reactive<ArticleRequestData>({
@@ -172,6 +180,8 @@ const uploadType = ref(1); // 上传类型，1：文章图片，2：文章封面
 const preview_cover = ref("");
 const coverVisible = ref(false);
 const imgUploadVisible = ref(false);
+
+const device = computed(() => useGettersPinia.device);
 
 // 定义选项
 const options = [
@@ -389,6 +399,14 @@ const coverUploadSuccess = (url) => {
   margin: 0 auto;
   width: 65%;
   margin-top: 5px;
+
+  @media screen and (max-width: 960px) {
+    background: #fff;
+    margin: 0 auto;
+    width: 90%;
+    margin-top: 5px;
+  }
+
   //
   .edit-head {
     height: 50px;

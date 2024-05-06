@@ -3,7 +3,7 @@
   <div ref="container" class="container">
     <div class="content-container">
       <!--  左-->
-      <div class="left-side">
+      <div class="left-side" v-if="device == 'desktop'">
         <h1 class="left-side-title">
           <img :src="randomImageSrc" />
           归档
@@ -34,7 +34,6 @@
           <el-icon><ArrowRight /></el-icon>
         </el-button>
       </div>
-
       <!-- 右 -->
       <div class="right-side">
         <el-timeline>
@@ -82,21 +81,23 @@
           @current-change="currentChange"
         />
       </div>
+
       <!-- 移动tab菜单图标 -->
-      <svg-icon
+      <el-icon
         v-if="device !== 'desktop'"
-        icon-class="archives-menu"
         class="menu-svg"
         @click="drawer = !drawer"
-      />
+        ><Menu
+      /></el-icon>
       <!-- 移动tab菜单抽屉 -->
       <el-drawer
         v-if="device !== 'desktop'"
-        :visible="drawer"
-        direction="ltr"
-        size="40%"
+        v-model="drawer"
+        :before-close="handleClose"
         :show-close="false"
+        size="40%"
       >
+        <template #header><h2>归档</h2> </template>
         <ul class="menu-list">
           <li
             v-for="(tab, index) in tabs"
@@ -108,22 +109,6 @@
             {{ tab.date }}
           </li>
         </ul>
-        <div class="page-wraper">
-          <el-button
-            type="text"
-            :disabled="tabCurrent === 1"
-            @click="tabPageChange(-1)"
-          >
-            <i class="el-icon-arrow-left el-icon" />
-          </el-button>
-          <el-button
-            type="text"
-            :disabled="tabPages === tabCurrent"
-            @click="tabPageChange(1)"
-          >
-            <i class="el-icon-arrow-right el-icon" />
-          </el-button>
-        </div>
       </el-drawer>
     </div>
   </div>
@@ -137,6 +122,11 @@ import {
 } from "/@/api/article/article";
 import { formatPast, formatDate } from "/@/utils/format/format-time";
 import { MoreFilled } from "@element-plus/icons-vue";
+import { useGetters } from "/@/store/getters";
+
+const useGettersPinia = useGetters();
+
+const device = computed(() => useGettersPinia.device);
 
 const drawer = ref(false);
 const tabActive = ref(0);
@@ -246,9 +236,11 @@ const tabClick = (index, tab) => {
 <style lang="less" scoped>
 .container {
   width: 100%;
-  height: 100vh;
+
   @media screen and (max-width: 960px) {
     background: #fff;
+    margin: 0 auto;
+    width: 90%;
   }
 
   .content-container {
@@ -258,7 +250,7 @@ const tabClick = (index, tab) => {
     display: flex;
 
     @media screen and (max-width: 960px) {
-      margin-top: 20px;
+      margin-top: 5px;
     }
 
     // 左
@@ -285,7 +277,7 @@ const tabClick = (index, tab) => {
         font-size: 15px;
         text-align: center;
         color: #909090;
-        // min-height: 370px;
+
         .list-tab {
           list-style: none;
           position: relative;
@@ -332,11 +324,12 @@ const tabClick = (index, tab) => {
       .fade-leave-to {
         opacity: 0;
       }
+
       .el-card {
         position: relative;
 
         @media screen and (max-width: 922px) {
-          width: 80vw;
+          width: 70vw;
         }
 
         .title {

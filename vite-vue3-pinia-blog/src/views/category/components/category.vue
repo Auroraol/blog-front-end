@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <!-- 左 -->
-    <el-affix :offset="70">
+    <el-affix :offset="70" v-if="device === 'desktop'">
       <div class="left-list">
-        <ul v-if="device === 'desktop'">
+        <ul>
           <li
             v-for="(category, index) in categorys"
             :key="index"
@@ -24,15 +24,28 @@
           :key="index"
           class="list-header-item"
           :class="{ 'header-item-active': categoryId === category.id }"
-          @click="chageTab(category.id)"
+          @click="changeTab(category.id)"
         >
           {{ category.name }}
         </li>
       </ul>
       <!-- 文章 -->
       <article-list :list="artList" :loading="loading" />
+
+      <el-pagination
+        v-if="device !== 'desktop'"
+        background
+        layout="prev, pager, next"
+        hide-on-single-page
+        :page-size="size"
+        :current-page="current"
+        :total="total"
+        @current-change="currentChange"
+      />
+
       <!-- 分页 -->
       <el-pagination
+        v-else
         v-model:current-page="current"
         v-model:page-size="size"
         :page-sizes="[5, 10, 20, 30]"
@@ -51,16 +64,10 @@
 import { categoryList } from "/@/api/category/category";
 import ArticleList from "/@/components/Box/ArticleBox/ArticleList.vue";
 import { pagePublishedArticle } from "/@/api/article/article";
-// import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-// import en from 'element-plus/dist/locale/en.mjs'
-// const language = ref('zh-cn')
-// const locale = computed(() => (language.value === 'zh-cn' ? zhCn : en))
-// import { pagePublishedArticle } from '@/api/article.js'
-// import { ref } from 'vue'
-// import { useRouter } from 'vue-router'
-// import { mapGetters } from 'vuex'
-
+import { useGetters } from "/@/store/getters";
 import gsap from "gsap";
+
+const useGettersPinia = useGetters();
 
 const categorys = ref([]);
 const categoryId = ref(0);
@@ -71,7 +78,7 @@ const size = ref(4);
 const total = ref(0);
 const router = useRouter();
 
-const device = ref("desktop");
+const device = computed(() => useGettersPinia.device);
 
 // 初始化
 onMounted(() => {
@@ -160,8 +167,14 @@ const getArtList = async () => {
   min-height: 631px;
   display: flex;
   border-radius: 0.5rem;
-
   align-items: flex-start;
+
+  @media screen and (max-width: 960px) {
+    margin: 0 auto;
+    width: 90%;
+    margin-top: 5px;
+  }
+
   .left-list {
     margin-left: 100px;
     background: #fff;
@@ -222,12 +235,12 @@ const getArtList = async () => {
     margin-left: 30px;
     margin-bottom: 20px;
 
+    // 手机端显示
     .list-header {
       margin: 0;
       padding: 0;
       display: flex;
       align-items: center;
-      width: 100vw;
       white-space: nowrap;
       overflow-x: scroll;
       font-size: 14px;
@@ -249,10 +262,13 @@ const getArtList = async () => {
       }
     }
 
-    @media screen and (max-width: 960px) {
-      margin-left: 0;
+    @media only screen and (max-width: 960px) {
+      // margin-left: 0;
+      margin: 0;
+      .content-list {
+        max-width: 300px;
+      }
     }
-
     .el-pagination {
       display: flex;
       justify-content: center;

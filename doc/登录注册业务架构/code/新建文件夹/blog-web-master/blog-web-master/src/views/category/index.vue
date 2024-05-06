@@ -2,13 +2,12 @@
   <div ref="container" class="container">
     <app-header :nav-item-active="1" />
     <div class="content-container">
-
       <ul v-if="device === 'desktop'" class="left-list">
         <li
-          v-for="(category,index) in categorys"
+          v-for="(category, index) in categorys"
           :key="index"
           class="left-list-item"
-          :class="{'left-list-item-active': categoryId === category.id}"
+          :class="{ 'left-list-item-active': categoryId === category.id }"
           @click="chageTab(category.id)"
         >
           <span class="item-content">{{ category.name }}</span>
@@ -17,12 +16,14 @@
       <div class="content-list">
         <ul v-if="device !== 'desktop'" class="list-header">
           <li
-            v-for="(category,index) in categorys"
+            v-for="(category, index) in categorys"
             :key="index"
             class="list-header-item"
             :class="{ 'header-item-active': categoryId === category.id }"
             @click="chageTab(category.id)"
-          >{{ category.name }}</li>
+          >
+            {{ category.name }}
+          </li>
         </ul>
         <article-list :list="artList" :loading="loading" />
 
@@ -41,16 +42,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { categoryList } from '@/api/category.js'
-import AppHeader from '@/components/Header/index'
-import ArticleList from '@/components/ArticleList'
-import { pagePublishedArticle } from '@/api/article.js'
+import { mapGetters } from "vuex";
+import { categoryList } from "@/api/category.js";
+import AppHeader from "@/components/Header/index";
+import ArticleList from "@/components/ArticleList";
+import { pagePublishedArticle } from "@/api/article.js";
 export default {
-  name: 'Category',
+  name: "Category",
   components: {
     AppHeader,
-    ArticleList
+    ArticleList,
   },
   data() {
     return {
@@ -60,79 +61,74 @@ export default {
       artList: [],
       current: 1,
       size: 10,
-      total: 0
-    }
+      total: 0,
+    };
   },
 
   computed: {
-    ...mapGetters([
-      'device'
-    ])
+    ...mapGetters(["device"]),
   },
 
   mounted() {
-    this.init()
+    this.init();
   },
 
   methods: {
-
     // 获取分类列表
     init() {
-      categoryList().then(
-        res => {
-          this.categorys = res.data
-          const id = this.$route.query && this.$route.query.id
-          if (id && this.categorys.some(ele => ele.id === id)) {
-            this.chageTab(id)
-          } else {
-            this.chageTab(this.categorys[0].id)
-          }
+      categoryList().then((res) => {
+        this.categorys = res.data;
+        const id = this.$route.query && this.$route.query.id;
+        if (id && this.categorys.some((ele) => ele.id === id)) {
+          this.chageTab(id);
+        } else {
+          this.chageTab(this.categorys[0].id);
         }
-      )
+      });
     },
 
     // tab更改
     chageTab(categoryId) {
-      this.total = 0
-      this.current = 1
-      this.categoryId = categoryId
-      this.getArtList()
+      this.total = 0;
+      this.current = 1;
+      this.categoryId = categoryId;
+      this.getArtList();
     },
 
     // 分页监听
     currentChange(current) {
-      this.current = current
-      this.getArtList()
+      this.current = current;
+      this.getArtList();
     },
 
     // 获取文章列表
     getArtList() {
-      this.loading = true
+      this.loading = true;
       const params = {
         current: this.current,
         size: this.size,
-        categoryId: this.categoryId
-      }
+        categoryId: this.categoryId,
+      };
       pagePublishedArticle(params).then(
-        res => {
-          this.total = res.data.total
-          this.artList = res.data.records
-          this.loading = false
-          this.$refs.container.scrollTop = 0
+        (res) => {
+          this.total = res.data.total;
+          this.artList = res.data.records;
+          this.loading = false;
+          this.$refs.container.scrollTop = 0;
         },
-        error => {
-          console.error(error)
-          this.loading = false
+        (error) => {
+          console.error(error);
+          this.loading = false;
         }
-      )
-    }
-  }
-}
+      );
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
 .container {
-  @import '~@/styles/variables';
+  @import "~@/styles/variables";
   width: 100%;
   height: 100vh;
   overflow-x: hidden;
@@ -148,7 +144,7 @@ export default {
     display: flex;
     align-items: flex-start;
 
-    @media screen and (max-width: 960px){
+    @media screen and (max-width: 960px) {
       margin-top: 0;
     }
 
@@ -163,7 +159,7 @@ export default {
       color: #909090;
       border-radius: 2px;
       position: fixed;
-      left: calc(calc(100% - 845px)/2);
+      left: calc(calc(100% - 845px) / 2);
       top: 75px;
       background: #fff;
       z-index: 999;
@@ -226,7 +222,7 @@ export default {
         white-space: nowrap;
         overflow-x: scroll;
         font-size: 14px;
-        border-bottom: 1px solid hsla(0,0%,59.2%,.1);
+        border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.1);
 
         &:first-child {
           margin-left: 5px;
@@ -244,7 +240,7 @@ export default {
         }
       }
 
-      @media screen and (max-width: 960px){
+      @media screen and (max-width: 960px) {
         margin-left: 0;
       }
 

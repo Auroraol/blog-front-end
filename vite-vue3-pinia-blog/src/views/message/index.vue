@@ -229,7 +229,7 @@
     <el-dialog
       v-model="reEditVisible"
       title="提示"
-      :width="device === 'desktop' ? '700px' : '95%'"
+      :width="device === 'desktop' ? '700px' : '80%'"
       top="45vh"
       :modal="false"
       :show-close="false"
@@ -291,7 +291,6 @@ const router = useRouter();
 // 通过 useGetters() 获取 getters store 的实例
 const useGettersPinia = useGetters();
 
-const device = ref("desktop");
 const content = ref("");
 const recontent = ref("");
 const reEditVisible = ref(false); //弹框
@@ -395,6 +394,7 @@ const userInfo = computed(() => {
 });
 
 const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
+const device = computed(() => useGettersPinia.device);
 
 // 在组件挂载后执行获取数据的操作
 onMounted(async () => {
@@ -621,6 +621,11 @@ const reSubmit = () => {
   @import "/@/assets/styles/variables.css";
   width: 80%;
   margin: 0 auto;
+
+  @media screen and (max-width: 922px) {
+    width: 90%;
+    margin-top: 5px;
+  }
 
   //回复对话框
   .re-editor-container {

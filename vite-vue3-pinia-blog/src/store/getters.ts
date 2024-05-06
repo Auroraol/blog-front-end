@@ -4,13 +4,14 @@ import { useLoginStore } from "./modules/login";
 // import { usePermissionStore } from "./modules/permission";
 // import { settingsStore } from "./modules/settings";
 import { useUserStore } from "./modules/user";
+import { useAppStore } from "./modules/app";
 
 
 export const useGetters = defineStore('getters', {
   getters: {
     // ...mapStores(useLoginStore, useUserStore),
     // sidebar: (state) => state.sidebar,
-    // device: (state) => state.app.device,
+    device: (state) => useAppStore().device,
     // defaultAvatar: (state) => state.settings.defaultAvatar,
     token: (state) => useUserStore().token,
     userInfo: (state) => useUserStore().userInfo,

@@ -64,7 +64,14 @@ const showLogo = () => {
 <style lang="less" scoped>
 // 引入LESS文件，或者直接在这里定义LESS变量
 @import "/@/assets/styles/variables.less";
+
 .menu {
+  @media screen and (max-width: 960px) {
+    background: #fff;
+    margin: 0 auto;
+    // width: 90%;
+  }
+
   .el-menu {
     background-color: @menuBg;
     color: @menuText;
