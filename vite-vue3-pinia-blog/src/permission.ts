@@ -152,7 +152,7 @@ router.beforeEach(async (to, from, next) => {
 });
 
 //
-router.afterEach(() => {
+router.afterEach(()=>{
   // 进度条结束
   NProgress.done();
 });

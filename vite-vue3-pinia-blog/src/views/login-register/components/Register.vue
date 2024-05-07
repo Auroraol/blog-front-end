@@ -118,16 +118,21 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useSmsCodeMixin } from '/@/mixins/smsMixin'
-import { useRouterMixin } from '/@/mixins/routerMixin'
-import { register } from "/@/api/user/user"
-import { useUserStore } from "/@/store/index"
+import { useSmsCodeMixin } from "/@/mixins/smsMixin";
+import { useRouterMixin } from "/@/mixins/routerMixin";
+import { register } from "/@/api/user/user";
+import { useUserStore, usePermissionStore } from "/@/store/index";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 // 在 setup 中引入 mixin
 const { getCode, codeCount } = useSmsCodeMixin();
 const { toPage } = useRouterMixin();
 
+//pinia
 const useUserPinia = useUserStore();
+const usePermissionStorePinia = usePermissionStore();
 
 const loading = ref(false);
 
@@ -162,7 +167,6 @@ const formRules = ref({
   ],
 });
 
-
 // 按钮使能
 const isFormValid = computed(() => {
   return (
@@ -175,7 +179,7 @@ const isFormValid = computed(() => {
 
 // 发送验证码
 const sendCode = () => {
-  getCode(registerForm.mobile)
+  getCode(registerForm.mobile);
 };
 
 const submit = async () => {
@@ -189,10 +193,14 @@ const submit = async () => {
       username: registerForm.username,
       password: registerForm.password,
     };
-    // TODO获得用户信息, 确定roles, 实现动态路由
+    //获得用户信息, 确定roles, 实现动态路由
     await useUserPinia.accountLogin(loginParams);
-    let {roles} = await useUserPinia.getUserInfo();
-    //  TODO const accessRoutes = await this.$store.dispatch('permission/generateRoutes', roles)
+    let { roles } = await useUserPinia.getUserInfo();
+    const accessRoutes = await usePermissionStorePinia.generateRoutes(roles);
+    // 添加动态路由
+    accessRoutes.forEach((res) => {
+      router.addRoute(res);
+    });
 
     ElMessage.success("注册成功");
     loading.value = false;
@@ -217,6 +225,10 @@ const privacy = () => {
 
 <style lang="less" scoped>
 .register-form {
+  @media screen and (max-width: 960px) {
+    width: 100%;
+  }
+
   text-align: center;
   width: 410px;
   height: 420px;

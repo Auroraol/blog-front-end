@@ -42,7 +42,11 @@ export const usePermissionStore = defineStore('permission',{
     addRoutes: []    //动态添加的路由
   }),
   actions: {
-    // 根据角色动态加载路由
+    /**
+     * 根据角色动态加载路由
+     * @param roles 
+     * @returns 
+     */
     generateRoutes(roles): Promise<any[]> {
       return new Promise(resolve => {
         let accessedRoutes;

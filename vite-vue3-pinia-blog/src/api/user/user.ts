@@ -14,20 +14,19 @@ export function accountLogin(params) {
   })
 }
 
-// /**
-//  * 第三方登录
-//  * @param {Object} params
-//  */
-// export function thirdLogin(params) {
-//   return request({
-//     url: '/oauth',
-//     headers: {
-//       'Authorization': 'Basic cGM6MTIzNDU2'
-//     },
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 第三方登录
+ * @param {Object} params
+ */
+export function thirdLogin(params) {
+  return request<LoginResponseType>(import.meta.env.VITE_APP_BASE_API +'/oauth', {
+    headers: {
+      'Authorization': 'Basic cGM6MTIzNDU2'
+    },
+    method: 'post',
+    params: params
+  })
+}
 
 /**
  * 手机号验证码登录

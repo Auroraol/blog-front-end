@@ -1,7 +1,7 @@
 // todo
 
 <template>
-  <!-- <div class="container">
+  <div class="container">
     <div class="content-container animated fadeInUp">
       <h3>绑定手机号</h3>
       <el-form>
@@ -47,105 +47,96 @@
         </el-form-item>
       </el-form>
     </div>
-  </div> -->
-  TODO
+  </div>
 </template>
 
-<script>
-// // import { bindMobile } from '/@/api/user/user'
-// import { validMobile } from "/@/utils/validate";
-// import { sendCode } from "/@/api/sms/sms";
-// export default {
-//   components: {
-//     AppHeader,
-//   },
-//   data() {
-//     return {
-//       loading: false,
-//       code: "",
-//       mobile: "",
-//       codeCount: 0,
-//       timer: null,
-//     };
-//   },
-//   methods: {
-//     // 按钮点击
-//     submit() {
-//       if (this.vsubmit()) {
-//         this.loading = true;
-//         const params = { mobile: this.mobile, code: this.code };
-//         bindMobile(params).then(
-//           (res) => {
-//             this.loading = false;
-//             this.$message({
-//               message: "绑定成功",
-//               type: "success",
-//             });
-//             this.$store
-//               .dispatch("user/getUserInfo")
-//               .then((res) => this.$router.push("/user/info"));
-//           },
-//           (error) => {
-//             console.error(error);
-//             this.loading = false;
-//           }
-//         );
-//       }
-//     },
+<script setup lang="ts">
+// 导入所需的组件和函数
+import AppHeader from "@/components/AppHeader.vue";
+import { defineProps, defineEmits, defineExpose } from "vue";
+import { validMobile } from "/@/utils/validate";
+import { sendCode } from "/@/api/sms/sms";
 
-//     // 提交校验
-//     vsubmit() {
-//       const mobile = this.mobile;
-//       if (mobile === "") {
-//         this.$message("请输入手机号");
-//         return false;
-//       }
-//       if (!validMobile(mobile)) {
-//         this.$message("手机号格式不正确");
-//         return false;
-//       }
-//       if (this.code === "") {
-//         this.$message("请输入验证码");
-//         return false;
-//       }
-//       return true;
-//     },
+// 定义 props 和 emits
+const props = defineProps({});
+const emits = defineEmits([]);
 
-//     // 发送验证码
-//     sendCode() {
-//       const mobile = this.mobile;
-//       if (mobile === "") {
-//         this.$message("请输入手机号");
-//         return;
-//       }
-//       if (!validMobile(mobile)) {
-//         this.$message("手机号格式不正确");
-//         return;
-//       }
-//       // 120倒数计时
-//       const TIME_COUNT = 120;
-//       if (!this.timer) {
-//         this.codeCount = TIME_COUNT;
-//         this.timer = setInterval(() => {
-//           if (this.codeCount > 0 && this.codeCount <= TIME_COUNT) {
-//             this.codeCount--;
-//           } else {
-//             clearInterval(this.timer);
-//             this.timer = null;
-//           }
-//         }, 1000);
-//       }
-//       const params = { mobile: mobile };
-//       sendCode(params).then((res) => {
-//         this.$message({
-//           message: "发送成功",
-//           type: "success",
-//         });
-//       });
-//     },
-//   },
-// };
+// 定义响应式数据
+const loading = ref(false);
+const code = ref("");
+const mobile = ref("");
+const codeCount = ref(0);
+let timer: NodeJS.Timeout | null = null;
+
+// 提交校验
+const vsubmit = () => {
+  const mobileValue = mobile.value;
+  if (mobileValue === "") {
+    return showMessage("请输入手机号");
+  }
+  if (!validMobile(mobileValue)) {
+    return showMessage("手机号格式不正确");
+  }
+  if (code.value === "") {
+    return showMessage("请输入验证码");
+  }
+  return true;
+};
+
+// 发送验证码
+const sendCode = () => {
+  const mobileValue = mobile.value;
+  if (mobileValue === "") {
+    return showMessage("请输入手机号");
+  }
+  if (!validMobile(mobileValue)) {
+    return showMessage("手机号格式不正确");
+  }
+  // 120倒数计时
+  const TIME_COUNT = 120;
+  if (!timer) {
+    codeCount.value = TIME_COUNT;
+    timer = setInterval(() => {
+      if (codeCount.value > 0 && codeCount.value <= TIME_COUNT) {
+        codeCount.value--;
+      } else {
+        clearInterval(timer as NodeJS.Timeout);
+        timer = null;
+      }
+    }, 1000);
+  }
+  const params = { mobile: mobileValue };
+  sendCode(params).then((res) => {
+    showMessage("发送成功", "success");
+  });
+};
+
+// 提交按钮点击
+const submit = () => {
+  if (vsubmit()) {
+    loading.value = true;
+    const params = { mobile: mobile.value, code: code.value };
+    bindMobile(params).then(
+      (res) => {
+        loading.value = false;
+        showMessage("绑定成功", "success");
+        // dispatch action
+        // redirect to info page
+      },
+      (error) => {
+        console.error(error);
+        loading.value = false;
+      }
+    );
+  }
+};
+
+// 显示消息
+const showMessage = (message: string, type: string = "error") => {
+  // show message
+};
 </script>
+
 
 <style lang="less" scoped>
 .container {

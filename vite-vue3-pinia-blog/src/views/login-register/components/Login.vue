@@ -155,11 +155,19 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useUserStore, useLoginStore } from "/@/store/index";
+import {
+  useUserStore,
+  useLoginStore,
+  usePermissionStore,
+} from "/@/store/index";
 import { setRemember, getRemember } from "/@/utils/auth";
 
 import { useSmsCodeMixin } from "/@/mixins/smsMixin";
 import { useRouterMixin } from "/@/mixins/routerMixin";
+
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 // 在 setup 中引入 mixin
 const { getCode, codeCount } = useSmsCodeMixin();
@@ -168,6 +176,7 @@ const { toPage } = useRouterMixin();
 // pinia
 const useUserPinia = useUserStore();
 const useLoginPinia = useLoginStore();
+const usePermissionStorePinia = usePermissionStore();
 
 //
 const loading = ref(false);
@@ -220,12 +229,14 @@ const passwordLogin = async () => {
   const params = toRaw(loginForm);
   try {
     await useUserPinia.accountLogin(params);
-    // TODO获得用户信息, 确定roles, 实现动态路由
+    // 获得用户信息, 确定roles, 实现动态路由
     let { roles } = await useUserPinia.getUserInfo();
-    // console.error(roles);
+    const accessRoutes = await usePermissionStorePinia.generateRoutes(roles);
+    // 添加动态路由
+    accessRoutes.forEach((res) => {
+      router.addRoute(res);
+    });
 
-    //  const accessRoutes = await this.$store.dispatch('permission/generateRoutes', roles)
-    // this.$router.addRoutes(accessRoutes)
     // 是否记住密码
     let checkedValue = checked.value;
     setRemember(checkedValue ? "1" : "0"); // 浏览器
@@ -252,13 +263,13 @@ const codeLogin = async () => {
   const params = toRaw(loginFormPhone);
   try {
     await useUserPinia.codeLogin(params);
-    // TODO获得用户信息, 确定roles, 实现动态路由
+    // 获得用户信息, 确定roles, 实现动态路由
     let { roles } = await useUserPinia.getUserInfo();
-
     loading.value = false;
     // 跳转到首页
     ElMessage.success("登录成功");
-    toPage("/index");
+    // toPage("/index");
+    window.location.href = "/";
   } catch (error) {
     loading.value = false;
     console.error(error);
@@ -285,6 +296,10 @@ const privacy = () => {
 
 <style lang="less" scoped>
 .login-form {
+  @media screen and (max-width: 960px) {
+    width: 100%;
+  }
+
   text-align: center;
   width: 410px;
   height: 420px;

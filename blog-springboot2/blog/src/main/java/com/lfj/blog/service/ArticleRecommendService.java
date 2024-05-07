@@ -32,7 +32,7 @@ public interface ArticleRecommendService {
 	 *
 	 * @param articleId
 	 */
-	void remove(Integer articleId);
+	boolean remove(Integer articleId);
 
 	/**
 	 * 异步刷新

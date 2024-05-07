@@ -244,7 +244,7 @@ const getArtList = async () => {
       white-space: nowrap;
       overflow-x: scroll;
       font-size: 14px;
-      border-bottom: 1px solid hsla(0, 0%, 59.2%, 0.1);
+      border-bottom: 1px solid hsla(0, 0%, 10.2%, 0.2);
 
       &:first-child {
         margin-left: 5px;

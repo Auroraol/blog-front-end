@@ -20,7 +20,7 @@
                 v-if="userInfo"
                 style="cursor: pointer"
                 :size="45"
-                :src="userInfo.avatar"
+                :src="userInfo.avatar || defaultAvatar"
               />
               <el-avatar
                 v-else
@@ -263,6 +263,7 @@ const useGettersPinia = useGetters();
 const useSettingsStorePinia = useSettingsStore();
 
 const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
+
 // 计算属性
 const userInfo = computed(() => {
   const info = useGettersPinia.userInfo;

@@ -88,19 +88,21 @@ public class ArticleRecommendServiceImpl implements ArticleRecommendService {
 	 * @param articleId
 	 */
 	@Override
-	public void remove(Integer articleId) {
+	public boolean remove(Integer articleId) {
 		if (articleId == null) {
-			return;
+			return false;
 		}
 		Set<Object> set = zSetOperations.range(KEY, 0, -1);
 		if (set != null) {
 			set.forEach(i -> {
 				ArticleVo articleVo = (ArticleVo) i;
 				if (articleId.equals(articleVo.getId())) {
-					zSetOperations.remove(KEY, articleVo);
+					long a = zSetOperations.remove(KEY, articleVo);
+//					System.out.println(a);
 				}
 			});
 		}
+		return true;
 	}
 
 	/**

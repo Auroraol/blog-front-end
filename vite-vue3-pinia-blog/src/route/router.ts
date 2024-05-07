@@ -105,11 +105,14 @@ export const constantRoutes = [
     name: "reset-password",
     component: () => import("/@/views/reset-password/index.vue"),
     hidden: true,
+    meta: {
+      title: "重置密码",
+    },
   },
   {
-    path: "/email-validate",
-    name: "email-validate",
-    component: () => import("/@/views/email-validate/index.vue"),
+    path: "/bind-email",
+    name: "bind-email",
+    component: () => import("/@/views/bind-email/index.vue"),
     hidden: true,
     meta: {
       title: "邮箱绑定",
@@ -204,8 +207,21 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: "浏览文章",
-    },
+    }
   },
+  {
+    path: '/search',
+    component: () => import('/@/views/search/index.vue'),
+    hidden: true,
+    meta: {
+      title: "搜索文章",
+    }
+  },
+  // {
+  //   path: '/oauth',
+  //   component: () => import('@/views/oauth.vue'),
+  //   hidden: true
+  // },
   // 后台-公用
   {
     path: "/user",

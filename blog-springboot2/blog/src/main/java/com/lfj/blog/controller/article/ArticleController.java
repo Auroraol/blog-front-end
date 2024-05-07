@@ -163,8 +163,12 @@ public class ArticleController {
 	@DeleteMapping("/recommend/delete/{articleId}")
 	@ApiOperation(value = "从推荐列表中删除", notes = "需要accessToken，需要管理员权限")
 	public ApiResponseResult recommendDelete(@ApiParam("文章id") @NotNull(message = "文章id不能为空") @PathVariable(value = "articleId") Integer articleId) {
-		articleRecommendService.remove(articleId);
-		return ApiResponseResult.success();
+
+		if (articleRecommendService.remove(articleId)) {
+			return ApiResponseResult.success();
+		}
+
+		return ApiResponseResult.fail(500000, "推荐列表中删除失败");
 	}
 
 	@GetMapping("/interrelated/list")

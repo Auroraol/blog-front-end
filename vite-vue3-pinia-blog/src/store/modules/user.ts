@@ -4,7 +4,7 @@ import {
   codeLogin,
   logout,
   getUserInfo,
-  // thirdLogin,
+  thirdLogin,
 } from "/@/api/user/user";
 
 import {
@@ -56,18 +56,18 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
-    // /**
-    //  * 第三方登录
-    //  */
-    // async thirdLogin(params) {
-    //   try {
-    //     const { data } = await thirdLogin(params);
-    //     this.SET_TOKEN(data.access_token);
-    //     return Promise.resolve();
-    //   } catch (error) {
-    //     return Promise.reject(error);
-    //   }
-    // },
+    /**
+     * 第三方登录
+     */
+    async thirdLogin(params) {
+      try {
+        const {access_token}  = await thirdLogin(params);
+        this.SET_TOKEN(access_token);
+        return Promise.resolve();
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    },
     /**
      * 验证码登录
      */

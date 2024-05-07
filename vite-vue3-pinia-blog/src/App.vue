@@ -9,7 +9,6 @@
         </transition>
       </div>
     </el-config-provider>
-    <!-- <live2d v-if="device === 'desktop'" /> -->
     <foot></foot>
   </div>
 </template>

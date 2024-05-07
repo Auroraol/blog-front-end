@@ -202,7 +202,6 @@ const handleDelete = (row) => {
     type: "warning",
   })
     .then(() => {
-      console.error("sss");
       deleteRecommend(row.id).then((res) => {
         ElMessage({
           message: "删除成功",

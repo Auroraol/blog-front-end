@@ -13,7 +13,7 @@
         <router-link v-if="!props.userInfo.mobile" to="/bind-mobile">
           <el-dropdown-item>绑定手机号</el-dropdown-item>
         </router-link>
-        <router-link v-if="!props.userInfo.email" to="/email-validate">
+        <router-link v-if="!props.userInfo.email" to="/bind-email">
           <el-dropdown-item>绑定邮箱</el-dropdown-item>
         </router-link>
         <el-dropdown-item @click="logout">
@@ -44,10 +44,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useUserStore, useSettingsStore } from "/@/store/index";
 
 const router = useRouter();
+const route = useRoute();
 
 // pinia
 const useUserPinia = useUserStore();
@@ -93,9 +94,7 @@ const logout = async () => {
   try {
     await useUserPinia.logout();
     sessionStorage.setItem("articleDraft", ""); // 清空草稿
-    // router.go(0);
-    location.reload();
-    // router.push("/");
+    location.assign("/");
   } catch (error) {
     console.error(error);
     ElMessage.error("退出失败");

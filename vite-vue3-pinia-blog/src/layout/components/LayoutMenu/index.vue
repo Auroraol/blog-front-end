@@ -36,6 +36,7 @@ const usePermissionStorePinia = usePermissionStore();
 
 const sidebar = computed(() => useAppStorePinia.sidebar);
 const permission_routes = computed(() => usePermissionStorePinia.routes);
+
 // 过滤隐藏的路由
 const filteredRoutes = computed(() => {
   return permission_routes.value.filter((route) => !route.hidden);

@@ -98,15 +98,16 @@
               关于
             </el-menu-item>
             <!-- 搜索框 -->
-            <el-autocomplete
-              style="padding: 0 70px"
-              v-model="state"
-              :fetch-suggestions="querySearchAsync"
-              placeholder="搜索"
-              @select="handleSelect"
+            <el-input
+              style="width: 350px; padding: 0 70px"
+              v-model="keyword"
+              placeholder="搜索文章"
+              @focus="inputFocus"
+              @blur="inputBlur"
+              @keyup.enter.native="search"
               class="search"
               suffix-icon="el-icon-search"
-            ></el-autocomplete>
+            ></el-input>
             <el-menu-item index="info" style="cursor: default">
               <el-button-group v-if="!userInfo">
                 <el-button @click="toLogin">登录</el-button>
@@ -133,6 +134,9 @@ const useUserPinia = useUserStore();
 const useGettersPinia = useGetters();
 const router = useRouter();
 const activeIndex = ref("");
+//搜索响应数据
+const keyword = ref("");
+const inputIconColor = ref("");
 
 // 计算属性
 const userInfo = computed(() => {
@@ -170,6 +174,28 @@ const toLogin = () => {
 //跳转到注册
 const toRegister = () => {
   router.push("/login-register/register");
+};
+
+//搜索
+// 搜索框聚焦
+const inputFocus = () => {
+  inputIconColor.value = "#1989fa";
+};
+
+// 搜索框失焦
+const inputBlur = () => {
+  inputIconColor.value = "";
+};
+
+// 搜索
+const search = () => {
+  const keywordValue = keyword.value;
+  if (keywordValue) {
+    router.push({
+      path: "/search",
+      query: { keyword: keywordValue },
+    });
+  }
 };
 </script>
 <style scoped lang="less">
