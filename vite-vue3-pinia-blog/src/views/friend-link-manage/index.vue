@@ -18,28 +18,30 @@
       @getList="getList"
     >
       <template #opera1="scope">
-        <el-button type="success" size="small"
-          ><a :href="scope.row.url" target="_blank">打开</a>
-        </el-button>
-        <el-button
-          type="primary"
-          size="small"
-          @click="handleEdit(scope.$index, scope.row)"
-          >编辑</el-button
-        >
-        <el-button
-          size="small"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button
-        >
+        <div class="button-container">
+          <el-button type="success" size="small"
+            ><a :href="scope.row.url" target="_blank">打开</a>
+          </el-button>
+          <el-button
+            type="primary"
+            size="small"
+            @click="handleEdit(scope.$index, scope.row)"
+            >编辑</el-button
+          >
+          <el-button
+            size="small"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            >删除</el-button
+          >
+        </div>
       </template>
     </mxe-table>
 
     <el-dialog
       title="保存友链"
       top="25vh"
-      width="400px"
+      width="380px"
       v-model="dialogVisible"
       :close-on-click-modal="false"
       :show-close="false"
@@ -220,6 +222,19 @@ const loadData = () => {
 <style lang="less" scoped>
 .container {
   width: 100%;
+
+  /* 适应手机端屏幕 */
+  @media screen and (max-width: 768px) {
+    .button-container {
+      display: flex;
+      flex-direction: column; // 垂直排列
+      align-items: flex-end;
+    }
+
+    .button-container .el-button {
+      margin-bottom: 10px; // 按钮之间的间距
+    }
+  }
 
   .head {
     height: 50px;

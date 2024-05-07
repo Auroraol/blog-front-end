@@ -28,24 +28,26 @@
       </template>
 
       <template #opera2="scope">
-        <el-button
-          v-if="!scope.row.edit"
-          type="primary"
-          size="small"
-          @click="handleEdit(scope.row)"
-          >编辑</el-button
-        >
-        <span v-else>
-          <el-button type="info" size="small" @click="scope.row.edit = false"
-            >取消</el-button
+        <div class="button-container">
+          <el-button
+            v-if="!scope.row.edit"
+            type="primary"
+            size="small"
+            @click="handleEdit(scope.row)"
+            >编辑</el-button
           >
-          <el-button type="success" size="small" @click="saveSubmit"
-            >保存</el-button
+          <span class="button-container2" v-else>
+            <el-button type="info" size="small" @click="scope.row.edit = false"
+              >取消</el-button
+            >
+            <el-button type="success" size="small" @click="saveSubmit"
+              >保存</el-button
+            >
+          </span>
+          <el-button size="small" type="danger" @click="handleDelete(scope.row)"
+            >删除</el-button
           >
-        </span>
-        <el-button size="small" type="danger" @click="handleDelete(scope.row)"
-          >删除</el-button
-        >
+        </div>
       </template>
     </mxe-table>
   </div>
@@ -178,6 +180,21 @@ const inputConfirm = (val) => {
 .container {
   text-align: center;
 
+  /* 适应手机端屏幕 */
+  @media screen and (max-width: 768px) {
+    .button-container {
+      display: flex;
+      align-items: center;
+      padding-right: 10px;
+    }
+    .button-container2 {
+      display: flex;
+      align-items: center;
+    }
+    .el-button + .el-button {
+      margin-left: 4px;
+    }
+  }
   .head {
     height: 50px;
     background: #d0d0d0;

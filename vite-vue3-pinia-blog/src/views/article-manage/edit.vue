@@ -2,10 +2,61 @@
   <div class="edit-container">
     <!-- 头部 -->
     <div class="edit-head">
-      <div class="edit-head-left">
+      <div v-if="device === 'desktop'" class="edit-head-left">
         <span>编辑文章</span>
         <span>ARTICLE EDIT</span>
       </div>
+
+      <div
+        class="edit-head-right"
+        style="display: flex; justify-content: space-between"
+      >
+        <div v-if="device === 'desktop'" style="flex: 3"></div>
+        <el-select
+          v-model="articleWrite.original"
+          class="col"
+          style="flex: 1.5"
+        >
+          <el-option
+            v-for="(option, index) in options"
+            :key="index"
+            :label="option.name"
+            :value="option.value"
+          />
+        </el-select>
+
+        <el-select
+          v-model="articleWrite.categoryId"
+          class="col"
+          placeholder="选择分类"
+          style="flex: 2"
+        >
+          <el-option
+            v-for="(category, index) in categories"
+            :key="index"
+            :label="category.name"
+            :value="category.id"
+          />
+        </el-select>
+
+        <el-button
+          class="col"
+          type="warning"
+          :loading="loading1"
+          @click="save(1)"
+          style="flex: 0.5"
+          >保存</el-button
+        >
+        <el-button
+          class="col"
+          type="danger"
+          :loading="loading"
+          @click="save(0)"
+          style="flex: 0.5"
+          >发布</el-button
+        >
+      </div>
+      <!-- 
       <div class="edit-head-right">
         <el-select
           v-model="articleWrite.original"
@@ -50,7 +101,7 @@
         <el-button class="col" type="danger" :loading="loading" @click="save(0)"
           >发布</el-button
         >
-      </div>
+      </div>-->
     </div>
     <div class="edit-head-box">
       <div class="sub-title">
@@ -160,8 +211,12 @@ import { tagList } from "/@/api/tag/tag";
 import TargetBlankExtension from "./components/TargetBlankExtension";
 import DynamicTags from "/@/components/ArticleEdit/DynamicTags.vue";
 import ImgUpload from "/@/components/ArticleEdit/ImgUpload.vue";
+import { useGetters } from "/@/store/getters";
 
 const router = useRouter();
+
+const useGettersPinia = useGetters();
+const device = computed(() => useGettersPinia.device);
 // 定义响应式变量
 // 上传文章
 const articleWrite = ref<ArticleRequestData>({
@@ -410,6 +465,14 @@ const coverUploadSuccess = (url) => {
   margin: 0 auto;
   width: 65%;
   margin-top: 5px;
+
+  @media screen and (max-width: 960px) {
+    background: #fff;
+    margin: 0 auto;
+    width: 90%;
+    margin-top: 5px;
+  }
+
   //
   .edit-head {
     height: 50px;

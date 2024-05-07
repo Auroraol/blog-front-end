@@ -93,10 +93,11 @@ const logout = async () => {
   try {
     await useUserPinia.logout();
     sessionStorage.setItem("articleDraft", ""); // 清空草稿
-    router.go(0);
+    // router.go(0);
+    location.reload();
+    // router.push("/");
   } catch (error) {
     console.error(error);
-
     ElMessage.error("退出失败");
   }
 };

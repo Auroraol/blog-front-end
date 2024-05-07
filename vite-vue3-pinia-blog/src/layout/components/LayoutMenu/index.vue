@@ -66,12 +66,6 @@ const showLogo = () => {
 @import "/@/assets/styles/variables.less";
 
 .menu {
-  @media screen and (max-width: 960px) {
-    background: #fff;
-    margin: 0 auto;
-    // width: 90%;
-  }
-
   .el-menu {
     background-color: @menuBg;
     color: @menuText;

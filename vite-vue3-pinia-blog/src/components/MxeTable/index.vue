@@ -1,6 +1,11 @@
 <script setup>
 import { ref, computed } from "vue";
 import MxeTableColumn from "./components/MxeTableColumn.vue";
+import { useGetters } from "/@/store/getters";
+
+const useGettersPinia = useGetters();
+
+const device = computed(() => useGettersPinia.device);
 
 // 父->子
 const props = defineProps({
@@ -73,7 +78,10 @@ const handleSizeChange = () => {
       </el-table>
     </div>
     <!-- 分页 -->
-    <div class="pager-box" v-if="props.pageIndex && props.pageSize">
+    <div
+      class="pager-box"
+      v-if="device === 'desktop' && props.pageIndex && props.pageSize"
+    >
       <el-pagination
         v-model:current-page="page.pageIndex"
         v-model:page-size="page.pageSize"
@@ -81,6 +89,17 @@ const handleSizeChange = () => {
         layout="total, prev, pager, next, sizes, jumper"
         :total="total"
         @size-change="handleSizeChange"
+        @current-change="emits('getList')"
+      />
+    </div>
+    <div class="pager-box" v-else>
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        v-model:page-size="page.pageSize"
+        v-model:current-page="page.pageIndex"
+        :total="total"
+        :hide-on-single-page="true"
         @current-change="emits('getList')"
       />
     </div>

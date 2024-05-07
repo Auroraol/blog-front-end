@@ -26,12 +26,14 @@
         />
       </template>
       <template #opera2="scope">
-        <el-button size="small" type="primary" @click="handleEdit(scope.row)"
-          >编辑</el-button
-        >
-        <el-button size="small" type="danger" @click="handleDelete(scope.row)"
-          >删除</el-button
-        >
+        <div class="button-container">
+          <el-button size="small" type="primary" @click="handleEdit(scope.row)"
+            >编辑</el-button
+          >
+          <el-button size="small" type="danger" @click="handleDelete(scope.row)"
+            >删除</el-button
+          >
+        </div>
       </template>
     </mxe-table>
 
@@ -284,6 +286,19 @@ const saveClient = () => {
 <style lang="less" scoped>
 .container {
   width: 100%;
+
+  /* 适应手机端屏幕 */
+  @media screen and (max-width: 768px) {
+    .button-container {
+      display: flex;
+      flex-direction: column; // 垂直排列
+      align-items: flex-end;
+    }
+
+    .button-container .el-button {
+      margin-bottom: 10px; // 按钮之间的间距
+    }
+  }
 
   .head {
     height: 50px;

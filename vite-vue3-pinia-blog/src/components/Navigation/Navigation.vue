@@ -2,7 +2,7 @@
 <template>
   <el-affix>
     <!-- 手机端 -->
-    <el-row class="nav" v-if="device !== 'desktop'">
+    <el-row class="nav-mobile" v-if="device !== 'desktop'">
       <el-col :span="24">
         <el-menu
           :default-active="activeIndex"
@@ -33,7 +33,11 @@
             </el-dropdown>
           </el-menu-item>
 
-          <el-menu-item index="info" style="cursor: default; margin-left: 60px">
+          <el-menu-item
+            index="info"
+            class="nav-user-info"
+            style="cursor: default"
+          >
             <el-button-group v-if="!userInfo">
               <el-button @click="toLogin">登录</el-button>
               <el-button @click="toRegister" color="#79BBDC">注册</el-button>
@@ -45,7 +49,7 @@
       </el-col>
     </el-row>
     <!-- 电脑端 -->
-    <el-row class="nav" v-if="device == 'desktop'">
+    <el-row class="nav" v-if="device === 'desktop'">
       <el-col :span="24">
         <div class="grid-content">
           <el-menu
@@ -196,10 +200,6 @@ const toRegister = () => {
   color: #fff;
 }
 
-// el-tooltip__trigger el-tooltip__trigger .el-submenu /deep/ .el-submenu__title {
-//   font-size: 20px;
-// }
-
 /* 点击出来的下划线进行隐藏 */
 .el-menu-item.is-active {
   border-bottom: none !important;
@@ -224,5 +224,20 @@ const toRegister = () => {
 
 :deep(:focus-visible) {
   outline: none;
+}
+
+// 手机端布局
+.nav-mobile {
+  background-color: #2580b3;
+  display: flex;
+  justify-content: space-between; // 让子元素在父元素两端对齐
+
+  .el-menu-demo {
+    flex-grow: 1; // 让菜单占据剩余空间
+
+    .nav-user-info {
+      margin-left: auto; // 将组件移到最右侧
+    }
+  }
 }
 </style>

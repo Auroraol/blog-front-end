@@ -51,7 +51,6 @@
 </template>
 
 <script setup lang="ts">
-// import path from "path";
 import { isExternal } from "/@/utils/validate";
 import { defineProps, ref, watch, onMounted, watchEffect } from "vue";
 

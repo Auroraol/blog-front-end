@@ -296,9 +296,5 @@ const previewClose = () => {
   .el-pagination {
     margin-top: 10px;
   }
-
-  /deep/ .el-table__expanded-cell[class*="cell"] {
-    padding: 15px;
-  }
 }
 </style>
