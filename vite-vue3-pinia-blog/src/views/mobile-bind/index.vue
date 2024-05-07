@@ -55,7 +55,7 @@
 import AppHeader from "@/components/AppHeader.vue";
 import { defineProps, defineEmits, defineExpose } from "vue";
 import { validMobile } from "/@/utils/validate";
-import { sendCode } from "/@/api/sms/sms";
+import { sendCode as apiSendCode } from "/@/api/sms/sms";
 
 // 定义 props 和 emits
 const props = defineProps({});
