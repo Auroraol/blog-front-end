@@ -1,5 +1,3 @@
-// todo
-
 <template>
   <div class="container">
     <div class="content-container animated fadeInUp">
@@ -9,23 +7,24 @@
           <el-input v-model="mobile" placeholder="输入手机号" />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="code" placeholder="验证码">
-            <span
-              v-show="!codeCount"
-              slot="suffix"
-              class="code-btn btn"
-              @click="sendCode"
-              >获取验证码</span
-            >
-            <el-button
-              v-show="codeCount"
-              slot="suffix"
-              type="primary"
-              size="mini"
-              disabled
-              style="margin-top: 6px"
-              >{{ codeCount }}s</el-button
-            >
+          <el-input
+            size="large"
+            v-model="code"
+            placeholder="请输入验证码"
+            inline-message
+          >
+            <template #suffix>
+              <i
+                v-show="!codeCount"
+                class="code"
+                style="font-style: normal; margin-right: 10px"
+                @click="sendCode"
+                >获取验证码</i
+              >
+              <el-text v-show="codeCount" type="primary"
+                >{{ codeCount }}s</el-text
+              >
+            </template>
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -51,11 +50,13 @@
 </template>
 
 <script setup lang="ts">
-// 导入所需的组件和函数
-import AppHeader from "@/components/AppHeader.vue";
 import { defineProps, defineEmits, defineExpose } from "vue";
 import { validMobile } from "/@/utils/validate";
-import { sendCode as apiSendCode } from "/@/api/sms/sms";
+import { useSmsCodeMixin } from "/@/mixins/smsMixin";
+import { bindMobile } from "/@/api/user/user";
+
+// 在 setup 中引入 mixin
+const { getCode, codeCount } = useSmsCodeMixin();
 
 // 定义 props 和 emits
 const props = defineProps({});
@@ -65,50 +66,28 @@ const emits = defineEmits([]);
 const loading = ref(false);
 const code = ref("");
 const mobile = ref("");
-const codeCount = ref(0);
-let timer: NodeJS.Timeout | null = null;
+
+// 发送验证码
+const sendCode = () => {
+  getCode(mobile);
+};
 
 // 提交校验
 const vsubmit = () => {
   const mobileValue = mobile.value;
   if (mobileValue === "") {
-    return showMessage("请输入手机号");
+    ElMessage.warning("请输入手机号");
+    return false;
   }
   if (!validMobile(mobileValue)) {
-    return showMessage("手机号格式不正确");
+    ElMessage.warning("手机号格式不正确");
+    return false;
   }
   if (code.value === "") {
-    return showMessage("请输入验证码");
+    ElMessage.warning("请输入验证码");
+    return false;
   }
   return true;
-};
-
-// 发送验证码
-const sendCode = () => {
-  const mobileValue = mobile.value;
-  if (mobileValue === "") {
-    return showMessage("请输入手机号");
-  }
-  if (!validMobile(mobileValue)) {
-    return showMessage("手机号格式不正确");
-  }
-  // 120倒数计时
-  const TIME_COUNT = 120;
-  if (!timer) {
-    codeCount.value = TIME_COUNT;
-    timer = setInterval(() => {
-      if (codeCount.value > 0 && codeCount.value <= TIME_COUNT) {
-        codeCount.value--;
-      } else {
-        clearInterval(timer as NodeJS.Timeout);
-        timer = null;
-      }
-    }, 1000);
-  }
-  const params = { mobile: mobileValue };
-  sendCode(params).then((res) => {
-    showMessage("发送成功", "success");
-  });
 };
 
 // 提交按钮点击
@@ -119,9 +98,7 @@ const submit = () => {
     bindMobile(params).then(
       (res) => {
         loading.value = false;
-        showMessage("绑定成功", "success");
-        // dispatch action
-        // redirect to info page
+        ElMessage.success("绑定成功");
       },
       (error) => {
         console.error(error);
@@ -129,11 +106,6 @@ const submit = () => {
       }
     );
   }
-};
-
-// 显示消息
-const showMessage = (message: string, type: string = "error") => {
-  // show message
 };
 </script>
 

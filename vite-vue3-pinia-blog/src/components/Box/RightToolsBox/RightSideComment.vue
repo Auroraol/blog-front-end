@@ -20,7 +20,7 @@
             <div class="avatar-wrapper">
               <img
                 class="user-avatar"
-                :src="item.fromUser.avatar || defaultAvatar"
+                :src="(item.fromUser && item.fromUser.avatar) || defaultAvatar"
               />
             </div>
             <div class="content-box">
@@ -54,16 +54,23 @@ const useSettingsStorePinia = useSettingsStore();
 const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
 
 //
-const loading = ref(true);
-const list = ref([]);
+const loading = ref(false);
+const list = ref();
+
+// 在组件挂载时调用初始化函数
+onMounted(() => {
+  init();
+});
 
 // 初始化函数
 const init = async () => {
   const params = { limit: 9 };
+  loading.value = true;
   try {
     const res = await latestCommentList(params); // 获取评论,需要token
     list.value = res;
     loading.value = false;
+    console.error(list.value);
   } catch (error) {
     console.error(error);
   }
@@ -75,9 +82,6 @@ const parseDate = (str) => {
   str = str.replace(/-/g, "/");
   return formatPast(new Date(str));
 };
-
-// 在组件挂载时调用初始化函数
-onMounted(init);
 </script>
 
 

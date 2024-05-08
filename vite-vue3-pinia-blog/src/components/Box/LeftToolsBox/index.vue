@@ -230,7 +230,7 @@
       </div>
     </el-card>
     <!--日历-->
-    <el-card shadow="hover" class="calendar_card" style="margin-left: 20px">
+    <el-card shadow="hover" class="calendar_card">
       <cus-calendar />
     </el-card>
     <!-- <div class="calendar_card "  style="margin-left: 20px">
@@ -297,8 +297,8 @@ onMounted(() => {
 .calendar_card {
   // width: 500px;
   width: 324px;
+  margin-left: 20px;
 
-  height: 630px;
   display: block;
   float: left;
   margin: 0px;

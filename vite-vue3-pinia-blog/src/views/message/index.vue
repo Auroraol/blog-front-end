@@ -217,11 +217,24 @@
 
     <!-- 分页 -->
     <el-pagination
+      v-if="device === 'desktop'"
       background
       layout="prev, pager, next"
       :page-size="size"
       :current-page="current"
       :total="total"
+      @current-change="currentChange"
+    />
+
+    <el-pagination
+      v-else
+      background
+      layout="prev, pager, next"
+      hide-on-single-page
+      :page-size="size"
+      :current-page="current"
+      :total="total"
+      :pager-count="4"
       @current-change="currentChange"
     />
 

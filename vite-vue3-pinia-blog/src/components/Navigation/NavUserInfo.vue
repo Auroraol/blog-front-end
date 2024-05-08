@@ -125,6 +125,11 @@ const logout = async () => {
   border: none;
   padding: 0 8px;
   margin-right: 8px;
+
+  @media screen and (max-width: 960px) {
+    margin: 0px;
+    padding: 0px;
+  }
 }
 
 .infoBox {

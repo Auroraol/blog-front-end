@@ -66,6 +66,7 @@
       :page-size="size"
       :current-page="current"
       :total="total"
+      :pager-count="4"
       :hide-on-single-page="true"
       @current-change="currentChange"
     />

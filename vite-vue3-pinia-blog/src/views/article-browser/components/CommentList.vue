@@ -46,7 +46,12 @@
             >
               <div class="cmt-li-title">
                 <div class="headimg">
-                  <img :src="comment.fromUser.avatar || defaultAvatar" />
+                  <img
+                    :src="
+                      (comment.fromUser && comment.fromUser.avatar) ||
+                      defaultAvatar
+                    "
+                  />
                 </div>
               </div>
               <div class="cmt-li-r">
@@ -54,13 +59,15 @@
                   <p
                     class="nickname"
                     :style="
-                      comment.fromUser.id === authorId ? 'color:#e74851' : ''
+                      comment.fromUser.id === props.authorId
+                        ? 'color:#e74851'
+                        : ''
                     "
                   >
                     {{ comment.fromUser.nickname }}
 
                     <el-tag
-                      v-if="comment.fromUser.id === authorId"
+                      v-if="comment.fromUser.id === props.authorId"
                       type="info"
                       size="small"
                       effect="light"
@@ -75,7 +82,7 @@
                     v-if="
                       userInfo &&
                       (userInfo.id === comment.fromUser.id ||
-                        userInfo.id === authorId ||
+                        userInfo.id === props.authorId ||
                         userInfo.roles.includes('admin'))
                     "
                     :visible="comment.del_visible"
@@ -112,6 +119,7 @@
                     >回复</span
                   >
                 </div>
+                <!-- </div> -->
 
                 <!-- 回复列表 -->
                 <ul class="reply-list">
@@ -125,12 +133,18 @@
                     </div>
                     <div class="reply-content">
                       <div class="headimg">
-                        <img :src="reply.fromUser.avatar || defaultAvatar" />
+                        <img
+                          :src="
+                            (reply.fromUser && reply.fromUser.avatar) ||
+                            defaultAvatar
+                          "
+                        />
                       </div>
                       <div class="nickname">
                         <span
                           :style="
-                            reply.fromUser.id === authorId
+                            comment.fromUser &&
+                            reply.fromUser.id === props.authorId
                               ? 'color:#e74851'
                               : ''
                           "
@@ -139,7 +153,9 @@
                         <span style="color: #000000">回复</span>
                         <span
                           :style="
-                            reply.toUser.id === authorId ? 'color:#e74851' : ''
+                            reply.toUser.id === props.authorId
+                              ? 'color:#e74851'
+                              : ''
                           "
                           >@{{ reply.toUser.nickname }}</span
                         >
@@ -151,7 +167,7 @@
                         v-if="
                           userInfo &&
                           (userInfo.id === reply.fromUser.id ||
-                            userInfo.id === authorId ||
+                            userInfo.id === props.authorId ||
                             userInfo.roles?.includes('admin'))
                         "
                         :visible="reply.del_visible"
@@ -280,9 +296,6 @@ import {
   deleteReply,
 } from "/@/api/comment/comment";
 
-// 引入 ref 函数来创建响应式数据
-const isReady = ref(false);
-
 const router = useRouter();
 const gettersStore = useGetters(); // 通过 useGetters() 获取 getters store 的实例
 const useSettingsStorePinia = useSettingsStore();
@@ -292,6 +305,10 @@ const useGettersPinia = useGetters();
 const props = defineProps({
   articleId: {
     type: [String, Number],
+  },
+  authorId: {
+    type: [String, Number],
+    required: true,
   },
 });
 
@@ -317,10 +334,7 @@ const userInfo = computed(() => {
 });
 
 const device = computed(() => useGettersPinia.device);
-
-// pinia
-const authorId = userInfo.id;
-const defaultAvatar = useSettingsStorePinia.defaultAvatar;
+const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
 
 // 监听 props.articleId 的变化
 watch(
@@ -332,14 +346,8 @@ watch(
 );
 
 // 在组件挂载后执行获取数据的操作
-onMounted(async () => {
-  try {
-    pageComment();
-    // 数据获取完成，将 isReady 置为 true，让组件渲染
-    isReady.value = true;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
+onMounted(() => {
+  pageComment();
 });
 
 // 日期转换
@@ -364,36 +372,33 @@ const currentChange = (currentPage) => {
 };
 
 // 获取分页数据
-const pageComment = () => {
+const pageComment = async () => {
   loading.value = true; // 显示加载
   const params = {
     articleId: props.articleId,
     current: current.value,
     size: size.value,
   };
+  try {
+    const res = await apipageComment(params);
+    loading.value = false;
+    total.value = res.total;
+    const commentList1 = res.records;
+    const clen = commentList1.length; //获取评论列表的长度，即评论数量。
 
-  apipageComment(params).then(
-    (res) => {
-      loading.value = false;
-      total.value = res.total;
-      const commentList1 = res.records;
-      const clen = commentList1.length; //获取评论列表的长度，即评论数量。
-
-      for (let i = 0; i < clen; i++) {
-        commentList1[i].del_visible = false; //用来控制评论是否可见或是否可以被删除等功能的标识。
-        const replyList = commentList1[i].replyList; //获取当前评论的回复列表。
-        const rlen = replyList.length;
-        for (let j = 0; j < rlen; j++) {
-          replyList[j].del_visible = false; //用来控制回复是否可见或是否可以被删除等功能的标识。
-        }
+    for (let i = 0; i < clen; i++) {
+      commentList1[i].del_visible = false; //用来控制评论是否可见或是否可以被删除等功能的标识。
+      const replyList = commentList1[i].replyList; //获取当前评论的回复列表。
+      const rlen = replyList.length;
+      for (let j = 0; j < rlen; j++) {
+        replyList[j].del_visible = false; //用来控制回复是否可见或是否可以被删除等功能的标识。
       }
-      commentList.value = commentList1;
-    },
-    (error) => {
-      console.error(error);
-      loading.value = false;
     }
-  );
+    commentList.value = commentList1;
+  } catch (error) {
+    console.error(error);
+    loading.value = false;
+  }
 };
 
 // 重载

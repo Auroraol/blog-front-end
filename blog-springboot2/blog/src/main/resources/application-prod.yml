@@ -98,7 +98,7 @@ sms:
     accessKeyId: CODE(gVhIxdO2/l2vGJFNsywZvTWsR3tJVPrmtGGQ4kjvU6WoU5UjOFmVqA==)            # 子用户的访问键
     accessKeySecret: CODE(DonDv1E1bt18WPvlxngorolpvxeJnfoUNk8X94+42sqEeBAmzAaaIg==)  # 子用户的访问密钥
     signName: 悦读博客              # 签名名称
-    templateCode: SMS_465388108    # 登录短信模板的code
+    templateCode: SMS_465896038    # 登录短信模板的code
 
 
 

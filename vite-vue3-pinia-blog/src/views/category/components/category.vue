@@ -40,6 +40,7 @@
         :page-size="size"
         :current-page="current"
         :total="total"
+        :pager-count="4"
         @current-change="currentChange"
       />
 
@@ -175,6 +176,7 @@ const getArtList = async () => {
     margin-top: 5px;
   }
 
+  //左
   .left-list {
     margin-left: 100px;
     background: #fff;
@@ -226,6 +228,7 @@ const getArtList = async () => {
     }
   }
 
+  // 右
   .content-list {
     background: #fff;
     width: 1150px;
@@ -234,6 +237,11 @@ const getArtList = async () => {
     border-radius: 2px;
     margin-left: 30px;
     margin-bottom: 20px;
+
+    @media only screen and (max-width: 960px) {
+      margin: 0;
+      padding: 0;
+    }
 
     // 手机端显示
     .list-header {
@@ -262,13 +270,6 @@ const getArtList = async () => {
       }
     }
 
-    @media only screen and (max-width: 960px) {
-      // margin-left: 0;
-      margin: 0;
-      .content-list {
-        max-width: 300px;
-      }
-    }
     .el-pagination {
       display: flex;
       justify-content: center;

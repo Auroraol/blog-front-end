@@ -130,28 +130,38 @@ export function bindEmail(params) {
   })
 }
 
-// /**
-//  * 验证原手机号
-//  * @param {Object} params
-//  */
-// export function validateMobile(params) {
-//   return request({
-//     url: '/user/mobile/validate',
-//     method: 'post',
-//     params: params
-//   })
-// }
+/**
+ * 验证原手机号
+ * @param {Object} params
+ */
+export function validateMobile(params) {
+  return request(import.meta.env.VITE_APP_BASE_API +'/user/mobile/validate', {
+    method: 'post',
+    params: params
+  }, true)
+}
+
+/**
+ * 绑定手机号
+ * @param {Object} params
+ */
+export function bindMobile(params) {
+  return request(import.meta.env.VITE_APP_BASE_API + '/user/mobile/bind',{
+      method: 'post',
+      params: params
+    }, true)
+}
+
 
 /**
  * 绑定新手机号
  * @param {Object} params
  */
 export function rebindMobile(params) {
-  // return request({
-  //   url: '/user/mobile/rebind',
-  //   method: 'post',
-  //   params: params
-  // })
+  return request(import.meta.env.VITE_APP_BASE_API + '/user/mobile/rebind',{
+    method: 'post',
+    params: params
+  }, true)
 }
 
 /**
@@ -164,19 +174,6 @@ export function bindUsername(params) {
     params: params
   }, true)
 }
-
-// /**
-//  * 绑定手机号
-//  * @param {Object} params
-//  */
-// export function bindMobile(params) {
-//   return request({
-//       url: '/user/mobile/bind',
-//       method: 'post',
-//       params: params
-//     })
-// }
-
 
 // 管理员
 /**

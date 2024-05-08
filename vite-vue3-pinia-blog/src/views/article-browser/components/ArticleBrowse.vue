@@ -74,7 +74,7 @@
           </div>
         </div>
         <!-- 评论组件 -->
-        <comment-list :articleId="id" />
+        <comment-list :article-id="id" :author-id="article.user.id" />
       </div>
     </el-col>
 
@@ -109,8 +109,8 @@ import { viewArtilce, incrementView } from "/@/api/article/article";
 import CopyRight from "./CopyRight.vue";
 import ArtTags from "./ArtTags.vue";
 import BrowserSidePanel from "./BrowserSidePanel.vue";
-import InterrelatedList from "/@/views/article-browser/components/InterrelatedList.vue";
-import CommentList from "/@/views/article-browser/components/CommentList.vue";
+import InterrelatedList from "./InterrelatedList.vue";
+import CommentList from "./CommentList.vue";
 import { MdPreview, MdCatalog } from "md-editor-v3";
 // preview.css相比style.css少了编辑器那部分样式
 import "md-editor-v3/lib/preview.css";

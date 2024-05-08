@@ -17,7 +17,7 @@ export default ({ mode }) => {
   //console.log(env.VITE_API_URL)
   const port = Number(env.VITE_PORT) || 80
   return defineConfig({
-    base: "./",
+    base: "/",
     // 配置插件
     plugins: [
       vue(), //vue

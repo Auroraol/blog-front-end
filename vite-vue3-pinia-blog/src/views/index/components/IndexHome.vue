@@ -53,7 +53,20 @@
                 </div>
               </template>
             </Suspense>
+
             <el-pagination
+              v-if="device !== 'desktop'"
+              background
+              layout="prev, pager, next"
+              hide-on-single-page
+              :page-size="size"
+              :current-page="current"
+              :total="total"
+              :pager-count="4"
+              @current-change="currentChange"
+            />
+            <el-pagination
+              v-else
               background
               layout="prev, pager, next"
               :page-size="size"
@@ -125,7 +138,7 @@ interface Article {
 const mainTabs = ref<string[]>(["最新", "热门"]);
 // 分页
 const current = ref<number>(1);
-const size = ref<number>(9);
+const size = ref<number>(6);
 const total = ref<number>(0);
 //
 const mainActive = ref<number>(0);
@@ -238,6 +251,11 @@ const mainTabClick = (index) => {
   margin-bottom: 1rem;
 }
 
+.articleBoxes {
+  .el-pagination {
+    margin-top: 12px;
+  }
+}
 .list-header {
   // border-radius: 1rem;
   border-top-left-radius: 1rem;

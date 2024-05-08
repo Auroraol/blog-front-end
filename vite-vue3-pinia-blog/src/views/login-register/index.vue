@@ -17,9 +17,8 @@ import { ref } from "vue";
 
 <style lang="less" scoped>
 .content {
-  min-height: 643px;
-  margin-bottom: -11px;
-  // height: 618px;
+  min-height: 710px;
+  margin-bottom: -15px;
   background-image: url("/image/imgs/1.png");
 }
 

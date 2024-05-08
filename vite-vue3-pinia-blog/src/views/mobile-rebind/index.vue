@@ -1,12 +1,10 @@
-// todo
 <template>
-  <!-- <div class="container">
-    <app-header :nav-item-active="-1" />
+  <div class="container">
     <div class="content-container animated fadeInUp">
       <h3>更换手机号</h3>
       <el-steps :active="active" align-center>
-        <el-step title="验证身份" icon="el-icon-unlock" />
-        <el-step title="更换手机号" icon="el-icon-mobile-phone" />
+        <el-step title="验证身份" icon="unlock" />
+        <el-step title="更换手机号" icon="phone" />
       </el-steps>
 
       <el-form>
@@ -14,23 +12,24 @@
           <el-input v-model="mobile" placeholder="输入手机号" />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="code" placeholder="验证码">
-            <span
-              v-show="!codeCount"
-              slot="suffix"
-              class="code-btn btn"
-              @click="sendCode"
-              >获取验证码</span
-            >
-            <el-button
-              v-show="codeCount"
-              slot="suffix"
-              type="primary"
-              size="mini"
-              disabled
-              style="margin-top: 6px"
-              >{{ codeCount }}s</el-button
-            >
+          <el-input
+            size="large"
+            v-model="code"
+            placeholder="请输入验证码"
+            inline-message
+          >
+            <template #suffix>
+              <i
+                v-show="!codeCount"
+                class="code"
+                style="font-style: normal; margin-right: 10px"
+                @click="sendCode"
+                >获取验证码</i
+              >
+              <el-text v-show="codeCount" type="primary"
+                >{{ codeCount }}s</el-text
+              >
+            </template>
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -52,124 +51,88 @@
         </el-form-item>
       </el-form>
     </div>
-  </div> -->
-  TODO
+  </div>
 </template>
 
-<script>
-// import { validateMobile, rebindMobile } from "@/api/user.js";
-// import AppHeader from "@/components/Header/index";
-// import { validMobile } from "@/utils/validate.js";
-// import { sendCode } from "@/api/code.js";
-// export default {
-//   components: {
-//     AppHeader,
-//   },
-//   data() {
-//     return {
-//       loading: false,
-//       code: "",
-//       mobile: "",
-//       codeCount: 0,
-//       timer: null,
-//       active: 1,
-//     };
-//   },
-//   methods: {
-//     // 按钮点击
-//     submit() {
-//       if (this.vsubmit()) {
-//         this.loading = true;
-//         const params = { mobile: this.mobile, code: this.code };
-//         const active = this.active;
-//         if (active === 1) {
-//           validateMobile(params).then(
-//             (res) => {
-//               this.loading = false;
-//               this.active = 2;
-//               this.mobile = "";
-//               this.code = "";
-//               this.timer = null;
-//               this.codeCount = 0;
-//             },
-//             (error) => {
-//               console.error(error);
-//               this.loading = false;
-//             }
-//           );
-//         } else {
-//           rebindMobile(params).then(
-//             (res) => {
-//               this.$message({
-//                 message: "更换成功",
-//                 type: "success",
-//               });
-//               this.$store
-//                 .dispatch("user/getUserInfo")
-//                 .then((res) => this.$router.push("/user/info"));
-//             },
-//             (error) => {
-//               console.error(error);
-//               this.loading = false;
-//             }
-//           );
-//         }
-//       }
-//     },
+<script setup lang="ts">
+import { validateMobile, rebindMobile } from "/@/api/user/user";
+import { validMobile } from "/@/utils/validate";
+import { useSmsCodeMixin } from "/@/mixins/smsMixin";
+import { useUserStore } from "/@/store/index";
+import { useRouter } from "vue-router";
 
-//     // 提交校验
-//     vsubmit() {
-//       const mobile = this.mobile;
-//       if (mobile === "") {
-//         this.$message("请输入手机号");
-//         return false;
-//       }
-//       if (!validMobile(mobile)) {
-//         this.$message("手机号格式不正确");
-//         return false;
-//       }
-//       if (this.code === "") {
-//         this.$message("请输入验证码");
-//         return false;
-//       }
-//       return true;
-//     },
+const router = useRouter();
 
-//     // 发送验证码
-//     sendCode() {
-//       const mobile = this.mobile;
-//       if (mobile === "") {
-//         this.$message("请输入手机号");
-//         return;
-//       }
-//       if (!validMobile(mobile)) {
-//         this.$message("手机号格式不正确");
-//         return;
-//       }
-//       // 120倒数计时
-//       const TIME_COUNT = 120;
-//       if (!this.timer) {
-//         this.codeCount = TIME_COUNT;
-//         this.timer = setInterval(() => {
-//           if (this.codeCount > 0 && this.codeCount <= TIME_COUNT) {
-//             this.codeCount--;
-//           } else {
-//             clearInterval(this.timer);
-//             this.timer = null;
-//           }
-//         }, 1000);
-//       }
-//       const params = { mobile: mobile };
-//       sendCode(params).then((res) => {
-//         this.$message({
-//           message: "发送成功",
-//           type: "success",
-//         });
-//       });
-//     },
-//   },
-// };
-//
+const useUserStorePinia = useUserStore();
+// 在 setup 中引入 mixin
+const { getCode, codeCount } = useSmsCodeMixin();
+
+const loading = ref(false);
+const code = ref("");
+const mobile = ref("");
+const active = ref(1);
+
+// 发送验证码
+const sendCode = () => {
+  getCode(mobile);
+};
+
+// 提交校验
+const vsubmit = () => {
+  const mobileValue = mobile.value;
+  if (mobileValue === "") {
+    ElMessage.warning("请输入手机号");
+    return false;
+  }
+  if (!validMobile(mobileValue)) {
+    ElMessage.warning("手机号格式不正确");
+    return false;
+  }
+  if (code.value === "") {
+    ElMessage.warning("请输入验证码");
+    return false;
+  }
+  return true;
+};
+
+// 按钮点击
+const submit = () => {
+  if (vsubmit()) {
+    loading.value = true;
+    const params = { mobile: mobile.value, code: code.value };
+    const activeNum = active.value;
+    if (activeNum === 1) {
+      validateMobile(params).then(
+        (res) => {
+          loading.value = false;
+          active.value = 2;
+          mobile.value = "";
+          code.value = "";
+        },
+        (error) => {
+          console.error(error);
+          loading.value = false;
+        }
+      );
+    } else {
+      rebindMobile(params).then(
+        (res) => {
+          ElMessage({
+            message: "更换成功",
+            type: "success",
+          });
+          useUserStorePinia
+            .getUserInfo()
+            .then((res) => router.push("/user/info"));
+        },
+        (error) => {
+          console.error(error);
+          loading.value = false;
+        }
+      );
+    }
+  }
+};
 </script>
 
 <style lang="less" scoped>
