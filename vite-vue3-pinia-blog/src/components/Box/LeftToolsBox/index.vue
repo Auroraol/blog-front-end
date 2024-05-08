@@ -2,13 +2,14 @@
 <template>
   <div class="articleLeft">
     <!-- 名片卡片 -->
-    <el-card style="max-width: 25rem; margin-left: 20px" shadow="always">
+    <el-card style="max-width: 25rem; margin-left: 20px">
       <template #header>
         <div class="card_head">
           <div class="left-element">
             <svg-icon name="mingpian" width="30px" height="30px"></svg-icon>
           </div>
           <div class="right-element"><span>名片</span></div>
+          <span class="span"></span>
         </div>
       </template>
 
@@ -167,17 +168,14 @@
     </el-card>
 
     <!-- 公告卡片 -->
-    <el-card
-      style="max-width: 25rem; margin-left: 20px; margin-top: 30px"
-      shadow="always"
-      body-style="background-color: #f2dede;"
-    >
+    <el-card style="max-width: 25rem; margin-left: 20px; margin-top: 30px">
       <template #header>
-        <div class="Announcement_card">
+        <div class="cnnouncement_card">
           <div class="left-element">
             <svg-icon name="gonggao" width="30px" height="30px"></svg-icon>
           </div>
           <div class="right-element"><span>公告</span></div>
+          <span class="span"></span>
         </div>
       </template>
       <div>
@@ -230,9 +228,7 @@
       </div>
     </el-card>
     <!--日历-->
-    <el-card shadow="hover" class="calendar_card">
-      <cus-calendar />
-    </el-card>
+    <cus-calendar class="calendar_card" />
     <!-- <div class="calendar_card "  style="margin-left: 20px">
       <el-calendar  v-model="value"   >
         <template #date-cell="{ data }">
@@ -281,10 +277,12 @@ onMounted(() => {
 </script>
 <style lang="less" scoped>
 .card_head,
-.Announcement_card {
+.cnnouncement_card {
   font-size: 1.8rem;
   display: flex;
   align-items: center; /* 垂直居中 */
+  flex-wrap: wrap;
+
   .left-element {
     // margin-right: 10px; /* 可以调整间距 */
   }
@@ -293,11 +291,33 @@ onMounted(() => {
     // margin-left: auto; /* 推到容器的右侧 */
     margin-left: 0.5rem;
   }
+
+  .span {
+    margin-top: 5px;
+    display: block;
+    width: 100%;
+    height: 0.5rem;
+    background-image: linear-gradient(
+      to left,
+      var(--gradient-start-one),
+      var(--gradient-end-one)
+    );
+    border-radius: 1rem;
+  }
 }
+
+.el-card {
+  border-radius: 0.5rem;
+  /deep/ .el-card__header {
+    border-bottom: none;
+  }
+}
+
+// 日历
 .calendar_card {
-  // width: 500px;
-  width: 324px;
-  margin-left: 20px;
+  border-radius: 0.5rem;
+  width: 340px;
+  padding-left: 20px;
 
   display: block;
   float: left;

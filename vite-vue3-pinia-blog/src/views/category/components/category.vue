@@ -40,7 +40,7 @@
         :page-size="size"
         :current-page="current"
         :total="total"
-        :pager-count="4"
+        :pager-count="3"
         @current-change="currentChange"
       />
 

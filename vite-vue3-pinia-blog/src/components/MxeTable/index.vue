@@ -99,7 +99,7 @@ const handleSizeChange = () => {
         v-model:page-size="page.pageSize"
         v-model:current-page="page.pageIndex"
         :total="total"
-        :pager-count="4"
+        :pager-count="3"
         :hide-on-single-page="true"
         @current-change="emits('getList')"
       />

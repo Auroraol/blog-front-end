@@ -2,7 +2,7 @@
   <div class="card">
     <el-row :gutter="20">
       <!-- 左侧 -->
-      <el-col :span="6" v-if="device == 'desktop'">
+      <el-col :span="6" :sm="6" v-if="device == 'desktop'">
         <div class="card3 bg-purple">
           <Suspense>
             <template #default>
@@ -18,7 +18,7 @@
         </div>
       </el-col>
       <!--中间-->
-      <el-col :span="12" :xs="24">
+      <el-col :span="12" :xs="24" :sm="12">
         <div class="card3 bg-purple-light">
           <!--每日一言 poetry诗歌-->
           <div class="title">
@@ -62,7 +62,7 @@
               :page-size="size"
               :current-page="current"
               :total="total"
-              :pager-count="4"
+              :pager-count="3"
               @current-change="currentChange"
             />
             <el-pagination
@@ -79,7 +79,7 @@
         </div>
       </el-col>
       <!-- 右侧 -->
-      <el-col :span="6" v-if="device == 'desktop'">
+      <el-col :span="6" :sm="6" v-if="device == 'desktop'">
         <div class="card3 bg-purple">
           <Suspense>
             <template #default>

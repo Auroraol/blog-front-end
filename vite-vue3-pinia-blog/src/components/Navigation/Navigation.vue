@@ -61,7 +61,7 @@
             active-text-color="#79bbff"
           >
             <img
-              style="width: 100px; height: 50px"
+              class="nav-img"
               src="https://poile-img.nos-eastchina1.126.net/logo.png"
             />
             <el-text class="logo-title" style="font-size: 1.4rem" type="primary"
@@ -201,6 +201,22 @@ const search = () => {
 <style scoped lang="less">
 .nav {
   background-color: #2580b3;
+
+  .nav-img {
+    width: 100px;
+    height: 50px;
+
+    @media screen and (max-width: 1024px) {
+      display: none;
+    }
+  }
+
+  // 平板
+  .logo-title {
+    @media screen and (max-width: 1024px) {
+      display: none;
+    }
+  }
 }
 
 .el-menu {
