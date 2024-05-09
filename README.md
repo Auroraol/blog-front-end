@@ -163,7 +163,7 @@ npm run build
 
 截图为首页,  其余页面和电脑端相似
 
-<img src="README.assets/b&ek=1&kp=1&pt=0&tl=1&vuin=1665834268&tm=1715176800&dis_t=1715179468&dis_k=8f88e7d2b1106d5d3552522fa5595f29&sce=50-1-1&rf=4-0&t=5.webp" alt="img" style="zoom: 33%;" />
+![image-20240509223729299](README.assets/image-20240509223729299.png)
 
 ### 前后端项目结构截图
 
