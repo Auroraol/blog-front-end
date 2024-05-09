@@ -256,6 +256,7 @@ const synchronizedDraft = () => {
     articleWrite.summary = draft.summary;
     articleWrite.content = draft.content;
     articleWrite.cover = draft.cover;
+    articleWrite.categoryId = draft.categoryId;
   }
 };
 
