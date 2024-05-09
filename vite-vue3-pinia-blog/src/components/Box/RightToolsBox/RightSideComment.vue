@@ -70,7 +70,6 @@ const init = async () => {
     const res = await latestCommentList(params); // 获取评论,需要token
     list.value = res;
     loading.value = false;
-    console.error(list.value);
   } catch (error) {
     console.error(error);
   }

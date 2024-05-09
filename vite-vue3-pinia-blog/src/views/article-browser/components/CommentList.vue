@@ -595,6 +595,8 @@ const reSubmit = () => {
   }
 
   .editor {
+    margin: 0 auto;
+    width: 100%;
     height: 180px;
     border: 1px solid #e74851;
     border-radius: 5px;

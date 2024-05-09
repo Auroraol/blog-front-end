@@ -43,7 +43,7 @@
           <!-- 文章内容 -->
           <MdPreview
             editorId="preview-only"
-            :modelValue="article.htmlContent"
+            :modelValue="article.content"
             :showCodeRowNumber="true"
             previewTheme="vuepress"
             codeTheme="a11y"
@@ -104,6 +104,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { MdPreview, MdCatalog } from "md-editor-v3";
 import { useRoute, onBeforeRouteUpdate } from "vue-router";
 import { viewArtilce, incrementView } from "/@/api/article/article";
 import CopyRight from "./CopyRight.vue";
@@ -111,7 +112,7 @@ import ArtTags from "./ArtTags.vue";
 import BrowserSidePanel from "./BrowserSidePanel.vue";
 import InterrelatedList from "./InterrelatedList.vue";
 import CommentList from "./CommentList.vue";
-import { MdPreview, MdCatalog } from "md-editor-v3";
+
 // preview.css相比style.css少了编辑器那部分样式
 import "md-editor-v3/lib/preview.css";
 import gsap from "gsap";
@@ -190,8 +191,9 @@ const containerGsap1 = () => {
 
 //
 const catalogList = ref([]);
+
 const getCatalog = (list) => {
-  console.log(list);
+  console.error(list);
   catalogList.value = list;
 };
 
@@ -201,10 +203,6 @@ const initArticle = async () => {
     const data = await viewArtilce(id.value);
     article.value = data;
     loading.value = false;
-    // 初始化音频
-    //   import('@/assets/audio/index.js').then(({ initAudio }) => {
-    //     initAudio()
-    //   })
     incrementViewCount();
   } catch (error) {
     loading.value = true;

@@ -56,52 +56,6 @@
           >发布</el-button
         >
       </div>
-      <!-- 
-      <div class="edit-head-right">
-        <el-select
-          v-model="articleWrite.original"
-          class="col"
-          style="width: 75px"
-        >
-          <el-option
-            v-for="(option, index) in options"
-            :key="index"
-            :label="option.name"
-            :value="option.value"
-          />
-        </el-select>
-        <el-select
-          v-model="articleWrite.categoryId"
-          class="col"
-          placeholder="选择分类"
-          style="width: 120px"
-        >
-          <el-option
-            v-for="(category, index) in categories"
-            :key="index"
-            :label="category.name"
-            :value="category.id"
-          />
-        </el-select>
-
-        <el-button
-          v-if="articleWrite.cover"
-          type="primary"
-          icon="picture"
-          @click="coverPreview"
-          >预览封面</el-button
-        >
-        <el-button
-          class="col"
-          type="warning"
-          :loading="loading1"
-          @click="save(1)"
-          >保存</el-button
-        >
-        <el-button class="col" type="danger" :loading="loading" @click="save(0)"
-          >发布</el-button
-        >
-      </div>-->
     </div>
     <div class="edit-head-box">
       <div class="sub-title">
@@ -148,7 +102,7 @@
     <!-- markdown编辑器 -->
     <MdEditor
       editorId="uploadingArticle"
-      v-model="articleWrite.htmlContent"
+      v-model="articleWrite.content"
       style="height: 45rem"
       previewTheme="vuepress"
       codeTheme="a11y"
@@ -276,7 +230,7 @@ const initEdit = async (id: number | null) => {
       htmlContent,
     } = res;
 
-    console.error(res);
+    // console.error(res);
 
     articleWrite.value = {
       id,
@@ -321,16 +275,16 @@ const initTag = async () => {
   }
 };
 
-const openFullScreen2 = () => {
-  const loading = ElLoading.service({
-    lock: true,
-    text: "Loading",
-    background: "rgba(0, 0, 0, 0.7)",
-  });
-  setTimeout(() => {
-    loading.close();
-  }, 2000);
-};
+// const openFullScreen2 = () => {
+//   const loading = ElLoading.service({
+//     lock: true,
+//     text: "Loading",
+//     background: "rgba(0, 0, 0, 0.7)",
+//   });
+//   setTimeout(() => {
+//     loading.close();
+//   }, 2000);
+// };
 
 // 监控到已选标签(子传父)
 const tagsChange = (tags) => {

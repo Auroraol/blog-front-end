@@ -86,7 +86,11 @@
       </div>
     </div>
     <!-- 标签 -->
-    <dynamic-tags :seletedTags="seletedTags" @tagsChange="tagsChange" />
+    <dynamic-tags
+      :beSeletedTags="beSeletedTags"
+      :beenSeletedTags="beenSeletedTags"
+      @tagsChange="tagsChange"
+    />
     <!-- 上传封面 -->
     <img-upload @uploadSuccess="coverUploadSuccess"></img-upload>
     <!-- markdown编辑器 -->
@@ -202,23 +206,15 @@ const openFullScreen2 = () => {
 
 // 定义分类列表和已选标签列表
 const categories = ref<categoryItem[]>([]);
-const seletedTags = ref([]);
+const beSeletedTags = ref([]); // 待选择
+const beenSeletedTags = ref([]); // 已选择
 
 // 初始化
 onMounted(() => {
   try {
-    initCategoryList();
     initTag();
-    // 如果有草稿就同步一下草稿
-    const session = sessionStorage.getItem("articleDraft");
-    if (session) {
-      const draft = JSON.parse(session);
-      articleWrite.title = draft.title;
-      articleWrite.htmlContent = draft.htmlContent;
-      articleWrite.tagIds = draft.tagIds;
-      articleWrite.summary = draft.summary;
-      // articleWrite.author = draft.author
-    }
+    initCategoryList();
+    synchronizedDraft();
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -231,7 +227,7 @@ const handleCategoryChange = (value) => {
 };
 
 // MdEditor  保存草稿（防抖,避免一直触发）
-function getArticleTitle(): Promise<string> {
+function saveArticleDraft(): Promise<string> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve("成功");
@@ -239,7 +235,7 @@ function getArticleTitle(): Promise<string> {
   });
 }
 
-const { data, run } = useRequest(() => getArticleTitle(), {
+const { data, run } = useRequest(() => saveArticleDraft(), {
   debounceWait: 1000,
   manual: true,
   onSuccess: (data) => {
@@ -247,6 +243,21 @@ const { data, run } = useRequest(() => getArticleTitle(), {
     sessionStorage.setItem("articleDraft", draft); // 保存到浏览器
   },
 });
+
+// 同步草稿
+const synchronizedDraft = () => {
+  // 如果有草稿就同步一下草稿
+  const session = sessionStorage.getItem("articleDraft");
+  if (session) {
+    const draft = JSON.parse(session);
+    articleWrite.title = draft.title;
+    articleWrite.htmlContent = draft.htmlContent;
+    articleWrite.tagIds = draft.tagIds;
+    articleWrite.summary = draft.summary;
+    articleWrite.content = draft.content;
+    articleWrite.cover = draft.cover;
+  }
+};
 
 // 监视属性
 watch(
@@ -268,7 +279,7 @@ const initCategoryList = () => {
 const initTag = async () => {
   try {
     const res = await tagList();
-    seletedTags.value = res;
+    beSeletedTags.value = res;
   } catch (error) {
     console.error(error);
   }
@@ -276,7 +287,13 @@ const initTag = async () => {
 
 // 监控到已选标签(子传父)
 const tagsChange = (tags) => {
-  articleWrite.tagIds = tags.map((x) => {
+  //赋值
+  beenSeletedTags.value = tags.map((x) => {
+    return x;
+  });
+  //赋值
+  articleWrite.tagIds = beenSeletedTags.value.map((x) => {
+    console.error(x);
     return x.id;
   });
 };
@@ -363,6 +380,10 @@ const save = (status: number) => {
         message: status === 0 ? "文章发布成功" : "文章保存成功",
         type: "success",
       });
+      // 情况草稿
+
+      // 跳转首页
+      location.assign("/");
     },
     (error) => {
       console.error(error);
