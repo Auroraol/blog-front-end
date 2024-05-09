@@ -8,7 +8,7 @@
         <span
           class="labelTag no-choose"
           @click="chooseTag(tag)"
-          v-for="tag in dynamicTags"
+          v-for="tag in beSeletedTags"
           :key="tag.id"
           >{{ tag.name }}</span
         >
@@ -16,10 +16,10 @@
     </div>
     <!--  已选标签 -->
     <div class="choose">
-      <p>已选择({{ chooseTags.length }} /6):</p>
+      <p>已选择({{ beenSeletedTags.length }} /6):</p>
       <div>
         <el-tag
-          v-for="tag in chooseTags"
+          v-for="tag in beenSeletedTags"
           :key="tag"
           class="mx-1"
           closable
@@ -73,29 +73,31 @@ const props = defineProps<{
   beenSeletedTags: Tag[];
 }>();
 
-const dynamicTags = computed(() =>
+// 待选中
+const beSeletedTags = computed(() =>
   props.beSeletedTags && props.beSeletedTags.length > 0
     ? props.beSeletedTags
     : []
 );
 
-const chooseTags = computed(() =>
+// 已选中
+const beenSeletedTags = computed(() =>
   props.beenSeletedTags && props.beenSeletedTags.length > 0
     ? props.beenSeletedTags
     : []
 );
 
-//选中待tag
+//点击选中tag
 const chooseTag = (tag: Tag) => {
   //如果已经选中了则不要重复选中
-  if (chooseTags.value.indexOf(tag) !== -1) {
+  if (beenSeletedTags.value.indexOf(tag) !== -1) {
     ElMessage.warning("不能重复选中");
     return;
   } else {
-    if (chooseTags.value.length < 6) {
-      const updatedTags = [...chooseTags.value, tag]; // s6语法拼接数组
-      chooseTags.value.push(tag);
-      emits("tagsChange", updatedTags);
+    if (beenSeletedTags.value.length < 6) {
+      const updatedTags = [...beenSeletedTags.value, tag]; // s6语法拼接数组
+      beenSeletedTags.value.push(tag);
+      emits("tagsChange", updatedTags); // 发送给父组件
     } else {
       alert("标签数量达到上限");
     }
@@ -104,7 +106,7 @@ const chooseTag = (tag: Tag) => {
 
 //点击关闭
 const handleClose = (tag: Tag) => {
-  chooseTags.value.splice(chooseTags.value.indexOf(tag), 1);
+  beenSeletedTags.value.splice(beenSeletedTags.value.indexOf(tag), 1);
 };
 
 //点击增加标签
@@ -119,15 +121,19 @@ const addTag = () => {
 const handleInputConfirm = async () => {
   if (inputValue.value) {
     //判断，如果标签数量已经达到最大数量则不添加新标签并且给出弹窗
-    if (chooseTags.value.length < 6) {
+    if (beenSeletedTags.value.length < 6) {
       try {
         const data = { tagName: inputValue.value };
         await apiAddTag(data); // 服务器增加标签
         const res = await getTagId(data);
-        chooseTags.value.push({
+        beenSeletedTags.value.push({
           id: res,
           name: inputValue.value,
         });
+        //
+        const updatedTags = [...beenSeletedTags.value]; // s6语法拼接数组
+        // console.error(updatedTags);
+        emits("tagsChange", updatedTags); // 发送给父组件
       } catch (error) {
         console.error(error);
       }
@@ -135,7 +141,6 @@ const handleInputConfirm = async () => {
       ElMessage.warning("标签数量达到上限");
     }
   }
-  // todo 保存草搞
   inputVisible.value = false;
   inputValue.value = "";
 };

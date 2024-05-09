@@ -285,13 +285,13 @@ const initTag = async () => {
   }
 };
 
-// 监控到已选标签(子传父)
+//子传父已选标签
 const tagsChange = (tags) => {
-  //赋值
+  // //赋值
   beenSeletedTags.value = tags.map((x) => {
     return x;
   });
-  //赋值
+  // //赋值
   articleWrite.tagIds = beenSeletedTags.value.map((x) => {
     console.error(x);
     return x.id;

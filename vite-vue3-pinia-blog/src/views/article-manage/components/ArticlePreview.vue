@@ -21,12 +21,13 @@
     <div
       v-loading="loading"
       class="content markdown-body"
-      v-html="article.htmlContent"
+      v-html="articleHtmlContent"
     />
   </el-dialog>
 </template>
 <script setup>
 import { articleDetail } from "/@/api/article/article";
+import { MdEditor } from "md-editor-v3";
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -39,23 +40,35 @@ const props = defineProps({
 });
 const emits = defineEmits(["defineEmits"]);
 
-const article = ref("");
+const articleHtmlContent = ref("");
 const loading = ref(true);
 
 const opened = () => {
   loading.value = true;
   articleDetail(props.id).then((res) => {
     loading.value = false;
-    article.value = res;
+
+    let htmlContent = res.htmlContent;
+
+    articleHtmlContent.value = htmlContent.replace(
+      /<video/g,
+      "<video style='width:100%;height:auto;'"
+    );
+
+    articleHtmlContent.value = htmlContent.replace(
+      /<img/g,
+      "<img style='width:100%;height:auto;'"
+    );
   });
 };
 
 const bClose = () => {
-  article.value = "";
+  articleHtmlContent.value = "";
   loading.value = true;
   emits("beforeClose");
 };
 </script>
+
 
 
 <style lang="less" scoped>
@@ -63,6 +76,10 @@ const bClose = () => {
   padding: 15px;
   min-height: 70vh;
   text-align: left;
+}
+
+[alt] {
+  max-width: 100%;
 }
 
 .el-dialog {

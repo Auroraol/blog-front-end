@@ -47,7 +47,6 @@
             :showCodeRowNumber="true"
             previewTheme="vuepress"
             codeTheme="a11y"
-            @onGetCatalog="getCatalog"
           />
         </div>
 
@@ -187,14 +186,6 @@ const containerGsap1 = () => {
   gsap.from(".articleMd", {
     duration: 0.3,
   });
-};
-
-//
-const catalogList = ref([]);
-
-const getCatalog = (list) => {
-  console.error(list);
-  catalogList.value = list;
 };
 
 // 加载文章数据
