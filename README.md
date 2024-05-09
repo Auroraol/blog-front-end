@@ -1,30 +1,31 @@
-# 📖 前言
+## 🎄 前言
+
+开源不易，麻烦占用 `10` 秒钟的时间帮忙点个免费的 `Star`，再此万分感谢！
 
 有时间就逛逛Github，刷刷掘金什么的，看看别人的见解，涨涨见识，看到好的文章也会选择收藏起来。逐渐地，我也意识到自己也该写写总结，写写一些自己的想法了。稍加思索后，冷静识破。于是决定自己写一个博客API系统，至于为啥是博客API系统而不是博客系统主要是基于两个方面的考虑：一是博客API是提供博客接口，前端页面可另外写，页面设计、风格可自由发挥，不强依赖后台服务，即便不会后台的伙伴也可以基于博客API自己搭建一个自己心仪的博客。二是个人平时开发也大都是前后端分离的开发模式，还是比较喜欢前后端分离的这种开发模式。
 出于对开源社区的敬意，将项目开源出来大家共同学习，希望对大家有所帮助。当然，本人水平有限，也欢迎大家指出存在的缺陷或不严谨的地方。
 
-# 🎄简介
+## 🛠️ 技术架构
 
+**前端：**
 
+ Vue3、TypeScript、Pinia、vue-router、Element-plus、Less、Vite、Axios 、md-editor-v3
 
++ 以一个vue全家桶 + element-ui编写的博客前端项目，简约风格，功能完善，具备完备的后台管理和前端数据展示，通过媒体查询等技术适配移动端。  
 
+**后端：**
 
-项目为java语言编写的一个博客API系统，上手简单，配置灵活，有完整的接口说明文档，接口丰富，接口具备认证授权、鉴权、参数校验、限流等功能。认证方式采用token认证方式，并且区分客户端。 热点数据使用redis缓存，数据库使用mysql。项目接入第三方阿里云短信服务，此服务需到阿里云平台开通。
-文件存储方面，项目提供4种选择，分别为本地存储、阿里云对象存储、网易云对象存储、七牛云对象存储，至于使用哪种看个人的选择，需要注意的是本地存储需要配置代理（如nginx）进行读取,这么做主要是基于两方面的考虑，一是tomcat相对其他静态文件服务器而言并不是很擅长读取静态文件。二是前端项目也需要一个静态文件服务器，可以用前端静态文件服务器代理读取。
+SpringBoot2.7.6/3.1.1、MyBatis-Plus、SpringSecurity5/6、MySQL、Redis
 
- Tip
++ 以java语言为基础编写的一个博客API系统，提供有完整的接口说明文档，接口丰富，接口具备认证授权、鉴权、参数校验、限流等功能。
++ 认证方式采用token认证方式，并且区分客户端。
++ 热点数据使用redis缓存，普通数据使用mysql存储。
++ 短信服务: 项目提供2种选择，分别为阿里云短信服务、腾讯短信服务。
++ 文件存储: 项目提供4种选择，分别为本地存储、阿里云对象存储、网易云对象存储、七牛云对象存储。  
 
-使用第三方文件存储主要是为了分担服务器带宽压力。将较大的图片文件放到1MB带宽的服务器上，读取的时候你将体会到什么叫龟速。
+## ✨ 功能
 
-# 技术架构
-
-采用SpringBoot2、MyBatis-Plus、Security等框架。
-
-
-
-
-
-# ✨功能
+## 💦已实现
 
 ✅首页
 
@@ -68,26 +69,24 @@
 
 ✅客户端管理 
 
+## 🏹 未来计划
 
+⭕文章搜索功能改用
 
-⭕
++ Elasticsearch
 
+⭕个人管理添加仪表盘
 
++ Echarts
 
-
-
-
-
-
-
-# 🚀Build
+## 🚀 Build
 
 ```sh
 # 克隆项目
-git clone https://github.com/copoile/blog-web.git
+git clone https://github.com/Auroraol/blog-front-end.git
 
 # 进入项目目录
-cd blog-web
+cd vite-vue3-pinia-blog
 
 # 安装依赖
 npm install 
@@ -96,17 +95,17 @@ npm install
 npm install --registry=https://registry.npm.taobao.org
 
 # 启动服务
-npm run dev
+npm run prod
 
 # 打包项目
-npm run build:prod
+npm run build
 ```
 
-# 运行截图
+## 📷 运行截图
 
 在线体验地址: [http://101.37.165.220/index](http://101.37.165.220/index)
 
-## 电脑端
+### 电脑端
 
 **首页**
 
@@ -154,13 +153,13 @@ npm run build:prod
 
 ![image-20240508225033150](README.assets/image-20240508225033150.png)
 
-## 手机端
+### 手机端
 
 截图为首页,  其余页面和电脑端相似
 
 <img src="README.assets/b&ek=1&kp=1&pt=0&tl=1&vuin=1665834268&tm=1715176800&dis_t=1715179468&dis_k=8f88e7d2b1106d5d3552522fa5595f29&sce=50-1-1&rf=4-0&t=5.webp" alt="img" style="zoom: 50%;" />
 
-# 前后端项目截图
+### 前后端项目结构截图
 
 **前端**
 
@@ -174,16 +173,16 @@ npm run build:prod
 
 ![d4fbc2e9f49c461ec3855be51fb0f7e](README.assets/d4fbc2e9f49c461ec3855be51fb0f7e.png)
 
-# :memo:API
+## 📖 Apis
 
-## 接口文档方式
+### 接口文档方式
 
-使用两种方式
+提供两种方式:
 
 + Postman
 + Swagger3
 
-### Postman
+#### Postman
 
 json文件:    [博客.postman_collection.json](博客.postman_collection.json) ![image-20240508223424600](README.assets/image-20240508223424600.png)
 
@@ -191,7 +190,7 @@ json文件:    [博客.postman_collection.json](博客.postman_collection.json) 
 
 ![image-20240508223516196](README.assets/image-20240508223516196.png)
 
-### Swagger3
+#### Swagger3
 
 ```text
 http://localhost:{port}/swagger-ui/index.html
@@ -209,7 +208,7 @@ http://localhost:{port}/swagger-ui/index.html
 
 ![image-20240501205443867](README.assets/image-20240501205443867.png)
 
-## 客户端
+### 客户端
 
 系统用户认证区分客户端
 
@@ -219,7 +218,7 @@ http://localhost:{port}/swagger-ui/index.html
 
 各客户端可自定义设置是否支持refresh_token，自定义设置登录超时时间等
 
-### 数据库客户端表设计
+#### 数据库客户端表设计
 
 |        字段名        |                描述                |
 | :------------------: | :--------------------------------: |
@@ -245,9 +244,9 @@ CREATE TABLE `client` (
 
 ```
 
-### 保存客户端
+#### 保存客户端
 
-#### API 接口
+##### API 接口
 
 请求方法：POST
 
@@ -3462,16 +3461,10 @@ size：每页数量，非必传，默认5
 }
 ```
 
-# 📈Stargazers
+# 📈 Stargazers
 
-```markdown
+[![Stargazers over time](README.assets/blog-front-end.svg)](https://starchart.cc/Auroraol/blog-front-end)
 
-## Stargazers over time
+# ⚖️ License
 
-```
-
-[![Stargazers over time](README.assets/CxKitty.svg)](https://starchart.cc/SocialSisterYi/CxKitty)
-
-
-
-# 🔗Link Repos
+ScrapeGraphAI is licensed under the MIT License. See the [LICENSE](https://github.com/VinciGit00/Scrapegraph-ai/blob/main/LICENSE) file for more information.
