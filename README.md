@@ -10,7 +10,7 @@
 
 **前端：**
 
- Vue3、TypeScript、Pinia、vue-router、Element-plus、Less、Vite、Axios 、md-editor-v3
+ Vue3、TypeScript、Pinia、vue-router、Element-plus、Less、Vite、Axios 、md-editor-v3 、GSAP 
 
 + 以一个vue全家桶 + element-ui编写的博客前端项目，简约风格，功能完善，具备完备的后台管理和前端数据展示，通过媒体查询等技术适配移动端。  
 
@@ -82,6 +82,8 @@ SpringBoot2.7.6/3.1.1、MyBatis-Plus、SpringSecurity5/6、MySQL、Redis、Swagg
 + Echarts
 
 ⭕ 网站备案
+
+⭕ 人脸识别登录
 
 ## 🚀 Build
 
