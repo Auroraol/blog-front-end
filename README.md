@@ -3471,7 +3471,7 @@ size：每页数量，非必传，默认5
 
 ## 📈 Stargazers
 
-[![Stargazers over time](README.assets/blog-front-end.svg)](https://starchart.cc/Auroraol/blog-front-end)
+[![Stargazers over time](README.assets/blog-front-end-17153434511091.svg)](https://starchart.cc/Auroraol/blog-front-end)
 
 ## ⚖️ License
 
