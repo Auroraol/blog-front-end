@@ -159,6 +159,10 @@ npm run build
 
 ![image-20240508225033150](README.assets/image-20240508225033150.png)
 
+404
+
+![image-20240510173802496](README.assets/image-20240510173802496.png)
+
 ### 手机端
 
 截图为首页,  其余页面和电脑端相似
