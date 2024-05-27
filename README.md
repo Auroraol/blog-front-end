@@ -537,6 +537,22 @@ password：密码，必传
 
 接口说明：账号可以是用户名，也可以是手机号。
 
+```tsx
+/**
+ * 账号登录
+ * @param {Object} params
+ */
+export function accountLogin(params) {
+  return request<LoginResponseType>(import.meta.env.VITE_APP_BASE_API +  '/account/login',{
+    headers: {
+      'Authorization': 'Basic cGM6MTIzNDU2'
+    },
+    method: 'post',
+    params: params
+  })
+}
+```
+
 **登录成功：**
 
 ```json

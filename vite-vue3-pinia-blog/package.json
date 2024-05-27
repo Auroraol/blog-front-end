@@ -17,6 +17,7 @@
     "@element-plus/icons-vue": "^2.0.6",
     "@vavt/v3-extension": "^1.1.2",
     "axios": "^0.27.2",
+    "axios-retry": "^4.3.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "element-plus": "^2.2.10",
     "fast-glob": "^3.3.2",

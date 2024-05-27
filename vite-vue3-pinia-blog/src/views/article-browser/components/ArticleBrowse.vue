@@ -4,7 +4,7 @@
       <el-affix offset="70">
         <BrowserSidePanel
           class="browserSide container"
-          v-if="device === 'desktop'"
+          v-if="device === 'desktop' && !loading"
           :title="article.title"
         ></BrowserSidePanel>
       </el-affix>
@@ -127,7 +127,7 @@ const device = computed(() => useGettersPinia.device);
 //md-catalog目录的监听设置
 const scrollElement = document.documentElement;
 
-const article = ref({});
+const article = ref();
 const loading = ref(true);
 const id = ref(0);
 const url = ref("");

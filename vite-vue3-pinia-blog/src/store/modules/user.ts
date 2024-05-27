@@ -63,9 +63,9 @@ export const useUserStore = defineStore("user", {
       try {
         const {access_token}  = await thirdLogin(params);
         this.SET_TOKEN(access_token);
-        return Promise.resolve();
+        return;
       } catch (error) {
-        return Promise.reject(error);
+        throw error; 
       }
     },
     /**
@@ -94,7 +94,7 @@ export const useUserStore = defineStore("user", {
         }
         this.SET_ROLES(roles);
         this.SET_USER_INFO(data);
-        return Promise.resolve(data);
+        return data;
       } catch (error) {
         throw error;
       }
@@ -110,7 +110,7 @@ export const useUserStore = defineStore("user", {
           access_token: access_token,
         };
         await logout(params);
-        return Promise.resolve();
+        return ;
       } catch (error) {
         throw error;
       }
@@ -118,7 +118,7 @@ export const useUserStore = defineStore("user", {
     /**
      * 重置
      */
-    resetToken() {
+    async resetToken() {
       this.SET_TOKEN("");
       this.SET_ROLES([]);
       this.SET_USER_INFO("");

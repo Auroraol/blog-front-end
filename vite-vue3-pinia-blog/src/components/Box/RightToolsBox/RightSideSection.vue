@@ -1,3 +1,4 @@
+// TODO
 <template>
   <div class="container">
     <div class="follow-section">
@@ -7,31 +8,34 @@
           <a href="https://github.com/copoile" target="_blank">
             <img
               class="icon"
-              style="background: #000000;border-radius: 3px;"
-              src="https://poile-img.nos-eastchina1.126.net/icon/github.png"
-            >
+              style="background: #000000; border-radius: 3px"
+              src=""
+            />
           </a>
         </li>
 
         <li class="item">
           <el-popover placement="bottom" trigger="hover">
-            <img
-              style="width:90px;height:90px;margin: 5px;"
-              src="https://poile-img.nos-eastchina1.126.net/icon/qrcode.jpg"
-            >
-            <img slot="reference" class="icon" src="https://b-gold-cdn.xitu.io/v3/static/img/wechat.ce329e6.png">
+            <img style="width: 90px; height: 90px; margin: 5px" src="" />
+            <img slot="reference" class="icon" src="" />
           </el-popover>
         </li>
 
         <li class="item">
-          <a href="https://www.zhihu.com/people/yaohw-53" target="_blank">
-            <img class="icon" src="https://b-gold-cdn.xitu.io/v3/static/img/zhuanlan.18265c6.png">
+          <a href="" target="_blank">
+            <img
+              class="icon"
+              src="https://b-gold-cdn.xitu.io/v3/static/img/zhuanlan.18265c6.png"
+            />
           </a>
         </li>
 
         <li class="item">
           <a href="https://www.jianshu.com/u/d757e6e6c36d" target="_blank">
-            <img class="icon" src="https://b-gold-cdn.xitu.io/v3/static/img/jianshu.80c1fdd.png">
+            <img
+              class="icon"
+              src="https://b-gold-cdn.xitu.io/v3/static/img/jianshu.80c1fdd.png"
+            />
           </a>
         </li>
       </ul>
@@ -51,22 +55,16 @@
           </li>
         </ul>
         <ul class="more-list">
-          <li class="item">
-            ©2020 个人阅读分享
-          </li>
+          <li class="item">©2024 阅读分享</li>
         </ul>
         <ul class="more-list">
-          <li class="item">
-            Powered by Yaohw
-          </li>
+          <li class="item">Powered by Yaohw</li>
         </ul>
         <ul class="more-list">
-          <li class="item">
-            备案号
-          </li>
+          <li class="item">备案号</li>
           <li class="item">
             <a href="http://www.beian.miit.gov.cn/" target="_blank">
-              粤ICP备19083123号
+              粤ICP备号
             </a>
           </li>
         </ul>
@@ -138,6 +136,5 @@
       }
     }
   }
-
 }
 </style>

@@ -1,11 +1,38 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getAccessToken } from "/@/utils/auth";
 import { ElMessageBox, ElMessage } from "element-plus";
+import axiosRetry from "axios-retry";
+import { useUserStore } from "/@/store/index";
 
 const axiosInstance = axios.create({
   timeout: 10000,
   // axios中请求配置有baseURL选项,表示请求URL公共部分,每个请求将会带该部分
   // baseURL: import.meta.env.VITE_API_URL,//配置了跨域这里不用写会冲突
+  validateStatus(status) {
+    // console.error(status);
+    // 状态码
+    return status >= 200 && status < 500; // code 200 - 500  范围之外的才走重试流程
+  },
+});
+
+const whiteRetry = new Set(["ECONNABORTED", undefined]);
+
+// 配置axios-retry插
+axiosRetry(axiosInstance, {
+  retries: 3, // 最多重试3次
+  shouldResetTimeout: true, //  重置超时时间
+  retryDelay: (retryCount) => {
+    return retryCount * 10000; // 重复请求延迟，每次请求之间间隔10s
+  },
+  retryCondition: (err) => {
+    console.error(err);
+    // true为打开自动发送请求，false为关闭自动发送请求
+    // 自定义重试条件，只重试网络错误
+    // return !err.response || err.response.status === 500;
+    //这里的code是状态码, code 200 - 500  范围之外的才走重试流程
+    const { code, message } = err;
+    return whiteRetry.has(<string>code) || message.includes("timeout");
+  },
 });
 
 // 请求拦截
@@ -24,11 +51,12 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => {
     const res = response.data; // 响应数据
+
     // 确保前端得到的res都是成功响应
     if (res.code !== 200000) {
       // 凭证无效或过期
       if (res.code === 400007 || res.code === 4000010) {
-        // useStore.dispatch('user/resetToken')
+        useUserStore().resetToken();
         ElMessageBox.confirm("登录信息已过期", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
