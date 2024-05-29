@@ -59,6 +59,11 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="less">
+//进度条
+#nprogress .bar {
+  background: red !important; //自定义颜色
+}
+
 // 淡出淡入
 .fade-enter-active,
 .fade-leave-active {

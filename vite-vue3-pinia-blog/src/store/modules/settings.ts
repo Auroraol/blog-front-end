@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia';
 import defaultSettings from '/@/settings'
-const { fixedHeader, sidebarLogo, defaultAvatar } = defaultSettings
+const { fixedHeader, sidebarLogo, defaultAvatar,swiperImage ,swiperText } = defaultSettings
 
 
 export const useSettingsStore = defineStore( 'settings', {
   state: () => ({
     fixedHeader: fixedHeader, 
     sidebarLogo: sidebarLogo, 
-    defaultAvatar: defaultAvatar
+    defaultAvatar: defaultAvatar,
+    swiperImage: swiperImage,
+    swiperText: swiperText,
   }),
   actions: {
     changeSetting({ state }, { key, value }) {

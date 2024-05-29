@@ -1,6 +1,8 @@
 <template>
-  <svg-icon v-if="icon" :iconClass="icon" />
-  <span v-if="title">{{ title }}</span>
+  <div class="item">
+    <svg-icon class="svg-icon" v-if="icon" :name="icon" />
+    <span v-if="title">{{ title }}</span>
+  </div>
 </template>
 
 <script setup>
@@ -29,8 +31,14 @@ watchEffect(() => {
 });
 </script>
 
-<style scoped>
-span {
-  margin-left: 16px;
+<style scoped lang="less" >
+.item {
+  display: flex; /* 使用 flex 布局 */
+  align-items: center; /* 垂直居中对齐 */
+
+  .svg-icon {
+    margin-top: -40px;
+    margin-right: 8px; /* 调整图标与文本之间的间距 */
+  }
 }
 </style>

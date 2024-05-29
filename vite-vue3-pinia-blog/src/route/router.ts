@@ -36,8 +36,12 @@ export const constantRoutes = [
   // 重定向
   {
     path: "/",
-    redirect: "/index",
+    name: "/",
+    component: () => import("/@/views/index/index.vue"),
     hidden: true,
+    meta: {
+      title: "首页",
+    }
   },
   {
     path: "/index",

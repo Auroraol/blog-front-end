@@ -4,6 +4,7 @@ import App from "./App.vue";
 // 引入重置与全局样式
 import "./assets/styles/reset.css";
 import "./assets/styles/common.css";
+// import "/@/assets/fonts/font.less";  // 字体
 //加载阿里巴巴矢量图标库
 // import './assets/icons'  // 图标
 import 'virtual:svg-icons-register'; // 使用svg 需要引入svg-icons-register 配置
@@ -25,7 +26,6 @@ import Loading from "./plugins/Loading/index";
 
 // 自定义回到顶部组件
 import BackTop from "./plugins/BackTop/index";
-
 
 const app = createApp(App);
 

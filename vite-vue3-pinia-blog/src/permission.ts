@@ -4,14 +4,24 @@ import router from "/@/route/router";
 import { usePermissionStore, useUserStore } from "/@/store/index";
 import { useGetters } from "/@/store/getters";
 
-import NProgress from "nprogress";// 进度条
-import "nprogress/nprogress.css";//进度条样式必须引入
+import NProgress from "nprogress"; // 进度条
+import "nprogress/nprogress.css"; //进度条样式必须引入
 
 import { getAccessToken } from "/@/utils/auth";
 import getPageTitle from "/@/utils/get-page-title";
 import { bindEmail } from "/@/api/user/user";
 
-NProgress.configure({ showSpinner: false });
+NProgress.configure({
+  // 动画方式
+  easing: "ease",
+  showSpinner: false,
+  // 递增进度条的速度
+  speed: 500,
+  // 自动递增间隔
+  trickleSpeed: 200,
+  // 更改启动时使用的最小百分比
+  minimum: 0.1,
+});
 
 // 免登录白名单(不强制登录的)
 const whiteList = [
@@ -39,20 +49,23 @@ const whiteList = [
 // 路由守卫
 router.beforeEach(async (to, from, next) => {
   // 百度统计
-  // if (window.location.hostname === 'www.poile.cn' && to.path) {
-  //   if (window._hmt) {
-  //       window._hmt.push(['_trackPageview', '/#' + to.fullPath]);
-  //   } else {
-  //       var _hmt = [];
-  //       window._hmt = _hmt;
-  //       (function () {
-  //           let hm = document.createElement('script');
-  //           hm.src = 'https://hm.baidu.com/hm.js?0365897af075de8b1b3ba64f3cc7b423';
-  //           let s = document.getElementsByTagName('script')[0];
-  //           s.parentNode.insertBefore(hm, s);
-  //     })();
-  //   }
-  // }
+  if (window.location.hostname === "http://101.37.165.220/" && to.path) {
+    // eslint-disable-next-line
+    if (window._hmt) {
+      window._hmt.push(["_trackPageview", "/#" + to.fullPath]);
+    } else {
+      // eslint-disable-next-line
+      var _hmt = _hmt || [];
+      // eslint-disable-next-line
+      window._hmt = _hmt;
+      (function () {
+        let hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?0365897af075de8b1b3ba64f3cc7b423";
+        let s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    }
+  }
 
   // 进度条开始
   NProgress.start();
@@ -141,18 +154,18 @@ router.beforeEach(async (to, from, next) => {
       // next(path);
       // 进入写文页面，判断是否有权限
       if (to.path === "/write") {
-          alert("还没有登录，去登录吧");
-          router.push("/login-register/login");
-        }
+        alert("还没有登录，去登录吧");
+        router.push("/login-register/login");
+      }
       // 转到404
-      next()
+      next();
       NProgress.done();
     }
   }
 });
 
 //
-router.afterEach(()=>{
+router.afterEach(() => {
   // 进度条结束
   NProgress.done();
 });

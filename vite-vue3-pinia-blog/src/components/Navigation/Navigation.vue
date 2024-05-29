@@ -12,7 +12,7 @@
           background-color="transparent"
           active-text-color="#79bbff"
         >
-          <el-menu-item index="/index">首页</el-menu-item>
+          <el-menu-item index="/">首页</el-menu-item>
           <el-menu-item index="info" style="cursor: default">
             <el-dropdown size="large" @command="handleSelect">
               <span class="more"> 更多 </span>
@@ -68,7 +68,7 @@
               >悦读博客</el-text
             >
 
-            <el-menu-item index="/index" style="margin-left: 110px">
+            <el-menu-item index="/" style="margin-left: 110px">
               <el-icon><House /></el-icon> 首页
             </el-menu-item>
             <el-menu-item index="/category">
@@ -105,13 +105,16 @@
               @focus="inputFocus"
               @blur="inputBlur"
               @keyup.enter.native="search"
-              class="search"
               suffix-icon="el-icon-search"
             ></el-input>
             <el-menu-item index="info" style="cursor: default">
               <el-button-group v-if="!userInfo">
-                <el-button @click="toLogin">登录</el-button>
-                <el-button @click="toRegister" color="#79BBDC">注册</el-button>
+                <el-button @click="toLogin"
+                  ><span class="but"> 登录 </span></el-button
+                >
+                <el-button @click="toRegister" color="#79BBDC">
+                  <span class="but"> 注册 </span></el-button
+                >
               </el-button-group>
               <!-- 组件nav-user-info -->
               <nav-user-info :userInfo="userInfo" v-else></nav-user-info>
@@ -201,6 +204,11 @@ const search = () => {
 <style scoped lang="less">
 .nav {
   background-color: #2580b3;
+  // width: 100%;
+  height: 60px;
+
+  backdrop-filter: blur(5px);
+  // transition: background-color $move;
 
   .nav-img {
     width: 100px;
@@ -235,8 +243,9 @@ const search = () => {
 .more {
   display: flex;
   align-items: center;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  // font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+  //   "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-family: "LXGW Wenkai";
   font-weight: bold;
   font-size: 15px;
   color: #fff;
@@ -267,7 +276,11 @@ const search = () => {
 :deep(:focus-visible) {
   outline: none;
 }
-
+.but {
+  font-family: "LXGW Wenkai";
+  font-weight: normal;
+  font-size: 15px;
+}
 // 手机端布局
 .nav-mobile {
   background-color: #2580b3;

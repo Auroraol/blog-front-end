@@ -1,4 +1,10 @@
 <template>
+  <Swiper
+    :Ripple="false"
+    :data="swiperText"
+    :src="useSettingsStorePinia.swiperImage"
+    v-if="swiperText.length"
+  ></Swiper>
   <div class="card">
     <el-row :gutter="20">
       <!-- 左侧 -->
@@ -96,12 +102,15 @@
       </el-col>
     </el-row>
   </div>
+  <ToolBar></ToolBar>
 </template>
 
 <script setup lang="ts">
+import ToolBar from "./../../../components/ToolBar/index.vue";
 import { defineAsyncComponent } from "vue";
 import { pagePublishedArticle } from "/@/api/article/article";
 import { useGetters } from "/@/store/getters";
+import { useSettingsStore } from "/@/store/index";
 
 import axios from "axios";
 import gsap from "gsap";
@@ -122,8 +131,13 @@ const AsyncArticleList = defineAsyncComponent(
 );
 
 const useGettersPinia = useGetters();
+const useSettingsStorePinia = useSettingsStore();
 
 const device = computed(() => useGettersPinia.device);
+
+// const swiperText = ref<string[]>([]);
+const swiperText = computed(() => useSettingsStorePinia.swiperText);
+watch(useSettingsStorePinia.swiperText, (data) => (swiperText.value = data));
 
 interface Article {
   // 定义文章类型
@@ -162,6 +176,9 @@ onMounted(() => {
   });
   // 获取文章列表
   getArtList();
+  console.error(useSettingsStorePinia.swiperImage);
+  console.error(swiperText.value);
+  console.error(useSettingsStorePinia.swiperText);
 });
 
 // 获取文章列表
@@ -206,8 +223,9 @@ const mainTabClick = (index) => {
 </script>
 
 <style scoped lang="less">
-@fontColor: #fff;
+@import url("/@/assets/fonts/font.less");
 
+@fontColor: #fff;
 .window {
   width: 100vw;
   height: 100vh;

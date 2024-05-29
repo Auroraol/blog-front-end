@@ -26,7 +26,11 @@ body,
   background-attachment: fixed;
   /* background-color: #54befc; */
   font-size: 13px;
-  font-family: '思源黑体 Normal', 'Microsoft YaHei', '黑体';
+  /* font-family: '思源黑体 Normal', 'Microsoft YaHei', '黑体';  */
+  /* font-family: "LXGW WenKai Mono Light"; */
+  font-family: "LXGW WenKai";
+  font-weight: normal; 
+
 }
 
 /* 版心*/
