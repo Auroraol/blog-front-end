@@ -64,9 +64,27 @@
               class="nav-img"
               src="https://poile-img.nos-eastchina1.126.net/logo.png"
             />
-            <el-text class="logo-title" style="font-size: 1.4rem" type="primary"
-              >悦读博客</el-text
+            <!-- 图片LOGO模式 -->
+            <router-link to="/" class="one_item_nav" v-if="false">
+            </router-link>
+            <!-- 文字LOGO模式 -->
+            <router-link
+              v-else
+              to="/"
+              class="one_item_nav"
+              :style="{
+                color: top > 100 || is ? 'var(--textColor, #333)' : '#fff',
+              }"
             >
+              <b>
+                <el-text
+                  class="logo-title hvr-grow"
+                  style="font-size: 1.4rem"
+                  type="primary"
+                  >悦读博客</el-text
+                ></b
+              >
+            </router-link>
 
             <el-menu-item index="/" style="margin-left: 110px">
               <el-icon><House /></el-icon> 首页
@@ -217,6 +235,24 @@ const search = () => {
     @media screen and (max-width: 1024px) {
       display: none;
     }
+  }
+  /* Grow */
+  .hvr-grow {
+    display: inline-block;
+    vertical-align: middle;
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+  }
+  .hvr-grow:hover,
+  .hvr-grow:focus,
+  .hvr-grow:active {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
   }
 
   // 平板
