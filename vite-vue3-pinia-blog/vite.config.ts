@@ -48,7 +48,6 @@ export default ({ mode }) => {
         //生成组件插入位置 只有两个值 boby-last(默认) | body-first
         // inject: 'body-last'
       })
-
     ],
 
     build: {
@@ -68,7 +67,18 @@ export default ({ mode }) => {
         "/@": path.resolve(__dirname, "src"),
       },
     },
-
+    // css预处理器中配置
+    css: {
+      /* CSS 预处理器 */
+      preprocessorOptions: {
+        less: {
+          modifyVars: {
+            // 配置定义的less样式变量路径
+            hack: `true; @import (reference) "${path.resolve('./src/assets/styles/variables.less')}";`
+          },
+        }
+      }
+    },
     /******配置开发服务器******/
     // 配置前端服务地址和端口
     server: {

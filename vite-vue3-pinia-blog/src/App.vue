@@ -9,6 +9,7 @@
         </transition>
       </div>
     </el-config-provider>
+    <ToolBar></ToolBar>
     <foot></foot>
   </div>
 </template>
@@ -61,7 +62,7 @@ onBeforeUnmount(() => {
 <style lang="less">
 //进度条
 #nprogress .bar {
-  background: red !important; //自定义颜色
+  background: @nprogress-color !important; //自定义颜色
 }
 
 // 淡出淡入

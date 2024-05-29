@@ -1,56 +1,35 @@
+// 创建less变量和函数
 /* 导航栏样式变量 */
+// variables.less
 
+// 个人中心
 /* 菜单字体颜色 */
-:root {
-  --menuText: #bfcbd9;
-}
-
+@menuText: #bfcbd9;
 /* 活动菜单字体颜色 */
-:root {
-  --menuActiveText: #409EFF;
-}
-
+@menuActiveText: #409EFF;
 /* 活动子菜单字体颜色 */
-:root {
-  --subMenuActiveText: #f4f4f5;
-}
-
+@subMenuActiveText: #f4f4f5;
 /* 菜单背景颜色 */
-:root {
-  --menuBg: #304156;
-}
-
+@menuBg: #304156;
 /* 菜单鼠标移入颜色 */
-:root {
-  --menuHover: #263445;
-}
-
+@menuHover: #263445;
 /* 子菜单背景颜色 */
-:root {
-  --subMenuBg: #1f2d3d;
-}
-
+@subMenuBg: #1f2d3d;
 /* 子菜单鼠标移入颜色 */
-:root {
-  --subMenuHover: #001528;
-}
+@subMenuHover: #001528;
 
 /* 宽度 */
-:root {
-  --sideBarWidth: 210px;
-  --ContentContainerW: 960px;
-  --ContentRightSideW: 240px;
-}
-
-
-// variables.less
-@menuText: #bfcbd9;
-@menuActiveText: #409EFF;
-@subMenuActiveText: #f4f4f5;
-@menuBg: #304156;
-@menuHover: #263445;
-@subMenuBg: #1f2d3d;
-@subMenuHover: #001528;
 @sideBarWidth: 210px;
 @ContentContainerW: 960px;
 @ContentRightSideW: 240px;
+
+/*进度条颜色*/
+@nprogress-color:var(--nprogress-color, red);
+
+
+//
+// 默认的主题颜色
+@background: var(--background, #f5f7fd);
+@background-img: var(--background-img, white);
+@header-background-img: var(--header-background-img, url("https://code-nav.top/statics/img/ssr/bg-boy.jpg"));
+

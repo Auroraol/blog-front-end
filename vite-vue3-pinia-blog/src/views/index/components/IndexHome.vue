@@ -102,7 +102,6 @@
       </el-col>
     </el-row>
   </div>
-  <ToolBar></ToolBar>
 </template>
 
 <script setup lang="ts">
