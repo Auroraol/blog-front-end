@@ -3487,17 +3487,72 @@ size：每页数量，非必传，默认5
 
 ### 聊天
 
-![image-20240602114902697](README.assets/image-20240602114902697.png)
+```mysql
+CREATE TABLE chat_room (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `chat_logs` JSON,
+    `del_root` BOOLEAN NOT NULL
+);
+```
+
+#### 添加房间
+
+```
+http://localhost:9091/chat/room/add?name=默
+```
+
+![image-20240603225346817](README.assets/image-20240603225346817.png)
+
+#### 删除房间
+
+```
+http://localhost:9091/chat/room/delete?name="多福多寿"
+```
+
+![image-20240603225407008](README.assets/image-20240603225407008.png)
 
 
+
+#### 请求所有的房间名
+
+```
+http://localhost:9091/chat/room/all
+```
 
 ![image-20240602114913105](README.assets/image-20240602114913105.png)
 
 
 
-![image-20240602115339104](README.assets/image-20240602115339104.png)
 
-![image-20240602193655111](README.assets/image-20240602193655111.png)
+
+#### 添加聊天
+
+```
+http://localhost:9091/chat/add
+```
+
+![image-20240603225824344](README.assets/image-20240603225824344.png)
+
+#### 所有聊天
+
+```
+http://localhost:9091/chat/all?name=默认房间
+```
+
+![image-20240603225853460](README.assets/image-20240603225853460.png)
+
+#### 通过用户账户获得昵称/头像
+
+```
+http://localhost:9091/user/chat/info?username=lfj
+```
+
+注意: 需要携带token
+
+![image-20240603230031455](README.assets/image-20240603230031455.png)
+
+![image-20240603230004143](README.assets/image-20240603230004143.png)
 
 ## 📈 Stargazers
 
