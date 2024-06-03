@@ -30,6 +30,7 @@
                 show-password
                 v-model="loginForm.password"
                 inline-message
+                @keyup.enter.native="passwordLogin"
               ></el-input>
             </el-form-item>
             <div class="button-top">

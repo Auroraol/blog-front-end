@@ -5,7 +5,7 @@ import { useLoginStore } from "./modules/login";
 // import { settingsStore } from "./modules/settings";
 import { useUserStore } from "./modules/user";
 import { useAppStore } from "./modules/app";
-
+import { useChatStore } from "./modules/chat";
 
 export const useGetters = defineStore('getters', {
   getters: {
@@ -19,7 +19,8 @@ export const useGetters = defineStore('getters', {
     // permission_routes: (state) => state.permission.routes,
     // loginVisible: (state) => state.login.visible,
     loginUsername: (state) => useLoginStore().username,
-    loginPassword: (state) => useLoginStore().password
+    loginPassword: (state) => useLoginStore().password,
+    chatUserInfo: (state) => useChatStore().chatUserInfo,
   }
 });
 

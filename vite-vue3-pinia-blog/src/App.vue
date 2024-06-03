@@ -27,11 +27,11 @@ const useAppStorePinia = useAppStore();
 onMounted(() => {
   // 动态设置内容高度，让 footer 始终居底，header+footer 的高度是 100
   // Height.value = document.documentElement.clientHeight - 100;
-  Height.value = document.documentElement.clientHeight - 40;
+  Height.value = document.documentElement.clientHeight - 42;
 
   // 监听浏览器窗口变化
   window.onresize = () => {
-    Height.value = document.documentElement.clientHeight - 40;
+    Height.value = document.documentElement.clientHeight - 42;
   };
 
   // 多端适配, 检测是手机端还是pc
@@ -62,7 +62,7 @@ onBeforeUnmount(() => {
 <style lang="less">
 //进度条
 #nprogress .bar {
-  background: @nprogress-color !important; //自定义颜色
+  background: @color !important; //自定义颜色
 }
 
 // 淡出淡入

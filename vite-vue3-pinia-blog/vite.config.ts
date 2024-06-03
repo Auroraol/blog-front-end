@@ -6,8 +6,7 @@ import vue from "@vitejs/plugin-vue";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import * as path from "path";
 
-import {createSvgIconsPlugin} from 'vite-plugin-svg-icons'
-
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 export default ({ mode }) => {
   //参数mode为开放模式或生产模式
@@ -15,7 +14,7 @@ export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd()); // 获取.env文件里定义的环境变量
   //console.log(env);   //变量在命令行里打印出来
   //console.log(env.VITE_API_URL)
-  const port = Number(env.VITE_PORT) || 80
+  const port = Number(env.VITE_PORT) || 80;
   return defineConfig({
     base: "/",
     // 配置插件
@@ -47,7 +46,7 @@ export default ({ mode }) => {
         symbolId: "icon-[name]",
         //生成组件插入位置 只有两个值 boby-last(默认) | body-first
         // inject: 'body-last'
-      })
+      }),
     ],
 
     build: {
@@ -74,10 +73,12 @@ export default ({ mode }) => {
         less: {
           modifyVars: {
             // 配置定义的less样式变量路径
-            hack: `true; @import (reference) "${path.resolve('./src/assets/styles/variables.less')}";`
+            hack: `true; @import (reference) "${path.resolve(
+              "./src/assets/styles/variables.less"
+            )}";`,
           },
-        }
-      }
+        },
+      },
     },
     /******配置开发服务器******/
     // 配置前端服务地址和端口
@@ -97,21 +98,14 @@ export default ({ mode }) => {
         [env.VITE_APP_BASE_API]: {
           target: env.VITE_API_URL,
           changeOrigin: true,
-          ws: true,  // 允许websocket代理
+          ws: true, // 允许websocket代理
           rewrite: (path) => {
             const regex = new RegExp(`^${env.VITE_APP_BASE_API}`);
-            return path.replace(regex, '');
+            return path.replace(regex, "");
           },
         },
       },
-    //   '/api': {
-    //     target: 'http://localhost:9000',
-    //     changeOrigin: true,
-    //     rewrite: (path) => path.replace(/^\/api/, '')
-    //   }
-    // }
     },
-
     /*
       proxy: {
       '/api1': {// 匹配所有以 '/api1'开头的请求路径
@@ -129,6 +123,5 @@ export default ({ mode }) => {
   //changeOrigin设置为false时，服务器收到的请求头中的host为：localhost:8080
   //changeOrigin默认值为true
 */
-
   });
 };

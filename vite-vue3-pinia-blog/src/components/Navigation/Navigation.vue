@@ -58,8 +58,9 @@
             mode="horizontal"
             @select="handleSelect"
             background-color="transparent"
-            active-text-color="#79bbff"
+            active-text-color="#fff"
           >
+            <!--  active-text-color="var(--color)" -->
             <img
               class="nav-img"
               src="https://poile-img.nos-eastchina1.126.net/logo.png"
@@ -68,14 +69,7 @@
             <router-link to="/" class="one_item_nav" v-if="false">
             </router-link>
             <!-- 文字LOGO模式 -->
-            <router-link
-              v-else
-              to="/"
-              class="one_item_nav"
-              :style="{
-                color: top > 100 || is ? 'var(--textColor, #333)' : '#fff',
-              }"
-            >
+            <router-link v-else to="/" class="one_item_nav">
               <b>
                 <el-text
                   class="logo-title hvr-grow"
@@ -87,34 +81,82 @@
             </router-link>
 
             <el-menu-item index="/" style="margin-left: 110px">
-              <el-icon><House /></el-icon> 首页
+              <!-- <el-icon><House /></el-icon> -->
+              🏠 首页
             </el-menu-item>
             <el-menu-item index="/category">
-              <el-icon><document /></el-icon>
-              分类
+              <!-- <el-icon><document /></el-icon> -->
+              🗂️ 分类
             </el-menu-item>
             <el-menu-item index="/write">
-              <el-icon><Reading /></el-icon>
-              文章
+              <!-- <el-icon><Reading /></el-icon> -->
+              ✍️ 文章
             </el-menu-item>
             <el-menu-item index="/archives">
-              <el-icon><Files /></el-icon>
-              归档
+              <!-- <el-icon><Files /></el-icon> -->
+              🗄️ 归档
             </el-menu-item>
 
             <el-menu-item index="/message">
-              <el-icon><ChatLineRound /></el-icon>
-              留言
+              <!-- <el-icon><ChatLineRound /></el-icon> -->
+              🏄‍♂️ 留言
             </el-menu-item>
             <el-menu-item index="/friend-link">
-              <el-icon><Link /></el-icon>
-              友链
+              <!-- <el-icon><Link /></el-icon> -->
+              🌎 友链
             </el-menu-item>
 
-            <el-menu-item index="/about">
-              <el-icon><Warning /></el-icon>
-              关于
-            </el-menu-item>
+            <!-- <el-menu-item index="/about">
+              <el-icon><Warning /></el-icon> 
+              🎗️ 关于
+            </el-menu-item> -->
+            <ul class="one">
+              <!-- <li class="one_item">
+              </li> -->
+              <!-- 扩展页面 -->
+              <li class="one_item">
+                <router-link :to="ExtendPage.url" class="one_item_nav">
+                  {{ ExtendPage.icon }} {{ ExtendPage.name }}
+
+                  <!-- 判断有没有二级分类，有就显示下拉箭头 -->
+                  <svg
+                    v-if="ExtendPage.children.length"
+                    preserveAspectRatio="xMidYMid meet"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    fill="none"
+                    viewBox="0 0 48 48"
+                  >
+                    <!--?lit$369315321$-->
+                    <g>
+                      <path
+                        stroke-linejoin="round"
+                        stroke-width="4"
+                        stroke="currentColor"
+                        d="M36 18 24 30 12 18"
+                        data-follow-stroke="currentColor"
+                      ></path>
+                    </g>
+                  </svg>
+                </router-link>
+
+                <!-- 二级导航 -->
+                <ul class="two">
+                  <li
+                    class="two_item"
+                    v-for="two in ExtendPage.children"
+                    :key="two.id"
+                  >
+                    <router-link
+                      :to="{ path: two.url, query: two.date }"
+                      class="two_item_nav"
+                      >{{ two.name }}</router-link
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
             <!-- 搜索框 -->
             <el-input
               style="width: 350px; padding: 0 70px"
@@ -158,6 +200,33 @@ const activeIndex = ref("");
 //搜索响应数据
 const keyword = ref("");
 const inputIconColor = ref("");
+
+//
+const ExtendPage = {
+  name: "扩展",
+  icon: "💡",
+  url: "",
+  children: [
+    {
+      id: 1,
+      name: "我的相册",
+      url: "/photo",
+    },
+    {
+      id: 2,
+      name: "聊天室",
+      url: "/chat",
+      date: {
+        name: "默认房间",
+      },
+    },
+    {
+      id: 3,
+      name: "关于",
+      url: "/about",
+    },
+  ],
+};
 
 // 计算属性
 const userInfo = computed(() => {
@@ -226,7 +295,8 @@ const search = () => {
   height: 60px;
 
   backdrop-filter: blur(5px);
-  // transition: background-color $move;
+  // transition: background-color 0.3s;
+  z-index: 999;
 
   .nav-img {
     width: 100px;
@@ -279,12 +349,19 @@ const search = () => {
 .more {
   display: flex;
   align-items: center;
-  // font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-  //   "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   font-family: "LXGW Wenkai";
   font-weight: bold;
   font-size: 15px;
   color: #fff;
+}
+
+.el-menu-demo,
+.el-menu-item,
+.el-sub-menu {
+  // 鼠标悬停效果
+  &:hover {
+    color: @color !important;
+  }
 }
 
 /* 点击出来的下划线进行隐藏 */
@@ -328,6 +405,91 @@ const search = () => {
 
     .nav-user-info {
       margin-left: auto; // 将组件移到最右侧
+    }
+  }
+}
+
+// 一级导航
+.one {
+  display: flex;
+  align-items: center;
+  height: 60px;
+
+  // 导航列表
+  .one_item {
+    position: relative;
+    // 导航
+    .one_item_nav {
+      display: inline-block;
+      padding: 20px;
+      // color: #333;
+      color: #fff;
+      font-size: 15px;
+      transition: color 0.3s;
+      // 鼠标悬停效果
+      &:hover {
+        color: @color !important;
+      }
+
+      .down {
+        color: #fff;
+      }
+    }
+
+    // 二级导航
+    .two {
+      display: none;
+      overflow: hidden;
+      position: absolute;
+      top: 50px;
+      width: 100%;
+
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08);
+
+      .two_item {
+        .two_item_nav {
+          position: relative;
+          display: inline-block;
+          width: 100%;
+          padding: 10px;
+          padding-left: 10px;
+          font-size: 15px;
+          box-sizing: border-box;
+          color: #666;
+          transition: all 0.3s;
+
+          // 鼠标经过的小横线
+          &::after {
+            content: "";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 3px;
+            background-color: @color;
+            transition: width 0.3s;
+          }
+        }
+
+        // 鼠标经过二级导航的效果
+        &:hover .two_item_nav {
+          color: @color !important;
+          background-color: #f2f2f2;
+          padding-left: 30px;
+
+          &:hover::after {
+            width: 10px;
+          }
+        }
+      }
+    }
+
+    // 鼠标经过哪个，就让哪个二级导航显示
+    &:hover .two {
+      display: block;
     }
   }
 }

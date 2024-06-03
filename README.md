@@ -3485,6 +3485,20 @@ size：每页数量，非必传，默认5
 }
 ```
 
+### 聊天
+
+![image-20240602114902697](README.assets/image-20240602114902697.png)
+
+
+
+![image-20240602114913105](README.assets/image-20240602114913105.png)
+
+
+
+![image-20240602115339104](README.assets/image-20240602115339104.png)
+
+![image-20240602193655111](README.assets/image-20240602193655111.png)
+
 ## 📈 Stargazers
 
 [![Stargazers over time](README.assets/blog-front-end-17153434511091.svg)](https://starchart.cc/Auroraol/blog-front-end)

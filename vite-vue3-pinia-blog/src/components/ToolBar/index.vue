@@ -197,9 +197,6 @@ const updateColor = () => {
   // 更改css变量--color的值
   $css.setProperty("--color", color.value);
 
-  // 修改进度条颜色
-  $css.setProperty("--nprogress-color", color.value);
-
   // 将主题色存储在本地
   localStorage.setItem("topicColor", color.value);
 

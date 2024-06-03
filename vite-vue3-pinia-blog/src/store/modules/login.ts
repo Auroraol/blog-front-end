@@ -8,11 +8,13 @@ import {
   removePassword,
 } from "/@/utils/auth";
 
+
 export const useLoginStore = defineStore("login", {
   state: () => ({
     visible: false,   // 是否点击登录
     username: getUsername(),
     password: getPassword(),
+    
   }),
   actions: {
     changeVisible(value) {

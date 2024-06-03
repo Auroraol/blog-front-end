@@ -152,8 +152,8 @@ router.beforeEach(async (to, from, next) => {
     } else {
       // const path = to.matched.length === 0 ? "/404" : "/";  //=0表示当前路由没有匹配到任何路由记录
       // next(path);
-      // 进入写文页面，判断是否有权限
-      if (to.path === "/write") {
+      // 进入写文页面，判断是否有权限 // 进入聊天室页面，判断是否有权限
+      if (to.path === "/write" || to.path === "/chat") {
         alert("还没有登录，去登录吧");
         router.push("/login-register/login");
       }

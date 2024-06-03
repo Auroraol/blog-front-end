@@ -16,7 +16,7 @@ import app from "../main";
  * redirect: noRedirect           设置noRedirect，则面包屑路径不可点
  * name:'router-name'             名称在 <keep-alive> 用到，后台管理必须设置！！！
  * meta : {
-    roles: ['admin','test']      页面角色控制，可多角色
+    roles: ['admin','ordinary']      页面角色控制，可多角色
     title: 'title'               标题   使用window.document.title = to.meta.title as string
     icon: 'svg-name'             导航栏图标
     breadcrumb: false            false，将不显示面包屑
@@ -41,7 +41,7 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: "首页",
-    }
+    },
   },
   {
     path: "/index",
@@ -132,20 +132,11 @@ export const constantRoutes = [
     },
   },
   {
-    path: '/rebind-mobile',
-    component: () => import('/@/views/mobile-rebind/index.vue'),
+    path: "/rebind-mobile",
+    component: () => import("/@/views/mobile-rebind/index.vue"),
     hidden: true,
-  meta: {
-    title: "手机号换绑",
-  },
-  },
-  {
-    path: "/about",
-    name: "about",
-    hidden: true,
-    component: () => import("/@/views/about/index.vue"),
     meta: {
-      title: "关于",
+      title: "手机号换绑",
     },
   },
   {
@@ -211,15 +202,40 @@ export const constantRoutes = [
     hidden: true,
     meta: {
       title: "浏览文章",
-    }
+    },
   },
   {
-    path: '/search',
-    component: () => import('/@/views/search/index.vue'),
+    path: "/search",
+    component: () => import("/@/views/search/index.vue"),
     hidden: true,
     meta: {
       title: "搜索文章",
-    }
+    },
+  },
+  {
+    path: "/about",
+    name: "about",
+    hidden: true,
+    component: () => import("/@/views/about/index.vue"),
+    meta: {
+      title: "关于",
+    },
+  },
+  {
+    // 相册
+    path: "/photo",
+    name: "photo",
+    hidden: true,
+    component: () => import("/@/views/photo/index.vue"),
+    meta: { title: "相册" },
+  },
+  {
+    //聊天室
+    path: "/chat",
+    name: "chat",
+    hidden: true,
+    component: () => import("/@/views/chat/index.vue"),
+    meta: { title: "聊天室" },
   },
   // {
   //   path: '/oauth',
@@ -274,7 +290,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "UserManage",
-        component: () => import('/@/views/user-manage/index.vue'),
+        component: () => import("/@/views/user-manage/index.vue"),
         meta: {
           title: "用户管理",
           icon: "user-manage",
@@ -296,7 +312,7 @@ export const asyncRoutes = [
       {
         path: "edit",
         name: "Edit",
-        component: () => import('/@/views/article-manage/edit.vue'),
+        component: () => import("/@/views/article-manage/edit.vue"),
         meta: {
           title: "编辑",
           icon: "art-edit",
@@ -305,7 +321,7 @@ export const asyncRoutes = [
       {
         path: "list",
         name: "List",
-        component: () => import('/@/views/article-manage/list.vue'),
+        component: () => import("/@/views/article-manage/list.vue"),
         meta: {
           title: "文章",
           icon: "art-list",
@@ -320,7 +336,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "RecommendManage",
-        component: () => import('/@/views/recommend-manage/index.vue'),
+        component: () => import("/@/views/recommend-manage/index.vue"),
         meta: {
           title: "推荐管理",
           icon: "recommend-manage",
@@ -336,7 +352,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "TagManage",
-        component: () => import('/@/views/tag-manage/index.vue'),
+        component: () => import("/@/views/tag-manage/index.vue"),
         meta: {
           title: "标签管理",
           icon: "tag-manage",
@@ -352,7 +368,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "CategoryManage",
-        component: () => import('/@/views/category-manage/index.vue'),
+        component: () => import("/@/views/category-manage/index.vue"),
         meta: {
           title: "分类管理",
           icon: "category-manage",
@@ -368,7 +384,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "FriendChainManage",
-        component: () => import('/@/views/friend-link-manage/index.vue'),
+        component: () => import("/@/views/friend-link-manage/index.vue"),
         meta: {
           title: "友链管理",
           icon: "friend-chain-manage",
@@ -384,7 +400,7 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "client",
-        component: () => import('/@/views/client-manage/index.vue'),
+        component: () => import("/@/views/client-manage/index.vue"),
         meta: {
           title: "客户端管理",
           icon: "client-manage",
@@ -400,11 +416,27 @@ export const asyncRoutes = [
       {
         path: "index",
         name: "File",
-        component: () => import('/@/views/file-manage/index.vue'),
+        component: () => import("/@/views/file-manage/index.vue"),
         meta: {
           title: "文件管理",
           icon: "file-manage",
           roles: ["admin"],
+        },
+      },
+    ],
+  },
+  {
+    path: "/stats",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "stats",
+        component: () => import("/@/views/Stats/index.vue"),
+        meta: {
+          title: "数据统计",
+          icon: "data-statistics",
+          roles: ["admin", "ordinary"],
         },
       },
     ],
