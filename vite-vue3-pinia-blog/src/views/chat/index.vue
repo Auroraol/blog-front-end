@@ -18,7 +18,6 @@
 ./components/Chat6.vue
 <script setup lang="ts">
 //Suspense要异步引入组件
-const List = defineAsyncComponent(() => import("./components/List.vue"));
 const Chat = defineAsyncComponent(() => import("./components/Chat.vue"));
 </script>
 
@@ -35,6 +34,7 @@ const Chat = defineAsyncComponent(() => import("./components/Chat.vue"));
 
 .chatbox {
   margin-top: 5px;
+
   // overflow: hidden;
   // display: flex;
   // justify-content: space-between;

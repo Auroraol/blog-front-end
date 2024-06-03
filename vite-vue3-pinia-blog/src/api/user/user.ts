@@ -194,3 +194,13 @@ export function updateStatus(params) {
     params: params
   },true)
 }
+
+/**
+ * 获取用户信息
+ */
+export function getChatUserInfo(params) {
+  return request<userInfoResponseType>(import.meta.env.VITE_APP_BASE_API + '/user/chat/info' ,{
+    method: 'get',
+    params: params
+  },true)
+}

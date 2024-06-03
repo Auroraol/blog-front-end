@@ -10,7 +10,7 @@
           align-items: center;
           box-sizing: border-box;
           padding: 0.5rem 1rem;
-          border-bottom: 1px solid hsla(0, 0%, 10.2%, 0.5);
+          border-bottom: 1px solid rgb(184 181 181);
         "
       >
         <span style="font-size: 1.2rem">房间列表</span>
@@ -96,8 +96,8 @@
       <span>在线 - {{ onlineList.length }}</span>
       <div
         class="userList"
-        v-for="item in onlineList"
-        :key="item.id"
+        v-for="(item, index) in onlineList"
+        :key="index"
         @click="goPersonalCenter(item)"
       >
         <img
@@ -107,7 +107,7 @@
             margin: 0.2rem;
             margin-right: 0.5rem;
           "
-          :src="item.headImg"
+          :src="item[1] || defaultAvatar"
           alt=""
         />
         <span
@@ -117,7 +117,7 @@
             white-space: nowrap;
             overflow: hidden;
           "
-          >{{ item.nickName }}
+          >{{ item[0] }}
           <span v-if="item.root" style="color: red">*</span>
         </span>
       </div>
@@ -132,7 +132,7 @@ import ChatWindow from "./chatWindow.vue";
 import { useRoute, useRouter } from "vue-router";
 import { getAccessToken } from "/@/utils/auth";
 import { ChatLog, ChatLogBox, ChatInfo, ChatUserInfo } from "/@/types/chat";
-import { useChatStore } from "/@/store/index";
+import { useChatStore, useSettingsStore } from "/@/store/index";
 import {
   chatList,
   addChatRoom,
@@ -140,7 +140,8 @@ import {
   getChatListAPI,
 } from "/@/api/chat/chat";
 
-// const pinia = useStore();
+const defaultAvatar = computed(() => useSettingsStore().defaultAvatar);
+
 const router = useRouter();
 const route = useRoute();
 
@@ -158,11 +159,13 @@ onMounted(() => {
 
 //组件销毁要退出连接
 onBeforeUnmount(() => {
+  console.error("sss");
+
   socket.disconnect();
 });
 
 //进入页面主动获取列表
-socket.emit("getUsers", "getOnlineList", (res: any) => {
+socket.emit("getUsers", (res: any) => {
   onlineList.value = res;
 });
 

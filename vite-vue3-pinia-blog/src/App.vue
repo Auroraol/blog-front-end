@@ -9,7 +9,6 @@
         </transition>
       </div>
     </el-config-provider>
-    <ToolBar></ToolBar>
     <foot></foot>
   </div>
 </template>

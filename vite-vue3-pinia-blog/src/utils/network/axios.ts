@@ -42,7 +42,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     // 当请求失败时做一些处理 抛出错误
-    console.log(error);
+    // console.log(error);
     return Promise.reject(error);
   }
 );

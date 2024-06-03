@@ -5,6 +5,7 @@
     :src="useSettingsStorePinia.swiperImage"
     v-if="swiperText.length"
   ></Swiper>
+  <ToolBar></ToolBar>
   <div class="card">
     <el-row :gutter="20">
       <!-- 左侧 -->

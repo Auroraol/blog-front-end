@@ -95,26 +95,21 @@
 
 <script setup lang="ts">
 import { ref, toRaw, reactive, onMounted } from "vue";
-
-// import useAxios from '@/hooks/axios/axios'
-// import { ElMessage } from 'element-plus'
-// import { ChatLog, ChatLogBox } from '@/hooks/Types/types'
-// import { useStore } from "@/store/count";
-// import { socket } from "@/hooks/socket/socket";
-// import { goToPersonalCenterHook } from "@/hooks/goToPersonalCenter/goToPersonalCenter";
 import { useRoute } from "vue-router";
 import { ChatLog, ChatLogBox, ChatUserInfo } from "/@/types/chat";
-import { useChatStore } from "/@/store/index";
+import { useChatStore, useSettingsStore } from "/@/store/index";
 import { useGetters } from "/@/store/getters";
 import { FormInstance } from "element-plus";
 
 import { getChatListAPI, addChatDataAPI } from "/@/api/chat/chat";
+import { getChatUserInfo } from "/@/api/user/user";
 import { socket } from "/@/utils/socket/socket";
 import { formatDate } from "/@/utils/format/format-time";
 
 const useChatStorePinia = useChatStore();
 
 const chatUserInfoPinia = computed(() => useGetters().chatUserInfo);
+const defaultAvatar = computed(() => useSettingsStore().defaultAvatar);
 
 const route = useRoute();
 
@@ -208,20 +203,33 @@ onMounted(() => {
   shiftPropsLogInfo();
 });
 
+// 计算属性
+const userInfo = computed(() => {
+  const info = useGetters().userInfo;
+  return Object.keys(info).length === 0 ? null : info;
+});
+
 //定义新消息盒子
 const newChatLogInfo = async (newLog: ChatLog) => {
-  //   const { data: res } = await useAxios.get("/userinfo", {
-  //     params: { account: newLog.account },
-  //   });
-  const info: ChatLogBox = {
-    // id: newLog.id,
-    account: newLog.account,
-    // head: res.data.headImg,
-    // nickName: res.data.nickName,
-    date: newLog.date,
-    content: newLog.content,
-  };
-  return info;
+  try {
+    const params = {
+      username: newLog.account,
+    };
+
+    const res = await getChatUserInfo(params);
+
+    const info: ChatLogBox = {
+      head: res.avatar || defaultAvatar,
+      nickName: res.nickname,
+      account: newLog.account,
+      date: newLog.date,
+      content: newLog.content,
+    };
+
+    return info;
+  } catch (error) {
+    throw error;
+  }
 };
 
 //拿到props传来的消息记录，然后请求对应的用户进行补全，最后更新要渲染的消息记录的数组
@@ -259,19 +267,8 @@ const sendChatLog = async () => {
     return;
   }
   const roomName = herfRoomName();
-  //   const account = JSON.parse(window.atob(localStorage.getItem("userAccount")!));
-  const account = "userAccount";
+  const account = userInfo.value.username;
   try {
-    //     const roomArr = await getChatListAPI({ name: roomName });
-    //     let newId;
-    //     if (!roomArr)
-    //       return ElMessage.error(`你发送消息的房间 ${herfRoomName()} 已经被删除`);
-    //     if (roomArr.length === 0) {
-    //       newId = 0;
-    //     } else {
-    //       newId = Number(roomArr[roomArr.length - 1].id) + 1;
-    //     }
-
     //更新数据库的聊天记录
     const newLog = {
       roomName: roomName,
@@ -336,11 +333,12 @@ const goPersonalCenter = (account: any) => {
   background-color: #fff;
 
   .header {
-    height: 30px;
+    height: 32px;
     line-height: 80px;
     padding-left: 40px;
     font-weight: 900;
     font-size: 18px;
+    border-bottom: 1px solid #e4dddd;
   }
 
   .chatMain {
