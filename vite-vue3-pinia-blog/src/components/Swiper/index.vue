@@ -1,17 +1,3 @@
-<script setup lang='ts'>
-const { Ripple = false } = defineProps<{
-  src: string;
-  Ripple?: boolean;
-  data?: string[];
-}>();
-
-onMounted(() => {
-  const TypedCursor = document.querySelector(".typed-cursor") as HTMLElement;
-  if (!TypedCursor) return;
-  TypedCursor.style.display = "none";
-});
-</script>
-
 <template>
   <div class="content">
     <!-- 星空颗粒效果 -->
@@ -73,6 +59,20 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<script setup lang='ts'>
+const { Ripple = false } = defineProps<{
+  src: string;
+  Ripple?: boolean;
+  data?: string[];
+}>();
+
+onMounted(() => {
+  const TypedCursor = document.querySelector(".typed-cursor") as HTMLElement;
+  if (!TypedCursor) return;
+  TypedCursor.style.display = "none";
+});
+</script>
 
 <style scoped lang="less">
 @import "./ripple.less";

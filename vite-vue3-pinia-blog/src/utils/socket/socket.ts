@@ -2,9 +2,9 @@ import { io } from 'socket.io-client'
 import { getAccessToken } from "/@/utils/auth";
 
 // // 连接服务器
-let socketHttpUrl = 'http://localhost:9974/Chat'    // 命名空间为/Chat
-// let socketHttpUrl = 'http://localhost:9974/Test' // 命名空间为/Test
-// let socketHttpUrl = 'http://localhost:9974'     // 无命名空间
+let socketHttpUrl = 'http://101.37.165.220:9974/Chat'    // 命名空间为/Chat
+// let socketHttpUrl = 'http://localhost:9074/Test' // 命名空间为/Test
+// let socketHttpUrl = 'http://localhost:9074'     // 无命名空间
 
 const socket = io(socketHttpUrl, {
     query: "Authorization=" + getAccessToken(),  // 参数  // 改成动态的

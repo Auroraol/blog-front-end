@@ -176,9 +176,9 @@ onMounted(() => {
   });
   // 获取文章列表
   getArtList();
-  console.error(useSettingsStorePinia.swiperImage);
-  console.error(swiperText.value);
-  console.error(useSettingsStorePinia.swiperText);
+  // console.error(useSettingsStorePinia.swiperImage);
+  // console.error(swiperText.value);
+  // console.error(useSettingsStorePinia.swiperText);
 });
 
 // 获取文章列表

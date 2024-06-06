@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   // axios中请求配置有baseURL选项,表示请求URL公共部分,每个请求将会带该部分
   // baseURL: import.meta.env.VITE_API_URL,//配置了跨域这里不用写会冲突
   validateStatus(status) {
-    console.error(status);
+    // console.error(status);
     // 状态码
     return status >= 200 && status < 500; // code 200 - 500  范围之外的才走重试流程
   },
@@ -70,11 +70,11 @@ axiosInstance.interceptors.response.use(
           });
       } else {
         // 其他, 返回失败message
-        ElMessage({
-          message: res.message || "Error",
-          type: "error",
-          duration: 5 * 1000,
-        });
+        // ElMessage({
+        //   message: res.message || "Error",
+        //   type: "error",
+        //   duration: 5 * 1000,
+        // });
       }
       return Promise.reject(new Error(res.message || "Error"));
     } else {

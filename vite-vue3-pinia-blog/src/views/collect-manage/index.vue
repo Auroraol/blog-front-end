@@ -73,9 +73,10 @@
 
     <!-- 没有收藏 -->
     <div v-if="!loading && artList.length === 0" class="list-none">
-      <img
-        src="http://tva1.sinaimg.cn/large/9150e4e5gy1ftwxi6tc2lg204i04mjra.gif"
-      />
+      <div style="text-align: center">
+        <svg-icon name="empty-df445c2e" width="200px" height="200px"></svg-icon>
+        <div class="info">暂无收藏</div>
+      </div>
     </div>
   </div>
 </template>

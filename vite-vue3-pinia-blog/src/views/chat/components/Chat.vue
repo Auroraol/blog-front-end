@@ -159,8 +159,6 @@ onMounted(() => {
 
 //组件销毁要退出连接
 onBeforeUnmount(() => {
-  console.error("sss");
-
   socket.disconnect();
 });
 
@@ -187,7 +185,7 @@ socket.on("changeRoomsBroadcast", () => {
 const getAllRooms = async () => {
   const res = await chatList();
   allRooms.value = res;
-  console.error(res);
+  // console.error(res);
 
   getRoomLog("默认房间"); //刚进入页面默认请求默认房间的消息记录
 };

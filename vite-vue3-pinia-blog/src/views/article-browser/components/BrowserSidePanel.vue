@@ -107,13 +107,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-// import { ElMessage } from 'element-plus'
-// import useAxios from '@/hooks/axios/axios';
-// import { useUserStore } from '/@/store/index';
-
 const authorInfo = ref<HTMLElement>(); //获取dom
-
-// const pinia = useStore()
 
 const props = defineProps({
   title: {
@@ -175,7 +169,7 @@ const isLiked = async () => {
       const res = await checkIsLiked(id.value);
       ifPraise.value = res === 1; //1点赞 0未攒
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   }
 };
@@ -186,7 +180,7 @@ const isCollected = async () => {
       const res = await checkIsCollected(id.value);
       ifCollection.value = res === 1;
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   }
 };
