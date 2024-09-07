@@ -192,6 +192,7 @@ import { mapState } from "pinia";
 import { useGetters } from "/@/store/getters";
 import { useUserStore } from "/@/store/index";
 import { getAccessToken } from "/@/utils/auth";
+import { isEmpty } from "/@/utils/isEmpty";
 
 const useUserPinia = useUserStore();
 const useGettersPinia = useGetters();
@@ -231,7 +232,11 @@ const ExtendPage = {
 // 计算属性
 const userInfo = computed(() => {
   const info = useGettersPinia.userInfo;
-  return Object.keys(info).length === 0 ? null : info;
+  if (isEmpty(info)) {
+    return null;
+  }
+  // return Object.keys(info).length === 0 ? null : info;
+  return info;
 });
 
 const device = computed(() => useGettersPinia.device);

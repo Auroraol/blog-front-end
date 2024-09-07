@@ -296,6 +296,8 @@ import {
   deleteReply,
 } from "/@/api/comment/comment";
 
+import { isEmpty } from "/@/utils/isEmpty";
+
 const router = useRouter();
 const gettersStore = useGetters(); // 通过 useGetters() 获取 getters store 的实例
 const useSettingsStorePinia = useSettingsStore();
@@ -330,9 +332,19 @@ const rloading = ref(false);
 const userInfo = computed(() => {
   const info = gettersStore.userInfo; //没有登录账号是useGettersPinia.userInfo数据类型是{}
   // 手动检查对象是否为空
-  return Object.keys(info).length === 0 ? null : info;
+  if (isEmpty(info)) {
+    return null;
+  }
+  // return Object.keys(info).length === 0 ? null : info;
+  return info;
 });
 
+// const userInfo = computed(() => {
+//   const info = gettersStore.userInfo; //没有登录账号是useGettersPinia.userInfo数据类型是{}
+//   // 手动检查对象是否为空
+
+//   return Object.keys(info).length === 0 ? null : info;
+// });
 const device = computed(() => useGettersPinia.device);
 const defaultAvatar = computed(() => useSettingsStorePinia.defaultAvatar);
 
